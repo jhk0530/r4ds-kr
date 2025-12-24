@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund">
+<title>23&nbsp; 계층적 데이터 – R for Data Science (2e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./webscraping.html" rel="next">
+<link href="./arrow.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8df9fc159a2c64db71ab329accd4d345.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script defer="" data-domain="r4ds.hadley.nz" src="https://plausible.io/js/plausible.js"></script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./import.html">가져오기 (Import)</a></li><li class="breadcrumb-item"><a href="./rectangling.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R for Data Science (2e)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hadley/r4ds/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">환영합니다</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">제2판 서문</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">소개</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./whole-game.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">전체 게임</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-visualize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">데이터 시각화</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">워크플로우: 기초</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-transform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">데이터 변형</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">워크플로우: 코드 스타일</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-tidy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">데이터 정리</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-scripts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">워크플로우: 스크립트와 프로젝트</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-import.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">데이터 가져오기</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">워크플로우: 도움 받기</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./visualize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">시각화 (Visualize)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">레이어(Layers)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./EDA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">탐색적 데이터 분석(Exploratory data analysis)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./communication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">소통(Communication)</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./transform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">변형 (Transform)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./logicals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">논리형 벡터</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numbers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">숫자</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">문자열</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./regexps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">정규 표현식 (Regular expressions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./factors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">팩터(Factors)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datetimes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">날짜와 시간</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./missing-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">결측값(Missing values)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./joins.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">조인(Joins)</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./import.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">가져오기 (Import)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spreadsheets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">스프레드시트</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">데이터베이스</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arrow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Arrow</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rectangling.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./webscraping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./program.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">프로그램 (Program)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">함수 (Functions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./iteration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">반복</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">기본 R 필드 가이드</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./communicate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">소통 (Communicate)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Quarto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quarto-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Quarto 형식</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li>
+<a href="#%EC%86%8C%EA%B0%9C" id="toc-소개" class="nav-link active" data-scroll-target="#%EC%86%8C%EA%B0%9C"><span class="header-section-number">23.1</span> 소개</a>
+  <ul class="collapse">
+<li><a href="#%EC%84%A0%EC%88%98-%EC%A7%80%EC%8B%9D" id="toc-선수-지식" class="nav-link" data-scroll-target="#%EC%84%A0%EC%88%98-%EC%A7%80%EC%8B%9D"><span class="header-section-number">23.1.1</span> 선수 지식</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#%EB%A6%AC%EC%8A%A4%ED%8A%B8lists" id="toc-리스트lists" class="nav-link" data-scroll-target="#%EB%A6%AC%EC%8A%A4%ED%8A%B8lists"><span class="header-section-number">23.2</span> 리스트(Lists)</a>
+  <ul class="collapse">
+<li><a href="#%EA%B3%84%EC%B8%B5-%EA%B5%AC%EC%A1%B0hierarchy" id="toc-계층-구조hierarchy" class="nav-link" data-scroll-target="#%EA%B3%84%EC%B8%B5-%EA%B5%AC%EC%A1%B0hierarchy"><span class="header-section-number">23.2.1</span> 계층 구조(Hierarchy)</a></li>
+  <li><a href="#%EB%A6%AC%EC%8A%A4%ED%8A%B8-%EC%97%B4list-columns" id="toc-리스트-열list-columns" class="nav-link" data-scroll-target="#%EB%A6%AC%EC%8A%A4%ED%8A%B8-%EC%97%B4list-columns"><span class="header-section-number">23.2.2</span> 리스트 열(List-columns)</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#%EC%A4%91%EC%B2%A9-%ED%95%B4%EC%A0%9Cunnesting" id="toc-중첩-해제unnesting" class="nav-link" data-scroll-target="#%EC%A4%91%EC%B2%A9-%ED%95%B4%EC%A0%9Cunnesting"><span class="header-section-number">23.3</span> 중첩 해제(Unnesting)</a>
+  <ul class="collapse">
+<li><a href="#unnest_wider" id="toc-unnest_wider" class="nav-link" data-scroll-target="#unnest_wider"><span class="header-section-number">23.3.1</span> <code>unnest_wider()</code></a></li>
+  <li><a href="#unnest_longer" id="toc-unnest_longer" class="nav-link" data-scroll-target="#unnest_longer"><span class="header-section-number">23.3.2</span> <code>unnest_longer()</code></a></li>
+  <li><a href="#%EC%9D%BC%EA%B4%80%EC%84%B1-%EC%97%86%EB%8A%94-%EC%9C%A0%ED%98%95" id="toc-일관성-없는-유형" class="nav-link" data-scroll-target="#%EC%9D%BC%EA%B4%80%EC%84%B1-%EC%97%86%EB%8A%94-%EC%9C%A0%ED%98%95"><span class="header-section-number">23.3.3</span> 일관성 없는 유형</a></li>
+  <li><a href="#%EA%B8%B0%ED%83%80-%ED%95%A8%EC%88%98" id="toc-기타-함수" class="nav-link" data-scroll-target="#%EA%B8%B0%ED%83%80-%ED%95%A8%EC%88%98"><span class="header-section-number">23.3.4</span> 기타 함수</a></li>
+  <li><a href="#%EC%97%B0%EC%8A%B5%EB%AC%B8%EC%A0%9C" id="toc-연습문제" class="nav-link" data-scroll-target="#%EC%97%B0%EC%8A%B5%EB%AC%B8%EC%A0%9C"><span class="header-section-number">23.3.5</span> 연습문제</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#%EC%82%AC%EB%A1%80-%EC%97%B0%EA%B5%AC" id="toc-사례-연구" class="nav-link" data-scroll-target="#%EC%82%AC%EB%A1%80-%EC%97%B0%EA%B5%AC"><span class="header-section-number">23.4</span> 사례 연구</a>
+  <ul class="collapse">
+<li><a href="#%EB%A7%A4%EC%9A%B0-%EB%84%93%EC%9D%80-%EB%8D%B0%EC%9D%B4%ED%84%B0" id="toc-매우-넓은-데이터" class="nav-link" data-scroll-target="#%EB%A7%A4%EC%9A%B0-%EB%84%93%EC%9D%80-%EB%8D%B0%EC%9D%B4%ED%84%B0"><span class="header-section-number">23.4.1</span> 매우 넓은 데이터</a></li>
+  <li><a href="#%EA%B4%80%EA%B3%84%ED%98%95-%EB%8D%B0%EC%9D%B4%ED%84%B0" id="toc-관계형-데이터" class="nav-link" data-scroll-target="#%EA%B4%80%EA%B3%84%ED%98%95-%EB%8D%B0%EC%9D%B4%ED%84%B0"><span class="header-section-number">23.4.2</span> 관계형 데이터</a></li>
+  <li><a href="#%EA%B9%8A%EA%B2%8C-%EC%A4%91%EC%B2%A9%EB%90%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0" id="toc-깊게-중첩된-데이터" class="nav-link" data-scroll-target="#%EA%B9%8A%EA%B2%8C-%EC%A4%91%EC%B2%A9%EB%90%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0"><span class="header-section-number">23.4.3</span> 깊게 중첩된 데이터</a></li>
+  <li><a href="#%EC%97%B0%EC%8A%B5%EB%AC%B8%EC%A0%9C-1" id="toc-연습문제-1" class="nav-link" data-scroll-target="#%EC%97%B0%EC%8A%B5%EB%AC%B8%EC%A0%9C-1"><span class="header-section-number">23.4.4</span> 연습문제</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#json" id="toc-json" class="nav-link" data-scroll-target="#json"><span class="header-section-number">23.5</span> JSON</a>
+  <ul class="collapse">
+<li><a href="#%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%9C%A0%ED%98%95" id="toc-데이터-유형" class="nav-link" data-scroll-target="#%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%9C%A0%ED%98%95"><span class="header-section-number">23.5.1</span> 데이터 유형</a></li>
+  <li><a href="#jsonlite" id="toc-jsonlite" class="nav-link" data-scroll-target="#jsonlite"><span class="header-section-number">23.5.2</span> jsonlite</a></li>
+  <li><a href="#%EC%A7%81%EC%82%AC%EA%B0%81%ED%98%95%ED%99%94-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0" id="toc-직사각형화-프로세스-시작하기" class="nav-link" data-scroll-target="#%EC%A7%81%EC%82%AC%EA%B0%81%ED%98%95%ED%99%94-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0"><span class="header-section-number">23.5.3</span> 직사각형화 프로세스 시작하기</a></li>
+  <li><a href="#%EC%97%B0%EC%8A%B5%EB%AC%B8%EC%A0%9C-2" id="toc-연습문제-2" class="nav-link" data-scroll-target="#%EC%97%B0%EC%8A%B5%EB%AC%B8%EC%A0%9C-2"><span class="header-section-number">23.5.4</span> 연습문제</a></li>
+  </ul>
+</li>
+  <li><a href="#%EC%9A%94%EC%95%BD" id="toc-요약" class="nav-link" data-scroll-target="#%EC%9A%94%EC%95%BD"><span class="header-section-number">23.6</span> 요약</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/hadley/r4ds/edit/main/rectangling.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hadley/r4ds/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./import.html">가져오기 (Import)</a></li><li class="breadcrumb-item"><a href="./rectangling.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-rectangling" class="quarto-section-identifier"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="소개" class="level2" data-number="23.1"><h2 data-number="23.1" class="anchored" data-anchor-id="소개">
+<span class="header-section-number">23.1</span> 소개</h2>
+<p>이 장에서는 데이터 <strong>직사각형화(rectangling)</strong> 기술을 배울 것입니다. 이는 근본적으로 계층적이거나 트리 형태인 데이터를 행과 열로 구성된 직사각형 데이터 프레임으로 변환하는 것입니다. 계층적 데이터는 놀라울 정도로 흔하며, 특히 웹에서 가져온 데이터로 작업할 때 더욱 그렇기 때문에 이 작업은 중요합니다.</p>
+<p>직사각형화에 대해 배우려면 먼저 계층적 데이터를 가능하게 하는 데이터 구조인 리스트에 대해 배워야 합니다. 그런 다음 두 가지 중요한 tidyr 함수인 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">tidyr::unnest_longer()</a></code>와 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">tidyr::unnest_wider()</a></code>를 배울 것입니다. 그 후 실제 문제를 해결하기 위해 이 간단한 함수들을 반복해서 적용하는 몇 가지 사례 연구를 보여줄 것입니다. 마지막으로 계층적 데이터셋의 가장 빈번한 소스이자 웹에서 데이터 교환을 위한 일반적인 형식인 JSON에 대해 이야기하며 마무리하겠습니다.</p>
+<section id="선수-지식" class="level3" data-number="23.1.1"><h3 data-number="23.1.1" class="anchored" data-anchor-id="선수-지식">
+<span class="header-section-number">23.1.1</span> 선수 지식</h3>
+<p>이 장에서는 tidyverse의 핵심 멤버인 tidyr의 많은 함수를 사용할 것입니다. 또한 직사각형화 연습을 위한 흥미로운 데이터셋을 제공하는 repurrrsive를 사용하고, 마지막으로 JSON 파일을 R 리스트로 읽기 위해 jsonlite를 사용할 것입니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.5.2</span></span>
+<span><span class="co">#&gt; Warning: package 'readr' was built under R version 4.5.2</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jennybc.github.io/repurrrsive/">repurrrsive</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite">jsonlite</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section><section id="리스트lists" class="level2" data-number="23.2"><h2 data-number="23.2" class="anchored" data-anchor-id="리스트lists">
+<span class="header-section-number">23.2</span> 리스트(Lists)</h2>
+<p>지금까지 정수, 숫자, 문자, 날짜-시간 및 팩터와 같은 단순한 벡터를 포함하는 데이터 프레임으로 작업했습니다. 이러한 벡터는 동질적(homogeneous), 즉 모든 요소가 동일한 데이터 유형이기 때문에 단순합니다. 다른 유형의 요소를 동일한 벡터에 저장하려면 <code><a href="https://rdrr.io/r/base/list.html">list()</a></code>로 생성하는 <strong>리스트(list)</strong> 가 필요합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="st">"a"</span>, <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">x1</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] 1 2 3 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [1] "a"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[3]]</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>리스트의 구성 요소 또는 <strong>자식(children)</strong> 의 이름을 지정하는 것이 종종 편리한데, 이는 티블의 열 이름을 지정하는 것과 같은 방식으로 할 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, b <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, c <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">x2</span></span>
+<span><span class="co">#&gt; $a</span></span>
+<span><span class="co">#&gt; [1] 1 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $b</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $c</span></span>
+<span><span class="co">#&gt; [1] 1 2 3 4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이러한 매우 단순한 리스트의 경우에도 인쇄하면 꽤 많은 공간을 차지합니다. 유용한 대안은 내용보다는 <strong>구조(str</strong>ucture)의 압축된 표시를 생성하는 <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>입니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ : int [1:4] 1 2 3 4</span></span>
+<span><span class="co">#&gt;  $ : chr "a"</span></span>
+<span><span class="co">#&gt;  $ : logi TRUE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ a: int [1:2] 1 2</span></span>
+<span><span class="co">#&gt;  $ b: int [1:3] 1 2 3</span></span>
+<span><span class="co">#&gt;  $ c: int [1:4] 1 2 3 4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>보시다시피 <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>은 리스트의 각 자식을 별도의 줄에 표시합니다. 이름이 있으면 이름을 표시하고, 그 다음 유형의 약어, 그 다음 처음 몇 개의 값을 표시합니다.</p>
+<section id="계층-구조hierarchy" class="level3" data-number="23.2.1"><h3 data-number="23.2.1" class="anchored" data-anchor-id="계층-구조hierarchy">
+<span class="header-section-number">23.2.1</span> 계층 구조(Hierarchy)</h3>
+<p>리스트는 다른 리스트를 포함하여 모든 유형의 객체를 포함할 수 있습니다. 이로 인해 계층적(트리 형태) 구조를 나타내기에 적합합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">x3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ :List of 2</span></span>
+<span><span class="co">#&gt;   ..$ : num 1</span></span>
+<span><span class="co">#&gt;   ..$ : num 2</span></span>
+<span><span class="co">#&gt;  $ :List of 2</span></span>
+<span><span class="co">#&gt;   ..$ : num 3</span></span>
+<span><span class="co">#&gt;   ..$ : num 4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이것은 평면 벡터를 생성하는 <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>와 눈에 띄게 다릅니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1 2 3 4</span></span>
+<span></span>
+<span><span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">x4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 4</span></span>
+<span><span class="co">#&gt;  $ : num 1</span></span>
+<span><span class="co">#&gt;  $ : num 2</span></span>
+<span><span class="co">#&gt;  $ : num 3</span></span>
+<span><span class="co">#&gt;  $ : num 4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>리스트가 복잡해짐에 따라 계층 구조를 한눈에 볼 수 있게 해주는 <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>이 더 유용해집니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">x5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ : num 1</span></span>
+<span><span class="co">#&gt;  $ :List of 2</span></span>
+<span><span class="co">#&gt;   ..$ : num 2</span></span>
+<span><span class="co">#&gt;   ..$ :List of 2</span></span>
+<span><span class="co">#&gt;   .. ..$ : num 3</span></span>
+<span><span class="co">#&gt;   .. ..$ :List of 2</span></span>
+<span><span class="co">#&gt;   .. .. ..$ : num 4</span></span>
+<span><span class="co">#&gt;   .. .. ..$ :List of 1</span></span>
+<span><span class="co">#&gt;   .. .. .. ..$ : num 5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>리스트가 훨씬 더 크고 복잡해지면 결국 <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>도 실패하기 시작하고 <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>로 전환해야 합니다. <a href="#fig-view-collapsed" class="quarto-xref">Figure&nbsp;<span>23.1</span></a> 는 <code>View(x5)</code>를 호출한 결과를 보여줍니다. 뷰어는 리스트의 최상위 수준만 보여주는 것으로 시작하지만, <a href="#fig-view-expand-1" class="quarto-xref">Figure&nbsp;<span>23.2</span></a> 처럼 구성 요소를 대화식으로 확장하여 더 많은 내용을 볼 수 있습니다. RStudio는 또한 <a href="#fig-view-expand-2" class="quarto-xref">Figure&nbsp;<span>23.3</span></a> 처럼 해당 요소에 액세스하는 데 필요한 코드를 보여줍니다. 이 코드가 어떻게 작동하는지는 <a href="base-R.html#sec-subset-one" class="quarto-xref"><span>Section 27.3</span></a> 에서 다시 다룰 것입니다.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-view-collapsed" class="quarto-float quarto-figure quarto-figure-center anchored" alt="리스트 뷰어를 보여주는 RStudio 스크린샷. x5의 두 자식을 보여줍니다:  첫 번째 자식은 double 벡터이고 두 번째 자식은 리스트입니다.  오른쪽을 가리키는 삼각형은 두 번째 자식 자체가 자식을 가지고 있지만  볼 수는 없음을 나타냅니다. ">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-view-collapsed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="screenshots/View-1.png" class="img-fluid figure-img" alt="리스트 뷰어를 보여주는 RStudio 스크린샷. x5의 두 자식을 보여줍니다:  첫 번째 자식은 double 벡터이고 두 번째 자식은 리스트입니다.  오른쪽을 가리키는 삼각형은 두 번째 자식 자체가 자식을 가지고 있지만  볼 수는 없음을 나타냅니다. " width="641">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-view-collapsed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;23.1: RStudio 뷰를 사용하면 복잡한 리스트를 대화식으로 탐색할 수 있습니다. 뷰어는 리스트의 최상위 수준만 보여주며 열립니다.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-view-expand-1" class="quarto-float quarto-figure quarto-figure-center anchored" alt="x5의 두 번째 자식을 확장한 리스트 뷰어의 또 다른 스크린샷.  이것도 두 개의 자식, 즉 double 벡터와 또 다른 리스트를 가지고 있습니다. ">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-view-expand-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="screenshots/View-2.png" class="img-fluid figure-img" alt="x5의 두 번째 자식을 확장한 리스트 뷰어의 또 다른 스크린샷.  이것도 두 개의 자식, 즉 double 벡터와 또 다른 리스트를 가지고 있습니다. " width="641">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-view-expand-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;23.2: 오른쪽을 가리키는 삼각형을 클릭하면 리스트의 해당 구성 요소가 확장되어 그 자식들도 볼 수 있습니다.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-view-expand-2" class="quarto-float quarto-figure quarto-figure-center anchored" alt="x5의 손자 수준을 확장하여 두 개의 자식(다시 double 벡터와 리스트)을  보여주는 또 다른 스크린샷. ">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-view-expand-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="screenshots/View-3.png" class="img-fluid figure-img" alt="x5의 손자 수준을 확장하여 두 개의 자식(다시 double 벡터와 리스트)을  보여주는 또 다른 스크린샷. " width="641">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-view-expand-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;23.3: 관심 있는 데이터에 도달할 때까지 이 작업을 필요한 만큼 반복할 수 있습니다. 왼쪽 하단 모서리에 유의하세요: 리스트의 요소를 클릭하면 RStudio가 그것에 액세스하는 데 필요한 부분집합 코드를 제공합니다. 이 경우 <code>x5[[2]][[2]][[2]]</code>입니다.
+</figcaption></figure>
+</div>
+</div>
+</div>
+</section><section id="리스트-열list-columns" class="level3" data-number="23.2.2"><h3 data-number="23.2.2" class="anchored" data-anchor-id="리스트-열list-columns">
+<span class="header-section-number">23.2.2</span> 리스트 열(List-columns)</h3>
+<p>리스트는 티블 내부에도 존재할 수 있으며, 이를 리스트 열이라고 부릅니다. 리스트 열은 일반적으로 티블에 속하지 않을 객체를 티블에 배치할 수 있게 해주기 때문에 유용합니다. 특히 리스트 열은 <a href="https://www.tidymodels.org">tidymodels</a> 생태계에서 많이 사용되는데, 모델 출력이나 리샘플링과 같은 것들을 데이터 프레임에 저장할 수 있게 해주기 때문입니다.</p>
+<p>다음은 리스트 열의 간단한 예입니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, </span>
+<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span>,</span>
+<span>  z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">df</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 3</span></span>
+<span><span class="co">#&gt;       x y     z         </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;list&gt;    </span></span>
+<span><span class="co">#&gt; 1     1 a     &lt;list [2]&gt;</span></span>
+<span><span class="co">#&gt; 2     2 b     &lt;list [3]&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>티블 안의 리스트라고 해서 특별한 점은 없으며, 다른 열과 똑같이 작동합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span><span class="co">#&gt;       x y     z         </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;list&gt;    </span></span>
+<span><span class="co">#&gt; 1     1 a     &lt;list [2]&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>리스트 열로 계산하는 것은 더 어렵지만, 그것은 일반적으로 리스트로 계산하는 것이 더 어렵기 때문입니다. 이에 대해서는 <a href="iteration.html" class="quarto-xref"><span>Chapter 26</span></a> 에서 다시 다룰 것입니다. 이 장에서는 리스트 열을 일반 변수로 중첩 해제(unnesting)하여 기존 도구를 사용할 수 있도록 하는 데 집중할 것입니다.</p>
+<p>기본 인쇄 방법은 내용의 대략적인 요약만 표시합니다. 리스트 열은 임의로 복잡할 수 있으므로 인쇄하는 좋은 방법이 없습니다. 그 내용을 보고 싶다면 리스트 열 하나만 뽑아내어 위에서 배운 기술 중 하나를 적용해야 합니다. 예: <code>df |&gt; pull(z) |&gt; str()</code> 또는 <code>df |&gt; pull(z) |&gt; View()</code>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>기본 R
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>리스트를 <code>data.frame</code>의 열에 넣는 것은 가능하지만, <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code>이 리스트를 열의 리스트로 취급하기 때문에 훨씬 더 까다롭습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   x.1.3 x.3.5</span></span>
+<span><span class="co">#&gt; 1     1     3</span></span>
+<span><span class="co">#&gt; 2     2     4</span></span>
+<span><span class="co">#&gt; 3     3     5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>리스트 <code><a href="https://rdrr.io/r/base/AsIs.html">I()</a></code>로 감싸서 <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame()</a></code>이 리스트를 행의 리스트로 취급하도록 강제할 수 있지만, 결과가 특별히 잘 인쇄되지는 않습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"1, 2"</span>, <span class="st">"3, 4, 5"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;         x       y</span></span>
+<span><span class="co">#&gt; 1    1, 2    1, 2</span></span>
+<span><span class="co">#&gt; 2 3, 4, 5 3, 4, 5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>티블에서 리스트 열을 사용하는 것이 더 쉬운데, <code><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble()</a></code>이 리스트를 벡터처럼 취급하고 인쇄 방법이 리스트를 염두에 두고 설계되었기 때문입니다.</p>
+</div>
+</div>
+</section></section><section id="중첩-해제unnesting" class="level2" data-number="23.3"><h2 data-number="23.3" class="anchored" data-anchor-id="중첩-해제unnesting">
+<span class="header-section-number">23.3</span> 중첩 해제(Unnesting)</h2>
+<p>리스트와 리스트 열의 기초를 배웠으니 이제 어떻게 일반 행과 열로 되돌릴 수 있는지 알아봅시다. 여기서는 기본 아이디어를 얻을 수 있도록 매우 간단한 샘플 데이터를 사용할 것입니다. 다음 섹션에서는 실제 데이터로 전환하겠습니다.</p>
+<p>리스트 열은 일반적으로 명명된 것과 이름이 없는 것의 두 가지 기본 형태가 있습니다. 자식이 <strong>이름이 있는(named)</strong> 경우, 모든 행에서 동일한 이름을 갖는 경향이 있습니다. 예를 들어 <code>df1</code>에서 리스트 열 <code>y</code>의 모든 요소는 <code>a</code>와 <code>b</code>라는 이름의 두 요소를 갖습니다. 이름이 있는 리스트 열은 자연스럽게 열로 중첩 해제됩니다: 각 명명된 요소는 새로운 명명된 열이 됩니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span></span>
+<span>  <span class="op">~</span><span class="va">x</span>, <span class="op">~</span><span class="va">y</span>,</span>
+<span>  <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">11</span>, b <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>,</span>
+<span>  <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">21</span>, b <span class="op">=</span> <span class="fl">22</span><span class="op">)</span>,</span>
+<span>  <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">31</span>, b <span class="op">=</span> <span class="fl">32</span><span class="op">)</span>,</span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>자식이 <strong>이름이 없는(unnamed)</strong> 경우, 요소의 수는 행마다 다른 경향이 있습니다. 예를 들어 <code>df2</code>에서 리스트 열 <code>y</code>의 요소는 이름이 없고 길이가 1에서 3까지 다양합니다. 이름이 없는 리스트 열은 자연스럽게 행으로 중첩 해제됩니다: 각 자식에 대해 하나의 행을 얻게 됩니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span></span>
+<span>  <span class="op">~</span><span class="va">x</span>, <span class="op">~</span><span class="va">y</span>,</span>
+<span>  <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">12</span>, <span class="fl">13</span><span class="op">)</span>,</span>
+<span>  <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">21</span><span class="op">)</span>,</span>
+<span>  <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">31</span>, <span class="fl">32</span><span class="op">)</span>,</span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>tidyr은 이 두 가지 경우를 위해 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>와 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>라는 두 가지 함수를 제공합니다. 다음 섹션에서 작동 방식을 설명합니다.</p>
+<section id="unnest_wider" class="level3" data-number="23.3.1"><h3 data-number="23.3.1" class="anchored" data-anchor-id="unnest_wider">
+<span class="header-section-number">23.3.1</span> <code>unnest_wider()</code>
+</h3>
+<p><code>df1</code>처럼 각 행이 동일한 이름을 가진 동일한 수의 요소를 가지고 있을 때, <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>를 사용하여 각 구성 요소를 자체 열에 넣는 것이 자연스럽습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df1</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
+<span><span class="co">#&gt;       x     a     b</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1     1    11    12</span></span>
+<span><span class="co">#&gt; 2     2    21    22</span></span>
+<span><span class="co">#&gt; 3     3    31    32</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>기본적으로 새 열의 이름은 전적으로 리스트 요소의 이름에서 가져오지만, <code>names_sep</code> 인수를 사용하여 열 이름과 요소 이름을 결합하도록 요청할 수 있습니다. 이는 반복되는 이름의 모호함을 해결하는 데 유용합니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df1</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">y</span>, names_sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
+<span><span class="co">#&gt;       x   y_a   y_b</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1     1    11    12</span></span>
+<span><span class="co">#&gt; 2     2    21    22</span></span>
+<span><span class="co">#&gt; 3     3    31    32</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="unnest_longer" class="level3" data-number="23.3.2"><h3 data-number="23.3.2" class="anchored" data-anchor-id="unnest_longer">
+<span class="header-section-number">23.3.2</span> <code>unnest_longer()</code>
+</h3>
+<p>각 행에 이름이 없는 리스트가 포함된 경우, <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>를 사용하여 각 요소를 자체 행에 넣는 것이 가장 자연스럽습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df2</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 2</span></span>
+<span><span class="co">#&gt;       x     y</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1     1    11</span></span>
+<span><span class="co">#&gt; 2     1    12</span></span>
+<span><span class="co">#&gt; 3     1    13</span></span>
+<span><span class="co">#&gt; 4     2    21</span></span>
+<span><span class="co">#&gt; 5     3    31</span></span>
+<span><span class="co">#&gt; 6     3    32</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>y</code> 내부의 각 요소에 대해 <code>x</code>가 어떻게 복제되는지 주목하세요: 리스트 열 내부의 각 요소에 대해 하나의 출력 행을 얻습니다. 하지만 다음 예제처럼 요소 중 하나가 비어 있으면 어떻게 될까요?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span></span>
+<span>  <span class="op">~</span><span class="va">x</span>, <span class="op">~</span><span class="va">y</span>,</span>
+<span>  <span class="st">"a"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  <span class="st">"b"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>,</span>
+<span>  <span class="st">"c"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">df6</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span><span class="co">#&gt;   x         y</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 a         1</span></span>
+<span><span class="co">#&gt; 2 a         2</span></span>
+<span><span class="co">#&gt; 3 b         3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>출력에서 행이 0개가 되므로 행이 사실상 사라집니다. 해당 행을 보존하여 <code>y</code>에 <code>NA</code>를 추가하고 싶다면 <code>keep_empty = TRUE</code>를 설정하세요.</p>
+</section><section id="일관성-없는-유형" class="level3" data-number="23.3.3"><h3 data-number="23.3.3" class="anchored" data-anchor-id="일관성-없는-유형">
+<span class="header-section-number">23.3.3</span> 일관성 없는 유형</h3>
+<p>서로 다른 유형의 벡터를 포함하는 리스트 열을 중첩 해제하면 어떻게 될까요? 예를 들어 리스트 열 <code>y</code>에 두 개의 숫자, 문자, 논리형이 포함된 다음 데이터셋을 예로 들어보겠습니다. 이들은 일반적으로 단일 열에 섞일 수 없습니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span></span>
+<span>  <span class="op">~</span><span class="va">x</span>, <span class="op">~</span><span class="va">y</span>,</span>
+<span>  <span class="st">"a"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="st">"b"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="cn">TRUE</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>는 행의 수를 변경하면서 항상 열의 집합을 변경하지 않은 상태로 유지합니다. 그렇다면 어떤 일이 벌어질까요? <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>는 어떻게 <code>y</code>에 있는 모든 것을 유지하면서 5개의 행을 생성할까요?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df4</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 4 × 2</span></span>
+<span><span class="co">#&gt;   x     y        </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;list&gt;   </span></span>
+<span><span class="co">#&gt; 1 a     &lt;dbl [1]&gt;</span></span>
+<span><span class="co">#&gt; 2 b     &lt;chr [1]&gt;</span></span>
+<span><span class="co">#&gt; 3 b     &lt;lgl [1]&gt;</span></span>
+<span><span class="co">#&gt; 4 b     &lt;dbl [1]&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>보시다시피 출력에는 리스트 열이 포함되어 있지만 리스트 열의 모든 요소에는 단일 요소가 포함되어 있습니다. <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>가 벡터의 공통 유형을 찾을 수 없기 때문에 원래 유형을 리스트 열에 유지합니다. 이것이 모든 열의 요소가 동일한 유형이어야 한다는 계명을 어기는 것인지 궁금할 수 있습니다. 그렇지 않습니다: 내용이 다른 유형이더라도 모든 요소는 리스트입니다.</p>
+<p>일관성 없는 유형을 다루는 것은 어렵고 세부 사항은 문제의 정확한 성격과 목표에 달려 있지만, 아마도 <a href="iteration.html" class="quarto-xref"><span>Chapter 26</span></a> 의 도구가 필요할 것입니다.</p>
+</section><section id="기타-함수" class="level3" data-number="23.3.4"><h3 data-number="23.3.4" class="anchored" data-anchor-id="기타-함수">
+<span class="header-section-number">23.3.4</span> 기타 함수</h3>
+<p>tidyr에는 이 책에서 다루지 않을 몇 가지 다른 유용한 직사각형화 함수가 있습니다:</p>
+<ul>
+<li>
+<code><a href="https://tidyr.tidyverse.org/reference/unnest_auto.html">unnest_auto()</a></code>는 리스트 열의 구조를 기반으로 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>와 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code> 중에서 자동으로 선택합니다. 빠른 탐색에는 좋지만, 궁극적으로는 데이터가 어떻게 구성되어 있는지 이해하도록 강제하지 않고 코드를 이해하기 어렵게 만들기 때문에 좋지 않은 생각입니다.</li>
+<li>
+<code><a href="https://tidyr.tidyverse.org/reference/unnest.html">unnest()</a></code>는 행과 열을 모두 확장합니다. 리스트 열에 데이터 프레임과 같은 2차원 구조가 포함된 경우에 유용합니다. 이 책에서는 보지 못하겠지만 <a href="https://www.tmwr.org/base-r.html#combining-base-r-models-and-the-tidyverse">tidymodels</a> 생태계를 사용한다면 만날 수도 있습니다.</li>
+</ul>
+<p>이러한 함수들은 다른 사람의 코드를 읽거나 더 드문 직사각형화 문제에 직면했을 때 접할 수 있으므로 알고 있는 것이 좋습니다.</p>
+</section><section id="연습문제" class="level3" data-number="23.3.5"><h3 data-number="23.3.5" class="anchored" data-anchor-id="연습문제">
+<span class="header-section-number">23.3.5</span> 연습문제</h3>
+<ol type="1">
+<li><p><code>df2</code>와 같은 이름이 없는 리스트 열에 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>를 사용하면 어떻게 됩니까? 이제 어떤 인수가 필요합니까? 결측값은 어떻게 됩니까?</p></li>
+<li><p><code>df1</code>과 같은 이름이 있는 리스트 열에 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>를 사용하면 어떻게 됩니까? 출력에서 어떤 추가 정보를 얻습니까? 그 추가 세부 정보를 어떻게 억제할 수 있습니까?</p></li>
+<li>
+<p>때때로 값이 정렬된 여러 리스트 열이 있는 데이터 프레임을 만나게 됩니다. 예를 들어 다음 데이터 프레임에서 <code>y</code>와 <code>z</code>의 값은 정렬되어 있습니다(즉, <code>y</code>와 <code>z</code>는 행 내에서 항상 같은 길이를 가지며, <code>y</code>의 첫 번째 값은 <code>z</code>의 첫 번째 값에 해당합니다). 이 데이터 프레임에 두 번의 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code> 호출을 적용하면 어떻게 됩니까? <code>x</code>와 <code>y</code> 사이의 관계를 어떻게 보존할 수 있습니까? (힌트: 문서를 주의 깊게 읽으세요).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span></span>
+<span>  <span class="op">~</span><span class="va">x</span>, <span class="op">~</span><span class="va">y</span>, <span class="op">~</span><span class="va">z</span>,</span>
+<span>  <span class="st">"a"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"y-a-1"</span>, <span class="st">"y-a-2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"z-a-1"</span>, <span class="st">"z-a-2"</span><span class="op">)</span>,</span>
+<span>  <span class="st">"b"</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"y-b-1"</span>, <span class="st">"y-b-2"</span>, <span class="st">"y-b-3"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"z-b-1"</span>, <span class="st">"z-b-2"</span>, <span class="st">"z-b-3"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</li>
+</ol></section></section><section id="사례-연구" class="level2" data-number="23.4"><h2 data-number="23.4" class="anchored" data-anchor-id="사례-연구">
+<span class="header-section-number">23.4</span> 사례 연구</h2>
+<p>위에서 사용한 간단한 예제와 실제 데이터의 주요 차이점은 실제 데이터에는 일반적으로 여러 번의 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code> 및/또는 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code> 호출이 필요한 여러 수준의 중첩이 포함되어 있다는 것입니다. 이를 실제로 보여주기 위해 이 섹션에서는 repurrrsive 패키지의 데이터셋을 사용하여 세 가지 실제 직사각형화 과제를 해결합니다.</p>
+<section id="매우-넓은-데이터" class="level3" data-number="23.4.1"><h3 data-number="23.4.1" class="anchored" data-anchor-id="매우-넓은-데이터">
+<span class="header-section-number">23.4.1</span> 매우 넓은 데이터</h3>
+<p><code>gh_repos</code>부터 시작하겠습니다. 이것은 GitHub API를 사용하여 검색된 GitHub 저장소 컬렉션에 대한 데이터가 포함된 리스트입니다. 매우 깊게 중첩된 리스트이므로 이 책에서 구조를 보여주기가 어렵습니다. 계속하기 전에 <code>View(gh_repos)</code>로 직접 탐색해 보는 것을 추천합니다.</p>
+<p><code>gh_repos</code>는 리스트이지만 우리의 도구는 리스트 열과 함께 작동하므로 먼저 티블에 넣는 것으로 시작하겠습니다. 나중에 설명할 이유 때문에 이 열을 <code>json</code>이라고 부릅니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="va">gh_repos</span><span class="op">)</span></span>
+<span><span class="va">repos</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 1</span></span>
+<span><span class="co">#&gt;   json       </span></span>
+<span><span class="co">#&gt;   &lt;list&gt;     </span></span>
+<span><span class="co">#&gt; 1 &lt;list [30]&gt;</span></span>
+<span><span class="co">#&gt; 2 &lt;list [30]&gt;</span></span>
+<span><span class="co">#&gt; 3 &lt;list [30]&gt;</span></span>
+<span><span class="co">#&gt; 4 &lt;list [26]&gt;</span></span>
+<span><span class="co">#&gt; 5 &lt;list [30]&gt;</span></span>
+<span><span class="co">#&gt; 6 &lt;list [30]&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이 티블에는 <code>gh_repos</code>의 각 자식에 대해 하나씩 6개의 행이 포함되어 있습니다. 각 행에는 26개 또는 30개의 행이 있는 이름이 없는 리스트가 포함되어 있습니다. 이들은 이름이 없으므로 각 자식을 자체 행에 넣기 위해 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>로 시작하겠습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 176 × 1</span></span>
+<span><span class="co">#&gt;   json             </span></span>
+<span><span class="co">#&gt;   &lt;list&gt;           </span></span>
+<span><span class="co">#&gt; 1 &lt;named list [68]&gt;</span></span>
+<span><span class="co">#&gt; 2 &lt;named list [68]&gt;</span></span>
+<span><span class="co">#&gt; 3 &lt;named list [68]&gt;</span></span>
+<span><span class="co">#&gt; 4 &lt;named list [68]&gt;</span></span>
+<span><span class="co">#&gt; 5 &lt;named list [68]&gt;</span></span>
+<span><span class="co">#&gt; 6 &lt;named list [68]&gt;</span></span>
+<span><span class="co">#&gt; # ℹ 170 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>처음에는 상황이 개선되지 않은 것처럼 보일 수 있습니다: 행은 더 많아졌지만(6개 대신 176개) <code>json</code>의 각 요소는 여전히 리스트입니다. 하지만 중요한 차이점이 있습니다: 이제 각 요소가 <strong>이름이 있는</strong> 리스트이므로 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>를 사용하여 각 요소를 자체 열에 넣을 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; # A tibble: 176 × 68</span></span>
+<span><span class="co">#&gt;         id name        full_name         owner        private html_url       </span></span>
+<span><span class="co">#&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;             &lt;list&gt;       &lt;lgl&gt;   &lt;chr&gt;          </span></span>
+<span><span class="co">#&gt; 1 61160198 after       gaborcsardi/after &lt;named list&gt; FALSE   https://github…</span></span>
+<span><span class="co">#&gt; 2 40500181 argufy      gaborcsardi/argu… &lt;named list&gt; FALSE   https://github…</span></span>
+<span><span class="co">#&gt; 3 36442442 ask         gaborcsardi/ask   &lt;named list&gt; FALSE   https://github…</span></span>
+<span><span class="co">#&gt; 4 34924886 baseimports gaborcsardi/base… &lt;named list&gt; FALSE   https://github…</span></span>
+<span><span class="co">#&gt; 5 61620661 citest      gaborcsardi/cite… &lt;named list&gt; FALSE   https://github…</span></span>
+<span><span class="co">#&gt; 6 33907457 clisymbols  gaborcsardi/clis… &lt;named list&gt; FALSE   https://github…</span></span>
+<span><span class="co">#&gt; # ℹ 170 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 62 more variables: description &lt;chr&gt;, fork &lt;lgl&gt;, url &lt;chr&gt;, …</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>작동은 했지만 결과가 약간 압도적입니다: 열이 너무 많아서 티블이 전부 인쇄하지도 못할 정도입니다! <code><a href="https://rdrr.io/r/base/names.html">names()</a></code>로 모두 볼 수 있으며, 여기서는 처음 10개를 살펴봅니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "id"          "name"        "full_name"   "owner"       "private"    </span></span>
+<span><span class="co">#&gt;  [6] "html_url"    "description" "fork"        "url"         "forks_url"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>흥미로워 보이는 것 몇 개를 뽑아보겠습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">full_name</span>, <span class="va">owner</span>, <span class="va">description</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 176 × 4</span></span>
+<span><span class="co">#&gt;         id full_name               owner             description             </span></span>
+<span><span class="co">#&gt;      &lt;int&gt; &lt;chr&gt;                   &lt;list&gt;            &lt;chr&gt;                   </span></span>
+<span><span class="co">#&gt; 1 61160198 gaborcsardi/after       &lt;named list [17]&gt; Run Code in the Backgro…</span></span>
+<span><span class="co">#&gt; 2 40500181 gaborcsardi/argufy      &lt;named list [17]&gt; Declarative function ar…</span></span>
+<span><span class="co">#&gt; 3 36442442 gaborcsardi/ask         &lt;named list [17]&gt; Friendly CLI interactio…</span></span>
+<span><span class="co">#&gt; 4 34924886 gaborcsardi/baseimports &lt;named list [17]&gt; Do we get warnings for …</span></span>
+<span><span class="co">#&gt; 5 61620661 gaborcsardi/citest      &lt;named list [17]&gt; Test R package and repo…</span></span>
+<span><span class="co">#&gt; 6 33907457 gaborcsardi/clisymbols  &lt;named list [17]&gt; Unicode symbols for CLI…</span></span>
+<span><span class="co">#&gt; # ℹ 170 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이것을 사용하여 <code>gh_repos</code>가 어떻게 구성되었는지 거꾸로 이해할 수 있습니다: 각 자식은 자신이 만든 최대 30개의 GitHub 저장소 리스트를 포함하는 GitHub 사용자였습니다.</p>
+<p><code>owner</code>는 또 다른 리스트 열이며 이름이 있는 리스트를 포함하므로 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>를 사용하여 값을 가져올 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">full_name</span>, <span class="va">owner</span>, <span class="va">description</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">owner</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in `unnest_wider()`:</span></span>
+<span><span class="co">#&gt; ! Can't duplicate names between the affected columns and the original</span></span>
+<span><span class="co">#&gt;   data.</span></span>
+<span><span class="co">#&gt; ✖ These names are duplicated:</span></span>
+<span><span class="co">#&gt;   ℹ `id`, from `owner`.</span></span>
+<span><span class="co">#&gt; ℹ Use `names_sep` to disambiguate using the column name.</span></span>
+<span><span class="co">#&gt; ℹ Or use `names_repair` to specify a repair strategy.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이런, 이 리스트 열에도 <code>id</code> 열이 포함되어 있고 동일한 데이터 프레임에 두 개의 <code>id</code> 열을 가질 수 없습니다. 제안된 대로 <code>names_sep</code>을 사용하여 문제를 해결해 보겠습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">repos</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">full_name</span>, <span class="va">owner</span>, <span class="va">description</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">owner</span>, names_sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 176 × 20</span></span>
+<span><span class="co">#&gt;         id full_name               owner_login owner_id owner_avatar_url     </span></span>
+<span><span class="co">#&gt;      &lt;int&gt; &lt;chr&gt;                   &lt;chr&gt;          &lt;int&gt; &lt;chr&gt;                </span></span>
+<span><span class="co">#&gt; 1 61160198 gaborcsardi/after       gaborcsardi   660288 https://avatars.gith…</span></span>
+<span><span class="co">#&gt; 2 40500181 gaborcsardi/argufy      gaborcsardi   660288 https://avatars.gith…</span></span>
+<span><span class="co">#&gt; 3 36442442 gaborcsardi/ask         gaborcsardi   660288 https://avatars.gith…</span></span>
+<span><span class="co">#&gt; 4 34924886 gaborcsardi/baseimports gaborcsardi   660288 https://avatars.gith…</span></span>
+<span><span class="co">#&gt; 5 61620661 gaborcsardi/citest      gaborcsardi   660288 https://avatars.gith…</span></span>
+<span><span class="co">#&gt; 6 33907457 gaborcsardi/clisymbols  gaborcsardi   660288 https://avatars.gith…</span></span>
+<span><span class="co">#&gt; # ℹ 170 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 15 more variables: owner_gravatar_id &lt;chr&gt;, owner_url &lt;chr&gt;, …</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이렇게 하면 또 다른 넓은 데이터셋이 생성되지만, <code>owner</code>에 저장소를 “소유”한 사람에 대한 많은 추가 데이터가 포함되어 있음을 알 수 있습니다.</p>
+</section><section id="관계형-데이터" class="level3" data-number="23.4.2"><h3 data-number="23.4.2" class="anchored" data-anchor-id="관계형-데이터">
+<span class="header-section-number">23.4.2</span> 관계형 데이터</h3>
+<p>중첩된 데이터는 때때로 우리가 보통 여러 데이터 프레임에 분산시킬 데이터를 나타내는 데 사용됩니다. 예를 들어 왕좌의 게임(Game of Thrones) 책과 TV 시리즈에 등장하는 인물에 대한 데이터가 포함된 <code>got_chars</code>를 예로 들어보겠습니다. <code>gh_repos</code>와 마찬가지로 리스트이므로 먼저 티블의 리스트 열로 변환하는 것으로 시작합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="va">got_chars</span><span class="op">)</span></span>
+<span><span class="va">chars</span></span>
+<span><span class="co">#&gt; # A tibble: 30 × 1</span></span>
+<span><span class="co">#&gt;   json             </span></span>
+<span><span class="co">#&gt;   &lt;list&gt;           </span></span>
+<span><span class="co">#&gt; 1 &lt;named list [18]&gt;</span></span>
+<span><span class="co">#&gt; 2 &lt;named list [18]&gt;</span></span>
+<span><span class="co">#&gt; 3 &lt;named list [18]&gt;</span></span>
+<span><span class="co">#&gt; 4 &lt;named list [18]&gt;</span></span>
+<span><span class="co">#&gt; 5 &lt;named list [18]&gt;</span></span>
+<span><span class="co">#&gt; 6 &lt;named list [18]&gt;</span></span>
+<span><span class="co">#&gt; # ℹ 24 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>json</code> 열에는 이름이 있는 요소가 포함되어 있으므로 먼저 넓게 만드는 것으로 시작하겠습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chars</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 30 × 18</span></span>
+<span><span class="co">#&gt;   url                    id name            gender culture    born           </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;               &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;          </span></span>
+<span><span class="co">#&gt; 1 https://www.anapio…  1022 Theon Greyjoy   Male   "Ironborn" "In 278 AC or …</span></span>
+<span><span class="co">#&gt; 2 https://www.anapio…  1052 Tyrion Lannist… Male   ""         "In 273 AC, at…</span></span>
+<span><span class="co">#&gt; 3 https://www.anapio…  1074 Victarion Grey… Male   "Ironborn" "In 268 AC or …</span></span>
+<span><span class="co">#&gt; 4 https://www.anapio…  1109 Will            Male   ""         ""             </span></span>
+<span><span class="co">#&gt; 5 https://www.anapio…  1166 Areo Hotah      Male   "Norvoshi" "In 257 AC or …</span></span>
+<span><span class="co">#&gt; 6 https://www.anapio…  1267 Chett           Male   ""         "At Hag's Mire"</span></span>
+<span><span class="co">#&gt; # ℹ 24 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 12 more variables: died &lt;chr&gt;, alive &lt;lgl&gt;, titles &lt;list&gt;, …</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>그리고 읽기 쉽게 몇 개의 열을 선택합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">characters</span> <span class="op">&lt;-</span> <span class="va">chars</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">name</span>, <span class="va">gender</span>, <span class="va">culture</span>, <span class="va">born</span>, <span class="va">died</span>, <span class="va">alive</span><span class="op">)</span></span>
+<span><span class="va">characters</span></span>
+<span><span class="co">#&gt; # A tibble: 30 × 7</span></span>
+<span><span class="co">#&gt;      id name              gender culture    born              died           </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;             &lt;chr&gt;          </span></span>
+<span><span class="co">#&gt; 1  1022 Theon Greyjoy     Male   "Ironborn" "In 278 AC or 27… ""             </span></span>
+<span><span class="co">#&gt; 2  1052 Tyrion Lannister  Male   ""         "In 273 AC, at C… ""             </span></span>
+<span><span class="co">#&gt; 3  1074 Victarion Greyjoy Male   "Ironborn" "In 268 AC or be… ""             </span></span>
+<span><span class="co">#&gt; 4  1109 Will              Male   ""         ""                "In 297 AC, at…</span></span>
+<span><span class="co">#&gt; 5  1166 Areo Hotah        Male   "Norvoshi" "In 257 AC or be… ""             </span></span>
+<span><span class="co">#&gt; 6  1267 Chett             Male   ""         "At Hag's Mire"   "In 299 AC, at…</span></span>
+<span><span class="co">#&gt; # ℹ 24 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 1 more variable: alive &lt;lgl&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이 데이터셋에는 많은 리스트 열도 포함되어 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chars</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/where.html">where</a></span><span class="op">(</span><span class="va">is.list</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 30 × 8</span></span>
+<span><span class="co">#&gt;      id titles    aliases    allegiances books     povBooks tvSeries playedBy</span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;list&gt;    &lt;list&gt;     &lt;list&gt;      &lt;list&gt;    &lt;list&gt;   &lt;list&gt;   &lt;list&gt;  </span></span>
+<span><span class="co">#&gt; 1  1022 &lt;chr [2]&gt; &lt;chr [4]&gt;  &lt;chr [1]&gt;   &lt;chr [3]&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; 2  1052 &lt;chr [2]&gt; &lt;chr [11]&gt; &lt;chr [1]&gt;   &lt;chr [2]&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; 3  1074 &lt;chr [2]&gt; &lt;chr [1]&gt;  &lt;chr [1]&gt;   &lt;chr [3]&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; 4  1109 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;NULL&gt;      &lt;chr [1]&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; 5  1166 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;chr [1]&gt;   &lt;chr [3]&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; 6  1267 &lt;chr [1]&gt; &lt;chr [1]&gt;  &lt;NULL&gt;      &lt;chr [2]&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; # ℹ 24 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>titles</code> 열을 살펴보겠습니다. 이름이 없는 리스트 열이므로 행으로 중첩 해제합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">chars</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">titles</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">titles</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 59 × 2</span></span>
+<span><span class="co">#&gt;      id titles                                              </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;                                               </span></span>
+<span><span class="co">#&gt; 1  1022 Prince of Winterfell                                </span></span>
+<span><span class="co">#&gt; 2  1022 Lord of the Iron Islands (by law of the green lands)</span></span>
+<span><span class="co">#&gt; 3  1052 Acting Hand of the King (former)                    </span></span>
+<span><span class="co">#&gt; 4  1052 Master of Coin (former)                             </span></span>
+<span><span class="co">#&gt; 5  1074 Lord Captain of the Iron Fleet                      </span></span>
+<span><span class="co">#&gt; 6  1074 Master of the Iron Victory                          </span></span>
+<span><span class="co">#&gt; # ℹ 53 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이 데이터는 필요에 따라 인물 데이터에 조인하기 쉬울 것이기 때문에 자체 테이블에서 볼 수 있을 것이라고 예상할 수 있습니다. 그렇게 해보겠습니다. 약간의 정리가 필요합니다: 빈 문자열을 포함하는 행을 제거하고, 각 행에 이제 단일 제목만 포함되므로 <code>titles</code>를 <code>title</code>로 이름을 바꿉니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">titles</span> <span class="op">&lt;-</span> <span class="va">chars</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="va">titles</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">titles</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">titles</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">titles</span><span class="op">)</span></span>
+<span><span class="va">titles</span></span>
+<span><span class="co">#&gt; # A tibble: 52 × 2</span></span>
+<span><span class="co">#&gt;      id title                                               </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;                                               </span></span>
+<span><span class="co">#&gt; 1  1022 Prince of Winterfell                                </span></span>
+<span><span class="co">#&gt; 2  1022 Lord of the Iron Islands (by law of the green lands)</span></span>
+<span><span class="co">#&gt; 3  1052 Acting Hand of the King (former)                    </span></span>
+<span><span class="co">#&gt; 4  1052 Master of Coin (former)                             </span></span>
+<span><span class="co">#&gt; 5  1074 Lord Captain of the Iron Fleet                      </span></span>
+<span><span class="co">#&gt; 6  1074 Master of the Iron Victory                          </span></span>
+<span><span class="co">#&gt; # ℹ 46 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>각 리스트 열에 대해 이와 같은 테이블을 만든 다음, 필요에 따라 조인을 사용하여 인물 데이터와 결합하는 것을 상상할 수 있습니다.</p>
+</section><section id="깊게-중첩된-데이터" class="level3" data-number="23.4.3"><h3 data-number="23.4.3" class="anchored" data-anchor-id="깊게-중첩된-데이터">
+<span class="header-section-number">23.4.3</span> 깊게 중첩된 데이터</h3>
+<p>매우 깊게 중첩되어 있어 반복적인 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code> 및 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code> 호출이 필요한 리스트 열인 <code>gmaps_cities</code>로 이 사례 연구를 마무리하겠습니다. 이것은 5개의 도시 이름과 구글의 <a href="https://developers.google.com/maps/documentation/geocoding">지오코딩 API</a>를 사용하여 해당 위치를 확인한 결과가 포함된 두 개의 열로 된 티블입니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gmaps_cities</span></span>
+<span><span class="co">#&gt; # A tibble: 5 × 2</span></span>
+<span><span class="co">#&gt;   city       json            </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1 Houston    &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 2 Washington &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 3 New York   &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 4 Chicago    &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 5 Arlington  &lt;named list [2]&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>json</code>은 내부 이름이 있는 리스트 열이므로 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>로 시작합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gmaps_cities</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 5 × 3</span></span>
+<span><span class="co">#&gt;   city       results    status</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;list&gt;     &lt;chr&gt; </span></span>
+<span><span class="co">#&gt; 1 Houston    &lt;list [1]&gt; OK    </span></span>
+<span><span class="co">#&gt; 2 Washington &lt;list [2]&gt; OK    </span></span>
+<span><span class="co">#&gt; 3 New York   &lt;list [1]&gt; OK    </span></span>
+<span><span class="co">#&gt; 4 Chicago    &lt;list [1]&gt; OK    </span></span>
+<span><span class="co">#&gt; 5 Arlington  &lt;list [2]&gt; OK</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이렇게 하면 <code>status</code>와 <code>results</code>를 얻게 됩니다. 상태가 모두 <code>OK</code>이므로 상태 열은 삭제하겠습니다. 실제 분석에서는 <code>status != "OK"</code>인 모든 행을 캡처하고 무엇이 잘못되었는지 파악하고 싶을 것입니다. <code>results</code>는 하나 또는 두 개의 요소를 가진 이름이 없는 리스트이므로(이유는 곧 알게 될 것입니다) 행으로 중첩 해제합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gmaps_cities</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">status</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 2</span></span>
+<span><span class="co">#&gt;   city       results         </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1 Houston    &lt;named list [5]&gt;</span></span>
+<span><span class="co">#&gt; 2 Washington &lt;named list [5]&gt;</span></span>
+<span><span class="co">#&gt; 3 Washington &lt;named list [5]&gt;</span></span>
+<span><span class="co">#&gt; 4 New York   &lt;named list [5]&gt;</span></span>
+<span><span class="co">#&gt; 5 Chicago    &lt;named list [5]&gt;</span></span>
+<span><span class="co">#&gt; 6 Arlington  &lt;named list [5]&gt;</span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이제 <code>results</code>는 이름이 있는 리스트이므로 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>를 사용합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">locations</span> <span class="op">&lt;-</span> <span class="va">gmaps_cities</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">status</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="va">locations</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 6</span></span>
+<span><span class="co">#&gt;   city       address_components formatted_address   geometry        </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;list&gt;             &lt;chr&gt;               &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1 Houston    &lt;list [4]&gt;         Houston, TX, USA    &lt;named list [4]&gt;</span></span>
+<span><span class="co">#&gt; 2 Washington &lt;list [2]&gt;         Washington, USA     &lt;named list [4]&gt;</span></span>
+<span><span class="co">#&gt; 3 Washington &lt;list [4]&gt;         Washington, DC, USA &lt;named list [4]&gt;</span></span>
+<span><span class="co">#&gt; 4 New York   &lt;list [3]&gt;         New York, NY, USA   &lt;named list [4]&gt;</span></span>
+<span><span class="co">#&gt; 5 Chicago    &lt;list [4]&gt;         Chicago, IL, USA    &lt;named list [4]&gt;</span></span>
+<span><span class="co">#&gt; 6 Arlington  &lt;list [4]&gt;         Arlington, TX, USA  &lt;named list [4]&gt;</span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span>
+<span><span class="co">#&gt; # ℹ 2 more variables: place_id &lt;chr&gt;, types &lt;list&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이제 왜 두 도시가 두 개의 결과를 얻었는지 알 수 있습니다: Washington은 워싱턴 주와 워싱턴 DC 모두와 일치했고, Arlington은 버지니아 주 알링턴과 텍사스 주 알링턴과 일치했습니다.</p>
+<p>여기서부터 갈 수 있는 몇 가지 다른 방향이 있습니다. <code>geometry</code> 리스트 열에 저장된 일치 항목의 정확한 위치를 확인하고 싶을 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">city</span>, <span class="va">formatted_address</span>, <span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 6</span></span>
+<span><span class="co">#&gt;   city       formatted_address   bounds           location     location_type</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;               &lt;list&gt;           &lt;list&gt;       &lt;chr&gt;        </span></span>
+<span><span class="co">#&gt; 1 Houston    Houston, TX, USA    &lt;named list [2]&gt; &lt;named list&gt; APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 2 Washington Washington, USA     &lt;named list [2]&gt; &lt;named list&gt; APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 3 Washington Washington, DC, USA &lt;named list [2]&gt; &lt;named list&gt; APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 4 New York   New York, NY, USA   &lt;named list [2]&gt; &lt;named list&gt; APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 5 Chicago    Chicago, IL, USA    &lt;named list [2]&gt; &lt;named list&gt; APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 6 Arlington  Arlington, TX, USA  &lt;named list [2]&gt; &lt;named list&gt; APPROXIMATE  </span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span>
+<span><span class="co">#&gt; # ℹ 1 more variable: viewport &lt;list&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>그러면 새로운 <code>bounds</code>(직사각형 영역)와 <code>location</code>(점)을 얻게 됩니다. <code>location</code>을 중첩 해제하여 위도(<code>lat</code>)와 경도(<code>lng</code>)를 볼 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">city</span>, <span class="va">formatted_address</span>, <span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 7</span></span>
+<span><span class="co">#&gt;   city       formatted_address   bounds             lat    lng location_type</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;               &lt;list&gt;           &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;        </span></span>
+<span><span class="co">#&gt; 1 Houston    Houston, TX, USA    &lt;named list [2]&gt;  29.8  -95.4 APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 2 Washington Washington, USA     &lt;named list [2]&gt;  47.8 -121.  APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 3 Washington Washington, DC, USA &lt;named list [2]&gt;  38.9  -77.0 APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 4 New York   New York, NY, USA   &lt;named list [2]&gt;  40.7  -74.0 APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 5 Chicago    Chicago, IL, USA    &lt;named list [2]&gt;  41.9  -87.6 APPROXIMATE  </span></span>
+<span><span class="co">#&gt; 6 Arlington  Arlington, TX, USA  &lt;named list [2]&gt;  32.7  -97.1 APPROXIMATE  </span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span>
+<span><span class="co">#&gt; # ℹ 1 more variable: viewport &lt;list&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>경계(bounds)를 추출하려면 몇 단계가 더 필요합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">city</span>, <span class="va">formatted_address</span>, <span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="co"># 관심 있는 변수에 집중</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">!</span><span class="va">location</span><span class="op">:</span><span class="va">viewport</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span><span class="co">#&gt;   city       formatted_address   northeast        southwest       </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;               &lt;list&gt;           &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1 Houston    Houston, TX, USA    &lt;named list [2]&gt; &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 2 Washington Washington, USA     &lt;named list [2]&gt; &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 3 Washington Washington, DC, USA &lt;named list [2]&gt; &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 4 New York   New York, NY, USA   &lt;named list [2]&gt; &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 5 Chicago    Chicago, IL, USA    &lt;named list [2]&gt; &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 6 Arlington  Arlington, TX, USA  &lt;named list [2]&gt; &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>그런 다음 <code>southwest</code>와 <code>northeast</code>(직사각형의 모서리)의 이름을 변경하여 <code>names_sep</code>을 사용하여 짧으면서도 기억하기 쉬운 이름을 만들 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">city</span>, <span class="va">formatted_address</span>, <span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">!</span><span class="va">location</span><span class="op">:</span><span class="va">viewport</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>ne <span class="op">=</span> <span class="va">northeast</span>, sw <span class="op">=</span> <span class="va">southwest</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ne</span>, <span class="va">sw</span><span class="op">)</span>, names_sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; # A tibble: 7 × 6</span></span>
+<span><span class="co">#&gt;   city       formatted_address   ne_lat ne_lng sw_lat sw_lng</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Houston    Houston, TX, USA      30.1  -95.0   29.5  -95.8</span></span>
+<span><span class="co">#&gt; 2 Washington Washington, USA       49.0 -117.    45.5 -125. </span></span>
+<span><span class="co">#&gt; 3 Washington Washington, DC, USA   39.0  -76.9   38.8  -77.1</span></span>
+<span><span class="co">#&gt; 4 New York   New York, NY, USA     40.9  -73.7   40.5  -74.3</span></span>
+<span><span class="co">#&gt; 5 Chicago    Chicago, IL, USA      42.0  -87.5   41.6  -87.9</span></span>
+<span><span class="co">#&gt; 6 Arlington  Arlington, TX, USA    32.8  -97.0   32.6  -97.2</span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>에 변수 이름 벡터를 제공하여 두 열을 동시에 중첩 해제하는 방법에 유의하세요.</p>
+<p>관심 있는 구성 요소에 도달하는 경로를 발견했다면 또 다른 tidyr 함수인 <code><a href="https://tidyr.tidyverse.org/reference/hoist.html">hoist()</a></code>를 사용하여 직접 추출할 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">locations</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">city</span>, <span class="va">formatted_address</span>, <span class="va">geometry</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/hoist.html">hoist</a></span><span class="op">(</span></span>
+<span>    <span class="va">geometry</span>,</span>
+<span>    ne_lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bounds"</span>, <span class="st">"northeast"</span>, <span class="st">"lat"</span><span class="op">)</span>,</span>
+<span>    sw_lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bounds"</span>, <span class="st">"southwest"</span>, <span class="st">"lat"</span><span class="op">)</span>,</span>
+<span>    ne_lng <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bounds"</span>, <span class="st">"northeast"</span>, <span class="st">"lng"</span><span class="op">)</span>,</span>
+<span>    sw_lng <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bounds"</span>, <span class="st">"southwest"</span>, <span class="st">"lng"</span><span class="op">)</span>,</span>
+<span>  <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이러한 사례 연구가 실제 직사각형화에 대한 흥미를 유발했다면 <code>vignette("rectangling", package = "tidyr")</code>에서 몇 가지 예제를 더 볼 수 있습니다.</p>
+</section><section id="연습문제-1" class="level3" data-number="23.4.4"><h3 data-number="23.4.4" class="anchored" data-anchor-id="연습문제-1">
+<span class="header-section-number">23.4.4</span> 연습문제</h3>
+<ol type="1">
+<li><p><code>gh_repos</code>가 언제 생성되었는지 대략적으로 추정해 보세요. 왜 날짜를 대략적으로만 추정할 수 있습니까?</p></li>
+<li><p>각 소유자가 많은 저장소를 가질 수 있기 때문에 <code>gh_repo</code>의 <code>owner</code> 열에는 중복된 정보가 많이 포함되어 있습니다. 각 소유자에 대해 하나의 행을 포함하는 <code>owners</code> 데이터 프레임을 구성할 수 있습니까? (힌트: <code><a href="https://dplyr.tidyverse.org/reference/distinct.html">distinct()</a></code>가 <code>list-cols</code>와 함께 작동합니까?)</p></li>
+<li><p><code>titles</code>에 사용된 단계를 따라 왕좌의 게임 인물들의 별칭(aliases), 충성(allegiances), 책(books) 및 TV 시리즈(TV series)에 대한 유사한 테이블을 만드세요.</p></li>
+<li>
+<p>다음 코드를 한 줄씩 설명하세요. 왜 흥미롭습니까? 왜 <code>got_chars</code>에서는 작동하지만 일반적으로는 작동하지 않을 수 있습니까?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="va">got_chars</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">id</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/where.html">where</a></span><span class="op">(</span><span class="va">is.list</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://tidyselect.r-lib.org/reference/where.html">where</a></span><span class="op">(</span><span class="va">is.list</span><span class="op">)</span>, </span>
+<span>    names_to <span class="op">=</span> <span class="st">"name"</span>, </span>
+<span>    values_to <span class="op">=</span> <span class="st">"value"</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span>  </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</li>
+<li><p><code>gmaps_cities</code>에서 <code>address_components</code>에는 무엇이 들어 있습니까? 왜 행마다 길이가 다릅니까? 그것을 파악하기 위해 적절하게 중첩 해제하세요. (힌트: <code>types</code>는 항상 두 개의 요소를 포함하는 것으로 보입니다. <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>보다 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>가 작업하기 더 쉬운가요?)</p></li>
+</ol></section></section><section id="json" class="level2" data-number="23.5"><h2 data-number="23.5" class="anchored" data-anchor-id="json">
+<span class="header-section-number">23.5</span> JSON</h2>
+<p>이전 섹션의 모든 사례 연구는 야생에서 수집된 JSON에서 가져온 것입니다. JSON은 <strong>j</strong>ava<strong>s</strong>cript <strong>o</strong>bject <strong>n</strong>otation의 약자로 대부분의 웹 API가 데이터를 반환하는 방식입니다. JSON과 R의 데이터 유형은 꽤 비슷하지만 완벽한 1대1 매핑은 아니므로 문제가 발생할 경우를 대비해 JSON에 대해 조금 이해하는 것이 중요합니다.</p>
+<section id="데이터-유형" class="level3" data-number="23.5.1"><h3 data-number="23.5.1" class="anchored" data-anchor-id="데이터-유형">
+<span class="header-section-number">23.5.1</span> 데이터 유형</h3>
+<p>JSON은 인간이 아니라 기계가 쉽게 읽고 쓸 수 있도록 설계된 간단한 형식입니다. 6가지 주요 데이터 유형이 있습니다. 그중 4개는 스칼라(scalar)입니다:</p>
+<ul>
+<li>가장 간단한 유형은 null(<code>null</code>)로 R의 <code>NA</code>와 같은 역할을 합니다. 데이터의 부재를 나타냅니다.</li>
+<li>
+<strong>문자열(string)</strong> 은 R의 문자열과 매우 유사하지만 항상 큰따옴표를 사용해야 합니다.</li>
+<li>
+<strong>숫자(number)</strong> 는 R의 숫자와 유사합니다: 정수(예: 123), 소수(예: 123.45) 또는 지수(예: 1.23e3) 표기법을 사용할 수 있습니다. JSON은 <code>Inf</code>, <code>-Inf</code> 또는 <code>NaN</code>을 지원하지 않습니다.</li>
+<li>
+<strong>불리언(boolean)</strong> 은 R의 <code>TRUE</code> 및 <code>FALSE</code>와 유사하지만 소문자 <code>true</code> 및 <code>false</code>를 사용합니다.</li>
+</ul>
+<p>JSON의 문자열, 숫자 및 불리언은 R의 문자형, 수치형 및 논리형 벡터와 매우 유사합니다. 주요 차이점은 JSON의 스칼라는 단일 값만 나타낼 수 있다는 것입니다. 여러 값을 나타내려면 나머지 두 가지 유형인 배열과 객체 중 하나를 사용해야 합니다.</p>
+<p>배열과 객체는 모두 R의 리스트와 유사합니다. 차이점은 이름이 있는지 여부입니다. <strong>배열(array)</strong> 은 이름이 없는 리스트와 같으며 <code>[]</code>로 씁니다. 예를 들어 <code>[1, 2, 3]</code>은 3개의 숫자를 포함하는 배열이고, <code>[null, 1, "string", false]</code>는 null, 숫자, 문자열 및 불리언을 포함하는 배열입니다. <strong>객체(object)</strong> 는 이름이 있는 리스트와 같으며 <code><a href="https://rdrr.io/r/base/Paren.html">{}</a></code>로 씁니다. 이름(JSON 용어로는 키)은 문자열이므로 따옴표로 둘러싸야 합니다. 예를 들어 <code>{"x": 1, "y": 2}</code>는 <code>x</code>를 1에, <code>y</code>를 2에 매핑하는 객체입니다.</p>
+<p>JSON에는 날짜나 날짜-시간을 나타내는 기본 방법이 없으므로 종종 문자열로 저장되며, 올바른 데이터 구조로 변환하려면 <code><a href="https://readr.tidyverse.org/reference/parse_datetime.html">readr::parse_date()</a></code> 또는 <code><a href="https://readr.tidyverse.org/reference/parse_datetime.html">readr::parse_datetime()</a></code>을 사용해야 합니다. 마찬가지로 JSON에서 부동 소수점 숫자를 나타내는 규칙은 약간 부정확하므로 때때로 문자열에 저장된 숫자를 발견할 수도 있습니다. 올바른 변수 유형을 얻기 위해 필요에 따라 <code><a href="https://readr.tidyverse.org/reference/parse_atomic.html">readr::parse_double()</a></code>을 적용하세요.</p>
+</section><section id="jsonlite" class="level3" data-number="23.5.2"><h3 data-number="23.5.2" class="anchored" data-anchor-id="jsonlite">
+<span class="header-section-number">23.5.2</span> jsonlite</h3>
+<p>JSON을 R 데이터 구조로 변환하려면 Jeroen Ooms가 만든 jsonlite 패키지를 권장합니다. 여기서는 두 가지 jsonlite 함수인 <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">read_json()</a></code>과 <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json()</a></code>만 사용합니다. 실제 생활에서는 디스크에서 JSON 파일을 읽기 위해 <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">read_json()</a></code>을 사용하게 될 것입니다. 예를 들어 repurrrsive 패키지는 <code>gh_user</code>에 대한 소스를 JSON 파일로 제공하며 <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">read_json()</a></code>으로 읽을 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># 패키지 내부의 json 파일 경로:</span></span>
+<span><span class="fu"><a href="https://jennybc.github.io/repurrrsive/reference/gh_users_json.html">gh_users_json</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "/Users/jinhwan/Library/R/arm64/4.5/library/repurrrsive/extdata/gh_users.json"</span></span>
+<span></span>
+<span><span class="co"># read_json()으로 읽기</span></span>
+<span><span class="va">gh_users2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">read_json</a></span><span class="op">(</span><span class="fu"><a href="https://jennybc.github.io/repurrrsive/reference/gh_users_json.html">gh_users_json</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 이전에 사용하던 데이터와 동일한지 확인</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="va">gh_users</span>, <span class="va">gh_users2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이 책에서는 <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json()</a></code>도 사용하는데, JSON을 포함하는 문자열을 인수로 받기 때문에 간단한 예제를 생성하는 데 좋기 때문입니다. 시작하기 위해 숫자 하나로 시작하여 배열에 몇 개의 숫자를 넣고, 그 배열을 객체에 넣는 세 가지 간단한 JSON 데이터셋이 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="st">'1'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  int 1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="st">'[1, 2, 3]'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ : int 1</span></span>
+<span><span class="co">#&gt;  $ : int 2</span></span>
+<span><span class="co">#&gt;  $ : int 3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="st">'{"x": [1, 2, 3]}'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 1</span></span>
+<span><span class="co">#&gt;  $ x:List of 3</span></span>
+<span><span class="co">#&gt;   ..$ : int 1</span></span>
+<span><span class="co">#&gt;   ..$ : int 2</span></span>
+<span><span class="co">#&gt;   ..$ : int 3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>jsonlite에는 <code><a href="https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html">fromJSON()</a></code>이라는 또 다른 중요한 함수가 있습니다. 여기서는 사용하지 않는데, 자동 단순화(<code>simplifyVector = TRUE</code>)를 수행하기 때문입니다. 이것은 특히 간단한 경우에 잘 작동하지만, 무슨 일이 일어나는지 정확히 알 수 있고 가장 복잡한 중첩 구조를 더 쉽게 처리할 수 있도록 직접 직사각형화를 수행하는 것이 더 낫다고 생각합니다.</p>
+</section><section id="직사각형화-프로세스-시작하기" class="level3" data-number="23.5.3"><h3 data-number="23.5.3" class="anchored" data-anchor-id="직사각형화-프로세스-시작하기">
+<span class="header-section-number">23.5.3</span> 직사각형화 프로세스 시작하기</h3>
+<p>대부분의 경우 JSON 파일은 최상위 배열 하나를 포함합니다. 여러 “것”(예: 여러 페이지, 여러 레코드 또는 여러 결과)에 대한 데이터를 제공하도록 설계되었기 때문입니다. 이 경우 각 요소가 행이 되도록 <code>tibble(json)</code>으로 직사각형화를 시작합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">json</span> <span class="op">&lt;-</span> <span class="st">'[</span></span>
+<span><span class="st">  {"name": "John", "age": 34},</span></span>
+<span><span class="st">  {"name": "Susan", "age": 27}</span></span>
+<span><span class="st">]'</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">df</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 1</span></span>
+<span><span class="co">#&gt;   json            </span></span>
+<span><span class="co">#&gt;   &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1 &lt;named list [2]&gt;</span></span>
+<span><span class="co">#&gt; 2 &lt;named list [2]&gt;</span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 2</span></span>
+<span><span class="co">#&gt;   name    age</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 John     34</span></span>
+<span><span class="co">#&gt; 2 Susan    27</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>더 드문 경우로, JSON 파일이 하나의 “것”을 나타내는 최상위 JSON 객체 하나로 구성되는 경우가 있습니다. 이 경우 티블에 넣기 전에 리스트로 감싸서 직사각형화 프로세스를 시작해야 합니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">json</span> <span class="op">&lt;-</span> <span class="st">'{</span></span>
+<span><span class="st">  "status": "OK", </span></span>
+<span><span class="st">  "results": [</span></span>
+<span><span class="st">    {"name": "John", "age": 34},</span></span>
+<span><span class="st">    {"name": "Susan", "age": 27}</span></span>
+<span><span class="st"> ]</span></span>
+<span><span class="st">}</span></span>
+<span><span class="st">'</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">df</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 1</span></span>
+<span><span class="co">#&gt;   json            </span></span>
+<span><span class="co">#&gt;   &lt;list&gt;          </span></span>
+<span><span class="co">#&gt; 1 &lt;named list [2]&gt;</span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 3</span></span>
+<span><span class="co">#&gt;   status name    age</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 OK     John     34</span></span>
+<span><span class="co">#&gt; 2 OK     Susan    27</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>대안으로 파싱된 JSON 내부를 파고들어 실제로 관심 있는 부분부터 시작할 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>results <span class="op">=</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span><span class="op">$</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 2</span></span>
+<span><span class="co">#&gt;   name    age</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 John     34</span></span>
+<span><span class="co">#&gt; 2 Susan    27</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="연습문제-2" class="level3" data-number="23.5.4"><h3 data-number="23.5.4" class="anchored" data-anchor-id="연습문제-2">
+<span class="header-section-number">23.5.4</span> 연습문제</h3>
+<ol type="1">
+<li>
+<p>아래의 <code>df_col</code>과 <code>df_row</code>를 직사각형화하세요. 이들은 JSON에서 데이터 프레임을 인코딩하는 두 가지 방법을 나타냅니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">json_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="st">'</span></span>
+<span><span class="st">  {</span></span>
+<span><span class="st">    "x": ["a", "x", "z"],</span></span>
+<span><span class="st">    "y": [10, null, 3]</span></span>
+<span><span class="st">  }</span></span>
+<span><span class="st">'</span><span class="op">)</span></span>
+<span><span class="va">json_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/read_json.html">parse_json</a></span><span class="op">(</span><span class="st">'</span></span>
+<span><span class="st">  [</span></span>
+<span><span class="st">    {"x": "a", "y": 10},</span></span>
+<span><span class="st">    {"x": "x", "y": null},</span></span>
+<span><span class="st">    {"x": "z", "y": 3}</span></span>
+<span><span class="st">  ]</span></span>
+<span><span class="st">'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">json_col</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">df_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>json <span class="op">=</span> <span class="va">json_row</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</li>
+</ol></section></section><section id="요약" class="level2" data-number="23.6"><h2 data-number="23.6" class="anchored" data-anchor-id="요약">
+<span class="header-section-number">23.6</span> 요약</h2>
+<p>이 장에서는 리스트가 무엇인지, JSON 파일에서 어떻게 리스트를 생성할 수 있는지, 그리고 그것들을 어떻게 직사각형 데이터 프레임으로 변환하는지 배웠습니다. 놀랍게도 리스트 요소를 행에 넣기 위한 <code><a href="https://tidyr.tidyverse.org/reference/unnest_longer.html">unnest_longer()</a></code>와 리스트 요소를 열에 넣기 위한 <code><a href="https://tidyr.tidyverse.org/reference/unnest_wider.html">unnest_wider()</a></code>라는 두 개의 새로운 함수만 필요했습니다. 리스트 열이 얼마나 깊게 중첩되어 있는지는 중요하지 않습니다. 이 두 함수를 반복해서 호출하기만 하면 됩니다.</p>
+<p>JSON은 웹 API가 반환하는 가장 일반적인 데이터 형식입니다. 웹사이트에 API가 없지만 웹사이트에서 원하는 데이터를 볼 수 있다면 어떻게 될까요? 그것이 다음 장의 주제입니다: 웹 스크래핑, 즉 HTML 웹페이지에서 데이터를 추출하는 것입니다.</p>
+
+
+</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+<ol>
+<li id="fn1"><p>이것은 RStudio 기능입니다.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/r4ds\.hadley\.nz\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./arrow.html" class="pagination-link" aria-label="Arrow">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Arrow</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./webscraping.html" class="pagination-link" aria-label="웹 스크래핑">
+        <span class="nav-page-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R for Data Science (2e) was written by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hadley/r4ds/edit/main/rectangling.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hadley/r4ds/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

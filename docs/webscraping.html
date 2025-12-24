@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund">
+<title>24&nbsp; 웹 스크래핑 – R for Data Science (2e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./program.html" rel="next">
+<link href="./rectangling.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8df9fc159a2c64db71ab329accd4d345.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script defer="" data-domain="r4ds.hadley.nz" src="https://plausible.io/js/plausible.js"></script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./import.html">가져오기 (Import)</a></li><li class="breadcrumb-item"><a href="./webscraping.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R for Data Science (2e)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hadley/r4ds/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">환영합니다</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">제2판 서문</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">소개</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./whole-game.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">전체 게임</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-visualize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">데이터 시각화</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">워크플로우: 기초</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-transform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">데이터 변형</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">워크플로우: 코드 스타일</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-tidy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">데이터 정리</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-scripts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">워크플로우: 스크립트와 프로젝트</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-import.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">데이터 가져오기</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">워크플로우: 도움 받기</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./visualize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">시각화 (Visualize)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">레이어(Layers)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./EDA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">탐색적 데이터 분석(Exploratory data analysis)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./communication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">소통(Communication)</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./transform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">변형 (Transform)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./logicals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">논리형 벡터</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numbers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">숫자</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">문자열</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./regexps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">정규 표현식 (Regular expressions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./factors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">팩터(Factors)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datetimes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">날짜와 시간</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./missing-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">결측값(Missing values)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./joins.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">조인(Joins)</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./import.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">가져오기 (Import)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spreadsheets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">스프레드시트</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">데이터베이스</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arrow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Arrow</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rectangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./webscraping.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./program.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">프로그램 (Program)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">함수 (Functions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./iteration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">반복</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">기본 R 필드 가이드</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./communicate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">소통 (Communicate)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Quarto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quarto-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Quarto 형식</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li>
+<a href="#%EC%86%8C%EA%B0%9C" id="toc-소개" class="nav-link active" data-scroll-target="#%EC%86%8C%EA%B0%9C"><span class="header-section-number">24.1</span> 소개</a>
+  <ul class="collapse">
+<li><a href="#%EC%84%A0%EC%88%98-%EC%A7%80%EC%8B%9D" id="toc-선수-지식" class="nav-link" data-scroll-target="#%EC%84%A0%EC%88%98-%EC%A7%80%EC%8B%9D"><span class="header-section-number">24.1.1</span> 선수 지식</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#%EC%8A%A4%ED%81%AC%EB%9E%98%ED%95%91-%EC%9C%A4%EB%A6%AC-%EB%B0%8F-%EB%B2%95%EC%A0%81-%EC%B8%A1%EB%A9%B4" id="toc-스크래핑-윤리-및-법적-측면" class="nav-link" data-scroll-target="#%EC%8A%A4%ED%81%AC%EB%9E%98%ED%95%91-%EC%9C%A4%EB%A6%AC-%EB%B0%8F-%EB%B2%95%EC%A0%81-%EC%B8%A1%EB%A9%B4"><span class="header-section-number">24.2</span> 스크래핑 윤리 및 법적 측면</a>
+  <ul class="collapse">
+<li><a href="#%EC%84%9C%EB%B9%84%EC%8A%A4-%EC%95%BD%EA%B4%80" id="toc-서비스-약관" class="nav-link" data-scroll-target="#%EC%84%9C%EB%B9%84%EC%8A%A4-%EC%95%BD%EA%B4%80"><span class="header-section-number">24.2.1</span> 서비스 약관</a></li>
+  <li><a href="#%EA%B0%9C%EC%9D%B8-%EC%8B%9D%EB%B3%84-%EC%A0%95%EB%B3%B4" id="toc-개인-식별-정보" class="nav-link" data-scroll-target="#%EA%B0%9C%EC%9D%B8-%EC%8B%9D%EB%B3%84-%EC%A0%95%EB%B3%B4"><span class="header-section-number">24.2.2</span> 개인 식별 정보</a></li>
+  <li><a href="#%EC%A0%80%EC%9E%91%EA%B6%8C" id="toc-저작권" class="nav-link" data-scroll-target="#%EC%A0%80%EC%9E%91%EA%B6%8C"><span class="header-section-number">24.2.3</span> 저작권</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#html-%EA%B8%B0%EC%B4%88" id="toc-html-기초" class="nav-link" data-scroll-target="#html-%EA%B8%B0%EC%B4%88"><span class="header-section-number">24.3</span> HTML 기초</a>
+  <ul class="collapse">
+<li><a href="#%EC%9A%94%EC%86%8Celements" id="toc-요소elements" class="nav-link" data-scroll-target="#%EC%9A%94%EC%86%8Celements"><span class="header-section-number">24.3.1</span> 요소(Elements)</a></li>
+  <li><a href="#%EC%86%8D%EC%84%B1attributes" id="toc-속성attributes" class="nav-link" data-scroll-target="#%EC%86%8D%EC%84%B1attributes"><span class="header-section-number">24.3.2</span> 속성(Attributes)</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%B6%94%EC%B6%9C" id="toc-데이터-추출" class="nav-link" data-scroll-target="#%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%B6%94%EC%B6%9C"><span class="header-section-number">24.4</span> 데이터 추출</a>
+  <ul class="collapse">
+<li><a href="#%EC%9A%94%EC%86%8C-%EC%B0%BE%EA%B8%B0" id="toc-요소-찾기" class="nav-link" data-scroll-target="#%EC%9A%94%EC%86%8C-%EC%B0%BE%EA%B8%B0"><span class="header-section-number">24.4.1</span> 요소 찾기</a></li>
+  <li><a href="#%EC%A4%91%EC%B2%A9-%EC%84%A0%ED%83%9D" id="toc-중첩-선택" class="nav-link" data-scroll-target="#%EC%A4%91%EC%B2%A9-%EC%84%A0%ED%83%9D"><span class="header-section-number">24.4.2</span> 중첩 선택</a></li>
+  <li><a href="#%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%99%80-%EC%86%8D%EC%84%B1" id="toc-텍스트와-속성" class="nav-link" data-scroll-target="#%ED%85%8D%EC%8A%A4%ED%8A%B8%EC%99%80-%EC%86%8D%EC%84%B1"><span class="header-section-number">24.4.3</span> 텍스트와 속성</a></li>
+  <li><a href="#%ED%91%9Ctables" id="toc-표tables" class="nav-link" data-scroll-target="#%ED%91%9Ctables"><span class="header-section-number">24.4.4</span> 표(Tables)</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-css-selectors" id="toc-sec-css-selectors" class="nav-link" data-scroll-target="#sec-css-selectors"><span class="header-section-number">24.5</span> 올바른 선택자 찾기</a></li>
+  <li>
+<a href="#%EC%A2%85%ED%95%A9%ED%95%98%EA%B8%B0" id="toc-종합하기" class="nav-link" data-scroll-target="#%EC%A2%85%ED%95%A9%ED%95%98%EA%B8%B0"><span class="header-section-number">24.6</span> 종합하기</a>
+  <ul class="collapse">
+<li><a href="#%EC%8A%A4%ED%83%80%EC%9B%8C%EC%A6%88starwars" id="toc-스타워즈starwars" class="nav-link" data-scroll-target="#%EC%8A%A4%ED%83%80%EC%9B%8C%EC%A6%88starwars"><span class="header-section-number">24.6.1</span> 스타워즈(StarWars)</a></li>
+  <li><a href="#imdb-%EC%9D%B8%EA%B8%B0-%EC%98%81%ED%99%94" id="toc-imdb-인기-영화" class="nav-link" data-scroll-target="#imdb-%EC%9D%B8%EA%B8%B0-%EC%98%81%ED%99%94"><span class="header-section-number">24.6.2</span> IMDB 인기 영화</a></li>
+  </ul>
+</li>
+  <li><a href="#%EB%8F%99%EC%A0%81-%EC%82%AC%EC%9D%B4%ED%8A%B8" id="toc-동적-사이트" class="nav-link" data-scroll-target="#%EB%8F%99%EC%A0%81-%EC%82%AC%EC%9D%B4%ED%8A%B8"><span class="header-section-number">24.7</span> 동적 사이트</a></li>
+  <li><a href="#%EC%9A%94%EC%95%BD" id="toc-요약" class="nav-link" data-scroll-target="#%EC%9A%94%EC%95%BD"><span class="header-section-number">24.8</span> 요약</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/hadley/r4ds/edit/main/webscraping.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hadley/r4ds/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./import.html">가져오기 (Import)</a></li><li class="breadcrumb-item"><a href="./webscraping.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-scraping" class="quarto-section-identifier"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><section id="소개" class="level2" data-number="24.1"><h2 data-number="24.1" class="anchored" data-anchor-id="소개">
+<span class="header-section-number">24.1</span> 소개</h2>
+<p>이 장에서는 <a href="https://rvest.tidyverse.org">rvest</a>를 사용한 웹 스크래핑의 기초를 소개합니다. 웹 스크래핑은 웹페이지에서 데이터를 추출하는 데 매우 유용한 도구입니다. 일부 웹사이트는 API(데이터를 JSON으로 반환하는 구조화된 HTTP 요청 세트)를 제공하며, 이는 <a href="rectangling.html" class="quarto-xref"><span>Chapter 23</span></a> 의 기술을 사용하여 처리합니다. 가능하면 API를 사용해야 합니다<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. 일반적으로 더 신뢰할 수 있는 데이터를 제공하기 때문입니다. 그러나 불행히도 웹 API 프로그래밍은 이 책의 범위를 벗어납니다. 대신, 사이트가 API를 제공하는지 여부와 관계없이 작동하는 기술인 스크래핑을 가르칩니다.</p>
+<p>이 장에서는 HTML의 기초를 다루기 전에 먼저 스크래핑의 윤리와 법적 측면에 대해 논의할 것입니다. 그런 다음 페이지의 특정 요소를 찾기 위한 CSS 선택자의 기초와 rvest 함수를 사용하여 HTML에서 텍스트와 속성의 데이터를 가져와 R로 옮기는 방법을 배울 것입니다. 그 후 두 가지 사례 연구와 동적 웹사이트에 대한 짧은 논의로 마무리하기 전에, 스크래핑하려는 페이지에 어떤 CSS 선택자가 필요한지 파악하는 몇 가지 기술을 논의할 것입니다.</p>
+<section id="선수-지식" class="level3" data-number="24.1.1"><h3 data-number="24.1.1" class="anchored" data-anchor-id="선수-지식">
+<span class="header-section-number">24.1.1</span> 선수 지식</h3>
+<p>이 장에서는 rvest에서 제공하는 도구에 초점을 맞출 것입니다. rvest는 tidyverse의 멤버이지만 핵심 멤버는 아니므로 명시적으로 로드해야 합니다. 스크래핑한 데이터를 다루는 데 일반적으로 유용하므로 전체 tidyverse도 로드할 것입니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.5.2</span></span>
+<span><span class="co">#&gt; Warning: package 'readr' was built under R version 4.5.2</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/">rvest</a></span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section><section id="스크래핑-윤리-및-법적-측면" class="level2" data-number="24.2"><h2 data-number="24.2" class="anchored" data-anchor-id="스크래핑-윤리-및-법적-측면">
+<span class="header-section-number">24.2</span> 스크래핑 윤리 및 법적 측면</h2>
+<p>웹 스크래핑을 수행하는 데 필요한 코드를 논의하기 전에, 그렇게 하는 것이 합법적이고 윤리적인지 여부에 대해 이야기해야 합니다. 전반적으로 이 두 가지와 관련하여 상황은 복잡합니다.</p>
+<p>법적 측면은 거주 지역에 따라 크게 달라집니다. 그러나 일반적인 원칙으로서 데이터가 공개적이고, 비개인적이며, 사실적이라면 괜찮을 가능성이 높습니다<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. 이 세 가지 요소는 아래에서 논의할 것처럼 사이트의 이용 약관, 개인 식별 정보 및 저작권과 연결되어 있기 때문에 중요합니다.</p>
+<p>데이터가 공개적이지 않거나, 비개인적이지 않거나, 사실적이지 않거나, 특히 돈을 벌기 위해 데이터를 스크래핑하는 경우 변호사와 상담해야 합니다. 어떤 경우이든 스크래핑하는 페이지를 호스팅하는 서버의 리소스를 존중해야 합니다. 가장 중요한 것은 많은 페이지를 스크래핑하는 경우 각 요청 사이에 잠시 기다려야 한다는 것입니다. 그렇게 하는 한 가지 쉬운 방법은 Dmytro Perepolkin이 만든 <a href="https://dmi3kno.github.io/polite/"><strong>polite</strong></a> 패키지를 사용하는 것입니다. 요청 사이에 자동으로 일시 중지하고 결과를 캐시하므로 동일한 페이지를 두 번 요청하지 않습니다.</p>
+<section id="서비스-약관" class="level3" data-number="24.2.1"><h3 data-number="24.2.1" class="anchored" data-anchor-id="서비스-약관">
+<span class="header-section-number">24.2.1</span> 서비스 약관</h3>
+<p>자세히 살펴보면 많은 웹사이트의 페이지 어딘가에 “이용 약관” 또는 “서비스 약관” 링크가 포함되어 있음을 알 수 있으며, 해당 페이지를 자세히 읽어보면 사이트가 웹 스크래핑을 명시적으로 금지하고 있음을 발견하는 경우가 많습니다. 이러한 페이지는 회사가 매우 광범위한 주장을 하는 법적 토지 강탈이 되는 경향이 있습니다. 가능한 한 이러한 서비스 약관을 존중하는 것이 예의이지만, 모든 주장을 곧이곧대로 받아들이지는 마세요.</p>
+<p>미국 법원은 웹사이트 하단에 서비스 약관을 배치하는 것만으로는 귀하가 그에 구속되기에 충분하지 않다고 일반적으로 판결했습니다(예: <a href="https://en.wikipedia.org/wiki/HiQ_Labs_v._LinkedIn">HiQ Labs v. LinkedIn</a>). 일반적으로 서비스 약관에 구속되려면 계정 생성이나 확인란 선택과 같은 명시적인 조치를 취해야 합니다. 이것이 데이터가 <strong>공개적</strong>인지 여부가 중요한 이유입니다. 액세스하는 데 계정이 필요하지 않다면 서비스 약관에 구속될 가능성이 낮습니다. 그러나 법원이 명시적으로 동의하지 않더라도 서비스 약관을 집행할 수 있다고 판결한 유럽에서는 상황이 다소 다릅니다.</p>
+</section><section id="개인-식별-정보" class="level3" data-number="24.2.2"><h3 data-number="24.2.2" class="anchored" data-anchor-id="개인-식별-정보">
+<span class="header-section-number">24.2.2</span> 개인 식별 정보</h3>
+<p>데이터가 공개적이더라도 이름, 이메일 주소, 전화번호, 생년월일 등과 같은 개인 식별 정보를 스크래핑할 때는 매우 주의해야 합니다. 유럽은 이러한 데이터의 수집 또는 저장에 대해 특히 엄격한 법률(<a href="https://gdpr-info.eu/">GDPR</a>)을 가지고 있으며, 거주 지역에 관계없이 윤리적 수렁에 빠질 가능성이 높습니다. 예를 들어, 2016년에 한 연구 그룹은 데이팅 사이트인 OkCupid에서 약 70,000명의 공개 프로필 정보(예: 사용자 이름, 나이, 성별, 위치 등)를 스크래핑하여 익명화 시도 없이 이 데이터를 공개적으로 출시했습니다. 연구원들은 데이터가 이미 공개되어 있었기 때문에 이에 문제가 없다고 느꼈지만, 이 작업은 데이터셋에 정보가 공개된 사용자의 식별 가능성에 대한 윤리적 우려로 인해 널리 비난받았습니다. 작업에 개인 식별 정보 스크래핑이 포함된 경우 OkCupid 연구<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>와 개인 식별 정보의 획득 및 출시와 관련된 의심스러운 연구 윤리를 가진 유사한 연구에 대해 읽어보는 것을 강력히 추천합니다.</p>
+</section><section id="저작권" class="level3" data-number="24.2.3"><h3 data-number="24.2.3" class="anchored" data-anchor-id="저작권">
+<span class="header-section-number">24.2.3</span> 저작권</h3>
+<p>마지막으로 저작권법에 대해서도 걱정해야 합니다. 저작권법은 복잡하지만 무엇이 보호되는지 정확히 설명하는 <a href="https://www.law.cornell.edu/uscode/text/17/102">미국 법률</a>을 살펴볼 가치가 있습니다: “[…] 모든 유형의 표현 매체에 고정된 저자의 독창적인 저작물, []”. 그런 다음 문학 저작물, 음악 저작물, 영화 등과 같이 적용되는 특정 범주를 설명합니다. 저작권 보호에서 눈에 띄게 빠진 것은 데이터입니다. 즉, 스크래핑을 사실(facts)로 제한하는 한 저작권 보호는 적용되지 않습니다. (하지만 유럽에는 데이터베이스를 보호하는 별도의 “<a href="https://en.wikipedia.org/wiki/Database_right">sui generis</a>” 권리가 있음에 유의하세요.)</p>
+<p>간단한 예로 미국에서는 재료 목록과 지침은 저작권으로 보호될 수 없으므로 저작권은 레시피를 보호하는 데 사용될 수 없습니다. 하지만 그 레시피 목록에 실질적인 새로운 문학적 내용이 수반된다면 그것은 저작권으로 보호될 수 있습니다. 이것이 인터넷에서 레시피를 찾을 때 항상 앞에 그렇게 많은 내용이 있는 이유입니다.</p>
+<p>독창적인 콘텐츠(텍스트나 이미지 등)를 스크래핑해야 하는 경우에도 여전히 <a href="https://en.wikipedia.org/wiki/Fair_use">공정 이용 원칙(doctrine of fair use)</a>에 따라 보호받을 수 있습니다. 공정 이용은 고정된 규칙은 아니지만 여러 요소를 따져봅니다. 연구 또는 비상업적 목적으로 데이터를 수집하고 스크래핑하는 내용을 필요한 것만으로 제한하는 경우 적용될 가능성이 더 높습니다.</p>
+</section></section><section id="html-기초" class="level2" data-number="24.3"><h2 data-number="24.3" class="anchored" data-anchor-id="html-기초">
+<span class="header-section-number">24.3</span> HTML 기초</h2>
+<p>웹페이지를 스크래핑하려면 먼저 웹페이지를 설명하는 언어인 <strong>HTML</strong>에 대해 조금 이해해야 합니다. HTML은 <strong>H</strong>yper<strong>T</strong>ext <strong>M</strong>arkup <strong>L</strong>anguage의 약자로 다음과 같이 생겼습니다:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="dt">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>페이지 제목<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>제목<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>일부 텍스트 및 <span class="dt">&lt;</span><span class="kw">b</span><span class="dt">&gt;</span>일부 굵은 텍스트.<span class="dt">&lt;/</span><span class="kw">b</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="dt">&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>HTML은 시작 태그(예: <code>&lt;tag&gt;</code>), 선택적 <strong>속성</strong>(<code>id='first'</code>), 종료 태그<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>(예: <code>&lt;/tag&gt;</code>) 및 <strong>내용</strong>(시작 태그와 종료 태그 사이의 모든 것)으로 구성된 <strong>요소(elements)</strong> 에 의해 형성된 계층 구조를 가집니다.</p>
+<p><code>&lt;</code>와 <code>&gt;</code>는 시작 및 종료 태그에 사용되므로 직접 작성할 수 없습니다. 대신 HTML <strong>이스케이프</strong>인 <code>&amp;gt;</code>(보다 큼)와 <code>&amp;lt;</code>(보다 작음)를 사용해야 합니다. 그리고 이러한 이스케이프는 <code>&amp;</code>를 사용하므로 리터럴 앰퍼샌드를 원한다면 <code>&amp;amp;</code>로 이스케이프해야 합니다. 다양한 가능한 HTML 이스케이프가 있지만 rvest가 자동으로 처리해 주므로 너무 걱정할 필요는 없습니다.</p>
+<p>웹 스크래핑이 가능한 이유는 스크래핑하려는 데이터가 포함된 대부분의 페이지가 일반적으로 일관된 구조를 가지고 있기 때문입니다.</p>
+<section id="요소elements" class="level3" data-number="24.3.1"><h3 data-number="24.3.1" class="anchored" data-anchor-id="요소elements">
+<span class="header-section-number">24.3.1</span> 요소(Elements)</h3>
+<p>100개 이상의 HTML 요소가 있습니다. 가장 중요한 것들은 다음과 같습니다:</p>
+<ul>
+<li><p>모든 HTML 페이지는 <code>&lt;html&gt;</code> 요소 내에 있어야 하며 두 개의 자식을 가져야 합니다: 페이지 제목과 같은 문서 메타데이터를 포함하는 <code>&lt;head&gt;</code>와 브라우저에서 보는 내용을 포함하는 <code>&lt;body&gt;</code>입니다.</p></li>
+<li><p><code>&lt;h1&gt;</code>(제목 1), <code>&lt;section&gt;</code>(섹션), <code>&lt;p&gt;</code>(단락) 및 <code>&lt;ol&gt;</code>(순서가 있는 목록)과 같은 블록 태그는 페이지의 전반적인 구조를 형성합니다.</p></li>
+<li><p><code>&lt;b&gt;</code>(굵게), <code>&lt;i&gt;</code>(기울임꼴) 및 <code>&lt;a&gt;</code>(링크)와 같은 인라인 태그는 블록 태그 내부의 텍스트 형식을 지정합니다.</p></li>
+</ul>
+<p>처음 보는 태그를 만나면 약간의 구글링으로 그 역할을 찾을 수 있습니다. 시작하기 좋은 또 다른 장소는 웹 프로그래밍의 거의 모든 측면을 설명하는 <a href="https://developer.mozilla.org/en-US/docs/Web/HTML">MDN 웹 문서</a>입니다.</p>
+<p>대부분의 요소는 시작 태그와 종료 태그 사이에 내용을 가질 수 있습니다. 이 내용은 텍스트이거나 더 많은 요소일 수 있습니다. 예를 들어 다음 HTML은 한 단어가 굵게 표시된 텍스트 단락을 포함합니다.</p>
+<pre><code>&lt;p&gt;
+  안녕! 내 &lt;b&gt;이름&lt;/b&gt;은 해들리야.
+&lt;/p&gt;</code></pre>
+<p><strong>자식(children)</strong> 은 포함된 요소이므로 위의 <code>&lt;p&gt;</code> 요소는 하나의 자식인 <code>&lt;b&gt;</code> 요소를 가집니다. <code>&lt;b&gt;</code> 요소는 자식이 없지만 내용(텍스트 “이름”)을 가집니다.</p>
+</section><section id="속성attributes" class="level3" data-number="24.3.2"><h3 data-number="24.3.2" class="anchored" data-anchor-id="속성attributes">
+<span class="header-section-number">24.3.2</span> 속성(Attributes)</h3>
+<p>태그는 <code>name1='value1' name2='value2'</code>와 같이 생긴 이름이 지정된 <strong>속성</strong>을 가질 수 있습니다. 가장 중요한 두 가지 속성은 <code>id</code>와 <code>class</code>로, CSS(Cascading Style Sheets)와 함께 사용되어 페이지의 시각적 모양을 제어합니다. 이들은 페이지에서 데이터를 스크래핑할 때 종종 유용합니다. 속성은 링크의 목적지(<code>&lt;a&gt;</code> 요소의 <code>href</code> 속성)와 이미지의 소스(<code>&lt;img&gt;</code> 요소의 <code>src</code> 속성)를 기록하는 데에도 사용됩니다.</p>
+</section></section><section id="데이터-추출" class="level2" data-number="24.4"><h2 data-number="24.4" class="anchored" data-anchor-id="데이터-추출">
+<span class="header-section-number">24.4</span> 데이터 추출</h2>
+<p>스크래핑을 시작하려면 스크래핑하려는 페이지의 URL이 필요하며 이는 일반적으로 웹 브라우저에서 복사할 수 있습니다. 그런 다음 <code><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html()</a></code>을 사용하여 해당 페이지의 HTML을 R로 읽어들여야 합니다. 이는 <code>xml_document</code><a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> 객체를 반환하며, 이를 rvest 함수를 사용하여 조작하게 됩니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="st">"http://rvest.tidyverse.org/"</span><span class="op">)</span></span>
+<span><span class="va">html</span></span>
+<span><span class="co">#&gt; {html_document}</span></span>
+<span><span class="co">#&gt; &lt;html lang="en"&gt;</span></span>
+<span><span class="co">#&gt; [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UT ...</span></span>
+<span><span class="co">#&gt; [2] &lt;body&gt;\n    &lt;a href="#container" class="visually-hidden-focusable"&gt;Ski ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>rvest에는 HTML을 인라인으로 작성할 수 있게 해주는 함수도 포함되어 있습니다. 이 장에서 다양한 rvest 함수가 간단한 예제와 함께 어떻게 작동하는지 가르치기 위해 이 함수를 자주 사용할 것입니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/minimal_html.html">minimal_html</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">  &lt;p&gt;이것은 단락입니다&lt;/p&gt;</span></span>
+<span><span class="st">  &lt;ul&gt;</span></span>
+<span><span class="st">    &lt;li&gt;이것은 글머리 기호 목록입니다&lt;/li&gt;</span></span>
+<span><span class="st">  &lt;/ul&gt;</span></span>
+<span><span class="st">"</span><span class="op">)</span></span>
+<span><span class="va">html</span></span>
+<span><span class="co">#&gt; {html_document}</span></span>
+<span><span class="co">#&gt; &lt;html&gt;</span></span>
+<span><span class="co">#&gt; [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UT ...</span></span>
+<span><span class="co">#&gt; [2] &lt;body&gt;\n&lt;p&gt;이것은 단락입니다&lt;/p&gt;\n  &lt;ul&gt;\n&lt;li&gt;이것은 글머리 기호 목록입니다&lt;/li&gt;\n  &lt;/ul&gt;\n ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이제 R에 HTML이 있으므로 관심 있는 데이터를 추출할 차례입니다. 먼저 관심 있는 요소를 식별할 수 있게 해주는 CSS 선택자와 거기서 데이터를 추출하는 데 사용할 수 있는 rvest 함수에 대해 배우게 될 것입니다. 그런 다음 몇 가지 특수 도구가 있는 HTML 표에 대해 짧게 다룰 것입니다.</p>
+<section id="요소-찾기" class="level3" data-number="24.4.1"><h3 data-number="24.4.1" class="anchored" data-anchor-id="요소-찾기">
+<span class="header-section-number">24.4.1</span> 요소 찾기</h3>
+<p>CSS는 Cascading Style Sheets의 약자로 HTML 문서의 시각적 스타일을 정의하기 위한 도구입니다. CSS에는 <strong>CSS 선택자(selectors)</strong> 라고 불리는 페이지의 요소를 선택하기 위한 미니어처 언어가 포함되어 있습니다. CSS 선택자는 HTML 요소를 찾기 위한 패턴을 정의하며, 추출하려는 요소를 설명하는 간결한 방법을 제공하므로 스크래핑에 유용합니다.</p>
+<p><a href="#sec-css-selectors" class="quarto-xref"><span>Section 24.5</span></a> 에서 CSS 선택자에 대해 더 자세히 다루겠지만, 다행히 다음 세 가지만으로도 많은 것을 할 수 있습니다:</p>
+<ul>
+<li><p><code>p</code>는 모든 <code>&lt;p&gt;</code> 요소를 선택합니다.</p></li>
+<li><p><code>.title</code>은 <code>class</code>가 “title”인 모든 요소를 선택합니다.</p></li>
+<li><p><code>#title</code>은 <code>id</code> 속성이 “title”과 같은 요소를 선택합니다. id 속성은 문서 내에서 고유해야 하므로 이는 항상 단일 요소만 선택합니다.</p></li>
+</ul>
+<p>간단한 예제로 이 선택자들을 시도해 봅시다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/minimal_html.html">minimal_html</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">  &lt;h1&gt;이것은 제목입니다&lt;/h1&gt;</span></span>
+<span><span class="st">  &lt;p id='first'&gt;이것은 단락입니다&lt;/p&gt;</span></span>
+<span><span class="st">  &lt;p class='important'&gt;이것은 중요한 단락입니다&lt;/p&gt;</span></span>
+<span><span class="st">"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>를 사용하여 선택자와 일치하는 모든 요소를 찾으세요:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"p"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (2)}</span></span>
+<span><span class="co">#&gt; [1] &lt;p id="first"&gt;이것은 단락입니다&lt;/p&gt;</span></span>
+<span><span class="co">#&gt; [2] &lt;p class="important"&gt;이것은 중요한 단락입니다&lt;/p&gt;</span></span>
+<span><span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">".important"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (1)}</span></span>
+<span><span class="co">#&gt; [1] &lt;p class="important"&gt;이것은 중요한 단락입니다&lt;/p&gt;</span></span>
+<span><span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"#first"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (1)}</span></span>
+<span><span class="co">#&gt; [1] &lt;p id="first"&gt;이것은 단락입니다&lt;/p&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>또 다른 중요한 함수는 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>로, 항상 입력과 동일한 수의 출력을 반환합니다. 전체 문서에 적용하면 첫 번째 일치 항목을 제공합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"p"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {html_node}</span></span>
+<span><span class="co">#&gt; &lt;p id="first"&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>일치하는 요소가 없는 선택자를 사용할 때 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>와 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code> 사이에는 중요한 차이점이 있습니다. <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>는 길이가 0인 벡터를 반환하는 반면, <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>는 결측값을 반환합니다. 이것은 곧 중요해질 것입니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (0)}</span></span>
+<span><span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_missing}</span></span>
+<span><span class="co">#&gt; &lt;NA&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section><section id="중첩-선택" class="level3" data-number="24.4.2"><h3 data-number="24.4.2" class="anchored" data-anchor-id="중첩-선택">
+<span class="header-section-number">24.4.2</span> 중첩 선택</h3>
+<p>대부분의 경우 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>와 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>를 함께 사용하게 되는데, 일반적으로 관측값이 될 요소를 식별하기 위해 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>를 사용한 다음 변수가 될 요소를 찾기 위해 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>를 사용합니다. 간단한 예제를 사용하여 이를 실제로 살펴보겠습니다. 여기에는 스타워즈(StarWars)의 네 캐릭터에 대한 정보가 포함된 순서가 없는 목록(<code>&lt;ul&gt;</code>)이 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/minimal_html.html">minimal_html</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">  &lt;ul&gt;</span></span>
+<span><span class="st">    &lt;li&gt;&lt;b&gt;C-3PO&lt;/b&gt;는 &lt;span class='weight'&gt;167 kg&lt;/span&gt;인 &lt;i&gt;드로이드&lt;/i&gt;입니다&lt;/li&gt;</span></span>
+<span><span class="st">    &lt;li&gt;&lt;b&gt;R4-P17&lt;/b&gt;은 &lt;i&gt;드로이드&lt;/i&gt;입니다&lt;/li&gt;</span></span>
+<span><span class="st">    &lt;li&gt;&lt;b&gt;R2-D2&lt;/b&gt;는 &lt;span class='weight'&gt;96 kg&lt;/span&gt;인 &lt;i&gt;드로이드&lt;/i&gt;입니다&lt;/li&gt;</span></span>
+<span><span class="st">    &lt;li&gt;&lt;b&gt;Yoda&lt;/b&gt;는 &lt;span class='weight'&gt;66 kg&lt;/span&gt;입니다&lt;/li&gt;</span></span>
+<span><span class="st">  &lt;/ul&gt;</span></span>
+<span><span class="st">"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>를 사용하여 각 요소가 서로 다른 캐릭터에 해당하는 벡터를 만들 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">characters</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"li"</span><span class="op">)</span></span>
+<span><span class="va">characters</span></span>
+<span><span class="co">#&gt; {xml_nodeset (4)}</span></span>
+<span><span class="co">#&gt; [1] &lt;li&gt;\n&lt;b&gt;C-3PO&lt;/b&gt;는 &lt;span class="weight"&gt;167 kg&lt;/span&gt;인 &lt;i&gt;드로이드&lt;/i&gt;입니다 ...</span></span>
+<span><span class="co">#&gt; [2] &lt;li&gt;\n&lt;b&gt;R4-P17&lt;/b&gt;은 &lt;i&gt;드로이드&lt;/i&gt;입니다&lt;/li&gt;</span></span>
+<span><span class="co">#&gt; [3] &lt;li&gt;\n&lt;b&gt;R2-D2&lt;/b&gt;는 &lt;span class="weight"&gt;96 kg&lt;/span&gt;인 &lt;i&gt;드로이드&lt;/i&gt;입니다&lt; ...</span></span>
+<span><span class="co">#&gt; [4] &lt;li&gt;\n&lt;b&gt;Yoda&lt;/b&gt;는 &lt;span class="weight"&gt;66 kg&lt;/span&gt;입니다&lt;/li&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>각 캐릭터의 이름을 추출하기 위해 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>를 사용합니다. <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>의 출력에 적용될 때 요소당 하나의 응답을 반환하는 것이 보장되기 때문입니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">characters</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (4)}</span></span>
+<span><span class="co">#&gt; [1] &lt;b&gt;C-3PO&lt;/b&gt;</span></span>
+<span><span class="co">#&gt; [2] &lt;b&gt;R4-P17&lt;/b&gt;</span></span>
+<span><span class="co">#&gt; [3] &lt;b&gt;R2-D2&lt;/b&gt;</span></span>
+<span><span class="co">#&gt; [4] &lt;b&gt;Yoda&lt;/b&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>와 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>의 구별은 이름에 대해서는 중요하지 않지만 몸무게에 대해서는 중요합니다. 몸무게 <code>&lt;span&gt;</code>이 없더라도 각 캐릭터에 대해 하나의 몸무게를 얻고 싶습니다. 그것이 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>가 하는 일입니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">characters</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">".weight"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (4)}</span></span>
+<span><span class="co">#&gt; [1] &lt;span class="weight"&gt;167 kg&lt;/span&gt;</span></span>
+<span><span class="co">#&gt; [2] NA</span></span>
+<span><span class="co">#&gt; [3] &lt;span class="weight"&gt;96 kg&lt;/span&gt;</span></span>
+<span><span class="co">#&gt; [4] &lt;span class="weight"&gt;66 kg&lt;/span&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>는 <code>characters</code>의 자식인 모든 몸무게 <code>&lt;span&gt;</code>을 찾습니다. 이들 중 세 개만 있으므로 이름과 몸무게 사이의 연결을 잃게 됩니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">characters</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">".weight"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_nodeset (3)}</span></span>
+<span><span class="co">#&gt; [1] &lt;span class="weight"&gt;167 kg&lt;/span&gt;</span></span>
+<span><span class="co">#&gt; [2] &lt;span class="weight"&gt;96 kg&lt;/span&gt;</span></span>
+<span><span class="co">#&gt; [3] &lt;span class="weight"&gt;66 kg&lt;/span&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이제 관심 있는 요소를 선택했으므로 텍스트 내용이나 일부 속성에서 데이터를 추출해야 합니다.</p>
+</section><section id="텍스트와-속성" class="level3" data-number="24.4.3"><h3 data-number="24.4.3" class="anchored" data-anchor-id="텍스트와-속성">
+<span class="header-section-number">24.4.3</span> 텍스트와 속성</h3>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2()</a></code><a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>는 HTML 요소의 일반 텍스트 내용을 추출합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">characters</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "C-3PO"  "R4-P17" "R2-D2"  "Yoda"</span></span>
+<span></span>
+<span><span class="va">characters</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">".weight"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "167 kg" NA       "96 kg"  "66 kg"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>모든 이스케이프가 자동으로 처리된다는 점에 유의하세요. HTML 이스케이프는 소스 HTML에서만 볼 수 있으며 rvest에서 반환된 데이터에서는 볼 수 없습니다.</p>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr()</a></code>는 속성에서 데이터를 추출합니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/minimal_html.html">minimal_html</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">  &lt;p&gt;&lt;a href='https://en.wikipedia.org/wiki/Cat'&gt;고양이&lt;/a&gt;&lt;/p&gt;</span></span>
+<span><span class="st">  &lt;p&gt;&lt;a href='https://en.wikipedia.org/wiki/Dog'&gt;개&lt;/a&gt;&lt;/p&gt;</span></span>
+<span><span class="st">"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">html</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"p"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"href"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "https://en.wikipedia.org/wiki/Cat" "https://en.wikipedia.org/wiki/Dog"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr()</a></code>는 항상 문자열을 반환하므로 숫자나 날짜를 추출하는 경우 사후 처리를 좀 해야 합니다.</p>
+</section><section id="표tables" class="level3" data-number="24.4.4"><h3 data-number="24.4.4" class="anchored" data-anchor-id="표tables">
+<span class="header-section-number">24.4.4</span> 표(Tables)</h3>
+<p>운이 좋다면 데이터가 이미 HTML 표에 저장되어 있을 것이고, 단순히 그 표에서 읽어오기만 하면 될 것입니다. 브라우저에서 표를 인식하는 것은 대개 간단합니다: 행과 열의 직사각형 구조를 가질 것이며, Excel과 같은 도구에 복사해서 붙여넣을 수 있습니다.</p>
+<p>HTML 표는 4개의 주요 요소로 구성됩니다: <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>(표 행), <code>&lt;th&gt;</code>(표 머리글) 및 <code>&lt;td&gt;</code>(표 데이터). 여기에 두 개의 열과 세 개의 행이 있는 간단한 HTML 표가 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/minimal_html.html">minimal_html</a></span><span class="op">(</span><span class="st">"</span></span>
+<span><span class="st">  &lt;table class='mytable'&gt;</span></span>
+<span><span class="st">    &lt;tr&gt;&lt;th&gt;x&lt;/th&gt;   &lt;th&gt;y&lt;/th&gt;&lt;/tr&gt;</span></span>
+<span><span class="st">    &lt;tr&gt;&lt;td&gt;1.5&lt;/td&gt; &lt;td&gt;2.7&lt;/td&gt;&lt;/tr&gt;</span></span>
+<span><span class="st">    &lt;tr&gt;&lt;td&gt;4.9&lt;/td&gt; &lt;td&gt;1.3&lt;/td&gt;&lt;/tr&gt;</span></span>
+<span><span class="st">    &lt;tr&gt;&lt;td&gt;7.2&lt;/td&gt; &lt;td&gt;8.1&lt;/td&gt;&lt;/tr&gt;</span></span>
+<span><span class="st">  &lt;/table&gt;</span></span>
+<span><span class="st">"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>rvest는 이런 종류의 데이터를 읽는 방법을 아는 함수인 <code><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table()</a></code>을 제공합니다. 페이지에서 찾은 각 표에 대해 하나의 티블을 포함하는 리스트를 반환합니다. 추출하려는 표를 식별하기 위해 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element()</a></code>를 사용하세요:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">".mytable"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span><span class="co">#&gt;       x     y</span></span>
+<span><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1   1.5   2.7</span></span>
+<span><span class="co">#&gt; 2   4.9   1.3</span></span>
+<span><span class="co">#&gt; 3   7.2   8.1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>x</code>와 <code>y</code>가 자동으로 숫자로 변환된 것을 주목하세요. 이 자동 변환이 항상 작동하는 것은 아니므로 더 복잡한 시나리오에서는 <code>convert = FALSE</code>로 이를 끄고 직접 변환을 수행하고 싶을 수 있습니다.</p>
+</section></section><section id="sec-css-selectors" class="level2" data-number="24.5"><h2 data-number="24.5" class="anchored" data-anchor-id="sec-css-selectors">
+<span class="header-section-number">24.5</span> 올바른 선택자 찾기</h2>
+<p>데이터에 필요한 선택자를 파악하는 것이 일반적으로 문제의 가장 어려운 부분입니다. 구체적(즉, 관심 없는 것은 선택하지 않음)이면서 민감한(즉, 관심 있는 모든 것을 선택함) 선택자를 찾기 위해 종종 실험을 좀 해야 합니다. 많은 시행착오는 프로세스의 정상적인 부분입니다! 이 프로세스를 돕기 위해 사용할 수 있는 두 가지 주요 도구가 있습니다: SelectorGadget과 브라우저의 개발자 도구입니다.</p>
+<p><a href="https://rvest.tidyverse.org/articles/selectorgadget.html">SelectorGadget</a>은 제공한 긍정적 예제와 부정적 예제를 기반으로 CSS 선택자를 자동으로 생성하는 자바스크립트 북마클릿입니다. 항상 작동하는 것은 아니지만 작동할 때는 마법 같습니다! <a href="https://rvest.tidyverse.org/articles/selectorgadget.html" class="uri">https://rvest.tidyverse.org/articles/selectorgadget.html</a>을 읽거나 Mine의 비디오 <a href="https://www.youtube.com/watch?v=PetWV5g1Xsc" class="uri">https://www.youtube.com/watch?v=PetWV5g1Xsc</a>를 시청하여 SelectorGadget을 설치하고 사용하는 방법을 배울 수 있습니다.</p>
+<p>모든 현대 브라우저에는 개발자를 위한 툴킷이 함께 제공되지만, 일반 브라우저가 아니더라도 크롬(Chrome)을 권장합니다: 웹 개발자 도구가 가장 뛰어나고 즉시 사용할 수 있기 때문입니다. 페이지의 요소를 마우스 오른쪽 버튼으로 클릭하고 <code>검사(Inspect)</code>를 클릭합니다. 그러면 방금 클릭한 요소를 중심으로 전체 HTML 페이지의 확장 가능한 뷰가 열립니다. 이를 사용하여 페이지를 탐색하고 어떤 선택자가 작동할지 감을 잡을 수 있습니다. class와 id 속성은 종종 페이지의 시각적 구조를 형성하는 데 사용되므로 찾고 있는 데이터를 추출하기 위한 좋은 도구가 되므로 특히 주의를 기울이세요.</p>
+<p>요소(Elements) 뷰 내에서 요소를 마우스 오른쪽 버튼으로 클릭하고 <code>Copy as Selector</code>를 선택하여 관심 있는 요소를 고유하게 식별할 선택자를 생성할 수도 있습니다.</p>
+<p>SelectorGadget이나 크롬 개발자 도구가 이해할 수 없는 CSS 선택자를 생성했다면 CSS 선택자를 평범한 영어로 번역해주는 <a href="https://kittygiraudel.github.io/selectors-explained/" class="uri">Selectors Explained</a>를 시도해 보세요. 이 작업을 자주 하게 된다면 일반적으로 CSS 선택자에 대해 더 많이 배우고 싶을 것입니다. 재미있는 <a href="https://flukeout.github.io/">CSS dinner</a> 튜토리얼부터 시작하여 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors">MDN 웹 문서</a>를 참조하는 것을 추천합니다.</p>
+</section><section id="종합하기" class="level2" data-number="24.6"><h2 data-number="24.6" class="anchored" data-anchor-id="종합하기">
+<span class="header-section-number">24.6</span> 종합하기</h2>
+<p>웹사이트 몇 군데를 스크래핑하기 위해 이 모든 것을 종합해 봅시다. 이 예제들이 실행할 때 더 이상 작동하지 않을 위험이 있습니다. 이것이 웹 스크래핑의 근본적인 과제입니다. 사이트 구조가 변경되면 스크래핑 코드를 변경해야 합니다.</p>
+<section id="스타워즈starwars" class="level3" data-number="24.6.1"><h3 data-number="24.6.1" class="anchored" data-anchor-id="스타워즈starwars">
+<span class="header-section-number">24.6.1</span> 스타워즈(StarWars)</h3>
+<p>rvest는 <code><a href="https://rvest.tidyverse.org/articles/starwars.html">vignette("starwars")</a></code>에 매우 간단한 예제를 포함하고 있습니다. 이것은 최소한의 HTML을 가진 간단한 페이지이므로 시작하기에 좋은 곳입니다. 지금 해당 페이지로 이동하여 “요소 검사”를 사용하여 스타워즈 영화 제목인 제목 중 하나를 검사해 보시길 권장합니다. 키보드나 마우스를 사용하여 HTML 계층 구조를 탐색하고 각 영화에서 사용되는 공유 구조에 대한 감을 잡을 수 있는지 확인해 보세요.</p>
+<p>각 영화가 다음과 같은 공유 구조를 가지고 있음을 볼 수 있을 것입니다:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">section</span><span class="dt">&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h2</span><span class="ot"> data-id</span><span class="op">=</span><span class="st">"1"</span><span class="dt">&gt;</span>The Phantom Menace<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Released: 1999-05-19<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Director: <span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> class</span><span class="op">=</span><span class="st">"director"</span><span class="dt">&gt;</span>George Lucas<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"crawl"</span><span class="dt">&gt;</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>...<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>...<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>...<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">section</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>우리의 목표는 이 데이터를 <code>title</code>, <code>year</code>, <code>director</code>, <code>intro</code> 변수를 가진 7행 데이터 프레임으로 변환하는 것입니다. 먼저 HTML을 읽고 모든 <code>&lt;section&gt;</code> 요소를 추출하는 것으로 시작하겠습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://rvest.tidyverse.org/articles/starwars.html"</span></span>
+<span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">section</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"section"</span><span class="op">)</span></span>
+<span><span class="va">section</span></span>
+<span><span class="co">#&gt; {xml_nodeset (7)}</span></span>
+<span><span class="co">#&gt; [1] &lt;section&gt;&lt;h2 data-id="1"&gt;\nThe Phantom Menace\n&lt;/h2&gt;\n&lt;p&gt;\nReleased: 1 ...</span></span>
+<span><span class="co">#&gt; [2] &lt;section&gt;&lt;h2 data-id="2"&gt;\nAttack of the Clones\n&lt;/h2&gt;\n&lt;p&gt;\nReleased: ...</span></span>
+<span><span class="co">#&gt; [3] &lt;section&gt;&lt;h2 data-id="3"&gt;\nRevenge of the Sith\n&lt;/h2&gt;\n&lt;p&gt;\nReleased:  ...</span></span>
+<span><span class="co">#&gt; [4] &lt;section&gt;&lt;h2 data-id="4"&gt;\nA New Hope\n&lt;/h2&gt;\n&lt;p&gt;\nReleased: 1977-05-2 ...</span></span>
+<span><span class="co">#&gt; [5] &lt;section&gt;&lt;h2 data-id="5"&gt;\nThe Empire Strikes Back\n&lt;/h2&gt;\n&lt;p&gt;\nReleas ...</span></span>
+<span><span class="co">#&gt; [6] &lt;section&gt;&lt;h2 data-id="6"&gt;\nReturn of the Jedi\n&lt;/h2&gt;\n&lt;p&gt;\nReleased: 1 ...</span></span>
+<span><span class="co">#&gt; [7] &lt;section&gt;&lt;h2 data-id="7"&gt;\nThe Force Awakens\n&lt;/h2&gt;\n&lt;p&gt;\nReleased: 20 ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이 코드는 해당 페이지에서 찾은 7편의 영화와 일치하는 7개의 요소를 검색하므로 <code>section</code>을 선택자로 사용하는 것이 좋음을 시사합니다. 데이터는 항상 텍스트에서 발견되므로 개별 요소를 추출하는 것은 간단합니다. 올바른 선택자를 찾기만 하면 됩니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">section</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"h2"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "The Phantom Menace"      "Attack of the Clones"   </span></span>
+<span><span class="co">#&gt; [3] "Revenge of the Sith"     "A New Hope"             </span></span>
+<span><span class="co">#&gt; [5] "The Empire Strikes Back" "Return of the Jedi"     </span></span>
+<span><span class="co">#&gt; [7] "The Force Awakens"</span></span>
+<span></span>
+<span><span class="va">section</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">".director"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "George Lucas"     "George Lucas"     "George Lucas"    </span></span>
+<span><span class="co">#&gt; [4] "George Lucas"     "Irvin Kershner"   "Richard Marquand"</span></span>
+<span><span class="co">#&gt; [7] "J. J. Abrams"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>각 구성 요소에 대해 이 작업을 완료하면 모든 결과를 티블로 묶을 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>  title <span class="op">=</span> <span class="va">section</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"h2"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  released <span class="op">=</span> <span class="va">section</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"p"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">"Released: "</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_datetime.html">parse_date</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  director <span class="op">=</span> <span class="va">section</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">".director"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  intro <span class="op">=</span> <span class="va">section</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">".crawl"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span><span class="co">#&gt;   title                   released   director         intro                  </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                   &lt;date&gt;     &lt;chr&gt;            &lt;chr&gt;                  </span></span>
+<span><span class="co">#&gt; 1 The Phantom Menace      1999-05-19 George Lucas     "Turmoil has engulfed …</span></span>
+<span><span class="co">#&gt; 2 Attack of the Clones    2002-05-16 George Lucas     "There is unrest in th…</span></span>
+<span><span class="co">#&gt; 3 Revenge of the Sith     2005-05-19 George Lucas     "War! The Republic is …</span></span>
+<span><span class="co">#&gt; 4 A New Hope              1977-05-25 George Lucas     "It is a period of civ…</span></span>
+<span><span class="co">#&gt; 5 The Empire Strikes Back 1980-05-17 Irvin Kershner   "It is a dark time for…</span></span>
+<span><span class="co">#&gt; 6 Return of the Jedi      1983-05-25 Richard Marquand "Luke Skywalker has re…</span></span>
+<span><span class="co">#&gt; # ℹ 1 more row</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>나중에 분석에서 쉽게 사용할 수 있는 변수를 얻기 위해 <code>released</code>에 대해 처리를 조금 더 했습니다.</p>
+</section><section id="imdb-인기-영화" class="level3" data-number="24.6.2"><h3 data-number="24.6.2" class="anchored" data-anchor-id="imdb-인기-영화">
+<span class="header-section-number">24.6.2</span> IMDB 인기 영화</h3>
+<p>다음 과제로 인터넷 영화 데이터베이스(IMDb)에서 상위 250개 영화를 추출하는 조금 더 까다로운 작업을 처리해 보겠습니다. 우리가 이 장을 썼을 때 페이지는 <a href="#fig-scraping-imdb" class="quarto-xref">Figure&nbsp;<span>24.1</span></a> 처럼 보였습니다.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-scraping-imdb" class="quarto-float quarto-figure quarto-figure-center anchored" alt="스크린샷은 &quot;Rank and Title&quot;, &quot;IMDb Rating&quot;, &quot;Your Rating&quot; 열이 있는  표를 보여줍니다. 상위 250개 중 9개 영화가 표시됩니다. 상위 5위는  쇼생크 탈출, 대부, 다크 나이트, 대부 2, 12인의 성난 사람들입니다.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-scraping-imdb-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="screenshots/scraping-imdb.png" class="img-fluid figure-img" alt="스크린샷은 &quot;Rank and Title&quot;, &quot;IMDb Rating&quot;, &quot;Your Rating&quot; 열이 있는  표를 보여줍니다. 상위 250개 중 9개 영화가 표시됩니다. 상위 5위는  쇼생크 탈출, 대부, 다크 나이트, 대부 2, 12인의 성난 사람들입니다." width="418">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scraping-imdb-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.1: 2022-12-05에 찍은 IMDb 상위 영화 웹페이지의 스크린샷.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>이 데이터는 명확한 표 구조를 가지고 있으므로 <code><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table()</a></code>로 시작할 가치가 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://web.archive.org/web/20220201012049/https://www.imdb.com/chart/top/"</span></span>
+<span><span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">table</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_element</a></span><span class="op">(</span><span class="st">"table"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">table</span></span>
+<span><span class="co">#&gt; # A tibble: 250 × 5</span></span>
+<span><span class="co">#&gt;   ``    `Rank &amp; Title`                    `IMDb Rating` `Your Rating`   ``   </span></span>
+<span><span class="co">#&gt;   &lt;lgl&gt; &lt;chr&gt;                                     &lt;dbl&gt; &lt;chr&gt;           &lt;lgl&gt;</span></span>
+<span><span class="co">#&gt; 1 NA    "1.\n      The Shawshank Redempt…           9.2 "12345678910\n… NA   </span></span>
+<span><span class="co">#&gt; 2 NA    "2.\n      The Godfather\n      …           9.1 "12345678910\n… NA   </span></span>
+<span><span class="co">#&gt; 3 NA    "3.\n      The Godfather: Part I…           9   "12345678910\n… NA   </span></span>
+<span><span class="co">#&gt; 4 NA    "4.\n      The Dark Knight\n    …           9   "12345678910\n… NA   </span></span>
+<span><span class="co">#&gt; 5 NA    "5.\n      12 Angry Men\n       …           8.9 "12345678910\n… NA   </span></span>
+<span><span class="co">#&gt; 6 NA    "6.\n      Schindler's List\n   …           8.9 "12345678910\n… NA   </span></span>
+<span><span class="co">#&gt; # ℹ 244 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>여기에는 몇 개의 빈 열이 포함되어 있지만 전반적으로 표의 정보를 잘 캡처합니다. 그러나 사용하기 쉽게 만들려면 처리를 좀 더 해야 합니다. 먼저 열의 이름을 작업하기 쉽게 바꾸고 순위(rank)와 제목(title)에 있는 불필요한 공백을 제거하겠습니다. 한 단계에서 이 두 열만 선택하고 이름을 바꾸기 위해 <code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code>(<code><a href="https://dplyr.tidyverse.org/reference/rename.html">rename()</a></code> 대신)를 사용하여 이 작업을 수행할 것입니다. 그런 다음 줄바꿈과 추가 공백을 제거한 다음, <code><a href="https://tidyr.tidyverse.org/reference/separate_wider_delim.html">separate_wider_regex()</a></code>(<a href="regexps.html#sec-extract-variables" class="quarto-xref"><span>Section 15.3.4</span></a> 에서 배움)를 적용하여 제목, 연도 및 순위를 자체 변수로 뽑아내겠습니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ratings</span> <span class="op">&lt;-</span> <span class="va">table</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span></span>
+<span>    rank_title_year <span class="op">=</span> <span class="va">`Rank &amp; Title`</span>,</span>
+<span>    rating <span class="op">=</span> <span class="va">`IMDb Rating`</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    rank_title_year <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace_all</a></span><span class="op">(</span><span class="va">rank_title_year</span>, <span class="st">"\n +"</span>, <span class="st">" "</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_wider_delim.html">separate_wider_regex</a></span><span class="op">(</span></span>
+<span>    <span class="va">rank_title_year</span>,</span>
+<span>    patterns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>      rank <span class="op">=</span> <span class="st">"\\d+"</span>, <span class="st">"\\. "</span>,</span>
+<span>      title <span class="op">=</span> <span class="st">".+"</span>, <span class="st">" +\\("</span>,</span>
+<span>      year <span class="op">=</span> <span class="st">"\\d+"</span>, <span class="st">"\\)"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">ratings</span></span>
+<span><span class="co">#&gt; # A tibble: 250 × 4</span></span>
+<span><span class="co">#&gt;   rank  title                    year  rating</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                    &lt;chr&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 1     The Shawshank Redemption 1994     9.2</span></span>
+<span><span class="co">#&gt; 2 2     The Godfather            1972     9.1</span></span>
+<span><span class="co">#&gt; 3 3     The Godfather: Part II   1974     9  </span></span>
+<span><span class="co">#&gt; 4 4     The Dark Knight          2008     9  </span></span>
+<span><span class="co">#&gt; 5 5     12 Angry Men             1957     8.9</span></span>
+<span><span class="co">#&gt; 6 6     Schindler's List         1993     8.9</span></span>
+<span><span class="co">#&gt; # ℹ 244 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>대부분의 데이터가 표 셀에서 나오는 경우에도 여전히 원시 HTML을 살펴볼 가치가 있습니다. 그렇게 하면 속성 중 하나를 사용하여 약간의 추가 데이터를 더할 수 있다는 것을 발견하게 될 것입니다. 이것이 페이지 소스를 탐색하는 데 시간을 조금 투자할 가치가 있는 이유 중 하나입니다. 추가 데이터를 찾거나 약간 더 쉬운 파싱 경로를 찾을 수도 있습니다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">html</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"td strong"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"title"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "9.2 based on 2,536,415 user ratings"</span></span>
+<span><span class="co">#&gt; [2] "9.1 based on 1,745,675 user ratings"</span></span>
+<span><span class="co">#&gt; [3] "9.0 based on 1,211,032 user ratings"</span></span>
+<span><span class="co">#&gt; [4] "9.0 based on 2,486,931 user ratings"</span></span>
+<span><span class="co">#&gt; [5] "8.9 based on 749,563 user ratings"  </span></span>
+<span><span class="co">#&gt; [6] "8.9 based on 1,295,705 user ratings"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이를 표 형식의 데이터와 결합하고 다시 <code><a href="https://tidyr.tidyverse.org/reference/separate_wider_delim.html">separate_wider_regex()</a></code>를 적용하여 관심 있는 데이터 조각을 추출할 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ratings</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    rating_n <span class="op">=</span> <span class="va">html</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements</a></span><span class="op">(</span><span class="st">"td strong"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"title"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_wider_delim.html">separate_wider_regex</a></span><span class="op">(</span></span>
+<span>    <span class="va">rating_n</span>,</span>
+<span>    patterns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>      <span class="st">"[0-9.]+ based on "</span>,</span>
+<span>      number <span class="op">=</span> <span class="st">"[0-9,]+"</span>,</span>
+<span>      <span class="st">" user ratings"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    number <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html">parse_number</a></span><span class="op">(</span><span class="va">number</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 250 × 5</span></span>
+<span><span class="co">#&gt;   rank  title                    year  rating  number</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                    &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 1     The Shawshank Redemption 1994     9.2 2536415</span></span>
+<span><span class="co">#&gt; 2 2     The Godfather            1972     9.1 1745675</span></span>
+<span><span class="co">#&gt; 3 3     The Godfather: Part II   1974     9   1211032</span></span>
+<span><span class="co">#&gt; 4 4     The Dark Knight          2008     9   2486931</span></span>
+<span><span class="co">#&gt; 5 5     12 Angry Men             1957     8.9  749563</span></span>
+<span><span class="co">#&gt; 6 6     Schindler's List         1993     8.9 1295705</span></span>
+<span><span class="co">#&gt; # ℹ 244 more rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section><section id="동적-사이트" class="level2" data-number="24.7"><h2 data-number="24.7" class="anchored" data-anchor-id="동적-사이트">
+<span class="header-section-number">24.7</span> 동적 사이트</h2>
+<p>지금까지는 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>가 브라우저에서 보는 내용을 반환하는 웹사이트에 집중하여 반환된 내용을 파싱하는 방법과 해당 정보를 깔끔한 데이터 프레임으로 구성하는 방법을 논의했습니다. 그러나 때때로 <code><a href="https://rvest.tidyverse.org/reference/html_element.html">html_elements()</a></code>와 친구들이 브라우저에서 보는 것과 전혀 다른 내용을 반환하는 사이트를 만나게 될 것입니다. 많은 경우 자바스크립트로 페이지 내용을 동적으로 생성하는 웹사이트를 스크래핑하려고 하기 때문입니다. rvest는 원시 HTML을 다운로드하고 자바스크립트를 실행하지 않기 때문에 현재는 이런 방식이 작동하지 않습니다.</p>
+<p>이런 유형의 사이트를 스크래핑하는 것은 여전히 가능하지만 rvest는 모든 자바스크립트 실행을 포함하여 웹 브라우저를 완전히 시뮬레이션하는 더 비용이 많이 드는 프로세스를 사용해야 합니다. 이 기능은 이 글을 쓰는 시점에는 사용할 수 없지만 우리가 적극적으로 작업 중인 기능이며 여러분이 이 글을 읽을 때쯤이면 사용할 수 있을 것입니다. 배경에서 실제로 크롬(Chrome) 브라우저를 실행하는 <a href="https://rstudio.github.io/chromote/index.html">chromote 패키지</a>를 사용하며, 사람이 텍스트를 입력하고 버튼을 클릭하는 것과 같이 사이트와 상호 작용할 수 있는 추가 도구를 제공합니다. 자세한 내용은 <a href="http://rvest.tidyverse.org/">rvest 웹사이트</a>를 확인하세요.</p>
+</section><section id="요약" class="level2" data-number="24.8"><h2 data-number="24.8" class="anchored" data-anchor-id="요약">
+<span class="header-section-number">24.8</span> 요약</h2>
+<p>이 장에서는 웹페이지에서 데이터를 스크래핑하는 이유와 이유가 아닌 것, 그리고 방법에 대해 배웠습니다. 먼저 HTML의 기초와 특정 요소를 참조하기 위해 CSS 선택자를 사용하는 방법을 배웠고, 그런 다음 rvest 패키지를 사용하여 HTML에서 R로 데이터를 가져오는 방법을 배웠습니다. 그런 다음 두 가지 사례 연구로 웹 스크래핑을 시연했습니다: rvest 패키지 웹사이트에서 스타워즈 영화에 대한 데이터를 스크래핑하는 간단한 시나리오와 IMDB에서 상위 250개 영화를 스크래핑하는 더 복잡한 시나리오입니다.</p>
+<p>웹에서 데이터를 스크래핑하는 기술적 세부 사항은 특히 사이트를 다룰 때 복잡할 수 있지만, 법적 및 윤리적 고려 사항은 훨씬 더 복잡할 수 있습니다. 데이터를 스크래핑하기 전에 이 두 가지 모두에 대해 스스로 교육하는 것이 중요합니다.</p>
+<p>이로써 데이터가 있는 곳(스프레드시트, 데이터베이스, JSON 파일 및 웹사이트)에서 R의 깔끔한 형태로 데이터를 가져오는 기술을 배운 책의 가져오기(import) 파트가 끝납니다. 이제 새로운 주제인 프로그래밍 언어로서의 R을 최대한 활용하는 것으로 시선을 돌릴 때입니다.</p>
+
+
+</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+<ol>
+<li id="fn1"><p>그리고 많은 인기 있는 API에는 이미 이를 래핑하는 CRAN 패키지가 있으므로 먼저 조사를 조금 해보세요!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>분명히 우리는 변호사가 아니며 이것은 법률 자문이 아닙니다. 하지만 이 주제에 대해 많은 것을 읽은 후 우리가 줄 수 있는 최선의 요약입니다.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>OkCupid 연구에 대한 기사 중 하나가 Wired에 게시되었습니다: <a href="https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science" class="uri">https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science</a>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>여러 태그( <code>&lt;p&gt;</code> 및 <code>&lt;li&gt;</code> 포함)는 종료 태그가 필요하지 않지만 HTML 구조를 보기가 조금 더 쉽기 때문에 포함하는 것이 가장 좋다고 생각합니다.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>이 클래스는 <a href="https://xml2.r-lib.org">xml2</a> 패키지에서 가져옵니다. xml2는 rvest가 기반으로 하는 저수준 패키지입니다.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>rvest는 <code><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text()</a></code>도 제공하지만 중첩된 HTML을 텍스트로 변환하는 작업을 더 잘 수행하므로 거의 항상 <code><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text2()</a></code>를 사용해야 합니다.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/r4ds\.hadley\.nz\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./rectangling.html" class="pagination-link" aria-label="계층적 데이터">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./program.html" class="pagination-link" aria-label="프로그램 (Program)">
+        <span class="nav-page-text">프로그램 (Program)</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R for Data Science (2e) was written by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hadley/r4ds/edit/main/webscraping.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hadley/r4ds/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund">
+<title>소개 – R for Data Science (2e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./whole-game.html" rel="next">
+<link href="./preface-2e.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8df9fc159a2c64db71ab329accd4d345.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script defer="" data-domain="r4ds.hadley.nz" src="https://plausible.io/js/plausible.js"></script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./intro.html">소개</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R for Data Science (2e)</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/hadley/r4ds/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">환영합니다</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">제2판 서문</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">소개</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./whole-game.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">전체 게임</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-visualize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">데이터 시각화</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">워크플로우: 기초</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-transform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">데이터 변형</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">워크플로우: 코드 스타일</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-tidy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">데이터 정리</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-scripts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">워크플로우: 스크립트와 프로젝트</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-import.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">데이터 가져오기</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow-help.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">워크플로우: 도움 받기</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./visualize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">시각화 (Visualize)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">레이어(Layers)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./EDA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">탐색적 데이터 분석(Exploratory data analysis)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./communication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">소통(Communication)</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./transform.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">변형 (Transform)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./logicals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">논리형 벡터</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numbers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">숫자</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">문자열</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./regexps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">정규 표현식 (Regular expressions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./factors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">팩터(Factors)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datetimes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">날짜와 시간</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./missing-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">결측값(Missing values)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./joins.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">조인(Joins)</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./import.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">가져오기 (Import)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spreadsheets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">스프레드시트</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">데이터베이스</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arrow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Arrow</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rectangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">계층적 데이터</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./webscraping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">웹 스크래핑</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./program.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">프로그램 (Program)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">함수 (Functions)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./iteration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">반복</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">기본 R 필드 가이드</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./communicate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">소통 (Communicate)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quarto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Quarto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quarto-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Quarto 형식</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#%EB%AC%B4%EC%97%87%EC%9D%84-%EB%B0%B0%EC%9A%B0%EA%B2%8C-%EB%90%98%EB%82%98%EC%9A%94" id="toc-무엇을-배우게-되나요" class="nav-link active" data-scroll-target="#%EB%AC%B4%EC%97%87%EC%9D%84-%EB%B0%B0%EC%9A%B0%EA%B2%8C-%EB%90%98%EB%82%98%EC%9A%94">무엇을 배우게 되나요</a></li>
+  <li><a href="#%EC%9D%B4-%EC%B1%85%EC%9D%98-%EA%B5%AC%EC%84%B1" id="toc-이-책의-구성" class="nav-link" data-scroll-target="#%EC%9D%B4-%EC%B1%85%EC%9D%98-%EA%B5%AC%EC%84%B1">이 책의 구성</a></li>
+  <li>
+<a href="#%EB%B0%B0%EC%9A%B0%EC%A7%80-%EC%95%8A%EC%9D%84-%EB%82%B4%EC%9A%A9" id="toc-배우지-않을-내용" class="nav-link" data-scroll-target="#%EB%B0%B0%EC%9A%B0%EC%A7%80-%EC%95%8A%EC%9D%84-%EB%82%B4%EC%9A%A9">배우지 않을 내용</a>
+  <ul class="collapse">
+<li><a href="#%EB%AA%A8%EB%8D%B8%EB%A7%81" id="toc-모델링" class="nav-link" data-scroll-target="#%EB%AA%A8%EB%8D%B8%EB%A7%81">모델링</a></li>
+  <li><a href="#%EB%B9%85-%EB%8D%B0%EC%9D%B4%ED%84%B0" id="toc-빅-데이터" class="nav-link" data-scroll-target="#%EB%B9%85-%EB%8D%B0%EC%9D%B4%ED%84%B0">빅 데이터</a></li>
+  <li><a href="#%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%A4%84%EB%A6%AC%EC%95%84-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EC%B9%9C%EA%B5%AC%EB%93%A4" id="toc-파이썬-줄리아-그리고-친구들" class="nav-link" data-scroll-target="#%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%A4%84%EB%A6%AC%EC%95%84-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EC%B9%9C%EA%B5%AC%EB%93%A4">파이썬, 줄리아, 그리고 친구들</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#%EC%84%A0%EC%88%98-%EC%A7%80%EC%8B%9D" id="toc-선수-지식" class="nav-link" data-scroll-target="#%EC%84%A0%EC%88%98-%EC%A7%80%EC%8B%9D">선수 지식</a>
+  <ul class="collapse">
+<li><a href="#r" id="toc-r" class="nav-link" data-scroll-target="#r">R</a></li>
+  <li><a href="#rstudio" id="toc-rstudio" class="nav-link" data-scroll-target="#rstudio">RStudio</a></li>
+  <li><a href="#tidyverse" id="toc-tidyverse" class="nav-link" data-scroll-target="#tidyverse">tidyverse</a></li>
+  <li><a href="#%EA%B7%B8-%EC%99%B8-%ED%8C%A8%ED%82%A4%EC%A7%80%EB%93%A4" id="toc-그-외-패키지들" class="nav-link" data-scroll-target="#%EA%B7%B8-%EC%99%B8-%ED%8C%A8%ED%82%A4%EC%A7%80%EB%93%A4">그 외 패키지들</a></li>
+  </ul>
+</li>
+  <li><a href="#r-%EC%BD%94%EB%93%9C-%EC%8B%A4%ED%96%89%ED%95%98%EA%B8%B0" id="toc-r-코드-실행하기" class="nav-link" data-scroll-target="#r-%EC%BD%94%EB%93%9C-%EC%8B%A4%ED%96%89%ED%95%98%EA%B8%B0">R 코드 실행하기</a></li>
+  <li><a href="#%EA%B0%90%EC%82%AC%EC%9D%98-%EB%A7%90" id="toc-감사의-말" class="nav-link" data-scroll-target="#%EA%B0%90%EC%82%AC%EC%9D%98-%EB%A7%90">감사의 말</a></li>
+  <li><a href="#%ED%8C%90%EA%B6%8C" id="toc-판권" class="nav-link" data-scroll-target="#%ED%8C%90%EA%B6%8C">판권</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/hadley/r4ds/edit/main/intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hadley/r4ds/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-intro" class="quarto-section-identifier">소개</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><p>데이터 과학은 원시 데이터를 이해, 통찰력, 지식으로 변환할 수 있게 해주는 흥미로운 분야입니다. “R for Data Science”의 목표는 데이터를 효율적이고 재현 가능하게 과학적으로 다루는 데 필요한 R의 가장 중요한 도구들을 배우고, 그 과정에서 재미도 느낄 수 있도록 돕는 것입니다 😃. 이 책을 다 읽고 나면, R의 장점들을 활용하여 다양한 데이터 과학 과제를 해결할 수 있는 도구를 갖추게 될 것입니다.</p>
+<section id="무엇을-배우게-되나요" class="level2"><h2 class="anchored" data-anchor-id="무엇을-배우게-되나요">무엇을 배우게 되나요</h2>
+<p>데이터 과학은 방대한 분야이며, 책 한 권으로 모든 것을 마스터할 수는 없습니다. 이 책은 가장 중요한 도구들에 대한 탄탄한 기초를 제공하고, 필요할 때 더 많은 것을 배울 수 있는 리소스를 찾을 수 있는 지식을 제공하는 것을 목표로 합니다. 우리가 생각하는 일반적인 데이터 과학 프로젝트의 단계는 <a href="#fig-ds-diagram" class="quarto-xref">Figure&nbsp;<span>1</span></a> 과 같습니다.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-ds-diagram" class="quarto-float quarto-figure quarto-figure-center anchored" alt="데이터 과학 주기를 보여주는 다이어그램: 가져오기 -> 정리 -> 이해  (변형 -> 시각화 -> 모델링 주기를 포함) -> 소통.  이 모든 것을 프로그래밍이 감싸고 있습니다. ">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-ds-diagram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/data-science/base.png" class="img-fluid figure-img" alt="데이터 과학 주기를 보여주는 다이어그램: 가져오기 -> 정리 -> 이해  (변형 -> 시각화 -> 모델링 주기를 포함) -> 소통.  이 모든 것을 프로그래밍이 감싸고 있습니다. " width="535">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ds-diagram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: 우리의 데이터 과학 프로세스 모델에서는 데이터 가져오기(import)와 정리(tidy)로 시작합니다. 다음으로 변형(transform), 시각화(visualize), 모델링(model)의 반복적인 주기를 통해 데이터를 이해합니다. 마지막으로 결과를 다른 사람들에게 소통(communicate)하며 프로세스를 마칩니다.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>먼저, 데이터를 R로 <strong>가져와야(import)</strong> 합니다. 이는 일반적으로 파일, 데이터베이스, 또는 웹 애플리케이션 프로그래밍 인터페이스(API)에 저장된 데이터를 가져와 R의 데이터 프레임으로 로드하는 것을 의미합니다. 데이터를 R로 가져오지 못하면 데이터 과학을 할 수 없습니다!</p>
+<p>데이터를 가져온 후에는 <strong>정리(tidy)</strong> 하는 것이 좋습니다. 데이터를 정리한다는 것은 데이터의 의미와 저장 방식이 일치하도록 일관된 형태로 저장하는 것을 의미합니다. 간단히 말해, 데이터가 깔끔하면(tidy) 각 열은 변수이고 각 행은 관측값입니다. 깔끔한(tidy) 데이터가 중요한 이유는 일관된 구조를 통해 데이터를 다양한 함수에 맞게 억지로 끼워 맞추는 대신 데이터에 대한 질문에 답하는 데 노력을 집중할 수 있게 해주기 때문입니다.</p>
+<p>깔끔한 데이터를 확보했다면, 일반적인 다음 단계는 <strong>변형(transform)</strong> 입니다. 변형에는 관심 있는 관측값(예: 특정 도시의 모든 사람 또는 작년의 모든 데이터)으로 좁히거나, 기존 변수의 함수로 새로운 변수를 생성하거나(예: 거리와 시간으로 속도 계산), 요약 통계량(예: 개수 또는 평균)을 계산하는 것이 포함됩니다. 정리와 변형을 합쳐서 <strong>랭글링(wrangling)</strong> 이라고 부르는데, 데이터를 작업하기 자연스러운 형태로 만드는 것이 종종 싸움처럼 느껴지기 때문입니다!</p>
+<p>필요한 변수를 갖춘 깔끔한 데이터가 준비되었다면, 지식 생성의 두 가지 주요 엔진은 시각화와 모델링입니다. 이들은 상호 보완적인 장단점을 가지고 있으므로, 실제 데이터 분석에서는 이 둘 사이를 여러 번 반복하게 됩니다.</p>
+<p><strong>시각화(Visualization)</strong> 는 근본적으로 인간적인 활동입니다. 좋은 시각화는 예상치 못한 것을 보여주거나 데이터에 대한 새로운 질문을 제기합니다. 또한 좋은 시각화는 잘못된 질문을 하고 있다거나 다른 데이터를 수집해야 한다는 힌트를 줄 수도 있습니다. 시각화는 놀라움을 줄 수 있지만, 해석하는 데 사람이 필요하기 때문에 확장성이 그리 좋지는 않습니다.</p>
+<p><strong>모델(Model)</strong> 은 시각화를 보완하는 도구입니다. 질문을 충분히 구체화했다면 모델을 사용하여 답을 얻을 수 있습니다. 모델은 근본적으로 수학적 또는 계산적 도구이므로 일반적으로 확장성이 좋습니다. 그렇지 않더라도, 더 많은 두뇌를 사는 것보다 더 많은 컴퓨터를 사는 것이 보통 더 저렴합니다! 하지만 모든 모델은 가정을 전제로 하며, 그 본질상 모델은 자신의 가정에 대해 의문을 제기할 수 없습니다. 즉, 모델은 근본적으로 여러분을 놀라게 할 수 없습니다.</p>
+<p>데이터 과학의 마지막 단계는 <strong>소통(communication)</strong> 으로, 모든 데이터 분석 프로젝트에서 절대적으로 중요한 부분입니다. 모델과 시각화가 데이터를 이해하는 데 아무리 큰 도움을 주었더라도, 그 결과를 다른 사람에게 전달할 수 없다면 의미가 없습니다.</p>
+<p>이 모든 도구를 감싸고 있는 것은 <strong>프로그래밍(programming)</strong> 입니다. 프로그래밍은 데이터 과학 프로젝트의 거의 모든 부분에서 사용하는 교차적인 도구입니다. 성공적인 데이터 과학자가 되기 위해 전문 프로그래머가 될 필요는 없지만, 프로그래밍을 더 배우는 것은 가치가 있습니다. 더 나은 프로그래머가 되면 반복적인 작업을 자동화하고 새로운 문제를 더 쉽게 해결할 수 있기 때문입니다.</p>
+<p>모든 데이터 과학 프로젝트에서 이 도구들을 사용하게 되지만, 대부분의 프로젝트에서는 이것만으로는 충분하지 않습니다. 대략 80/20 법칙이 적용됩니다. 이 책에서 배우는 도구들로 프로젝트의 약 80%를 해결할 수 있지만, 나머지 20%를 해결하려면 다른 도구들이 필요합니다. 책 전반에 걸쳐 더 배울 수 있는 리소스를 안내해 드릴 것입니다.</p>
+</section><section id="이-책의-구성" class="level2"><h2 class="anchored" data-anchor-id="이-책의-구성">이 책의 구성</h2>
+<p>앞서 설명한 데이터 과학 도구들은 분석에서 사용하는 순서에 따라 대략적으로 구성되어 있습니다(물론 여러 번 반복하게 되겠지만요). 하지만 저희 경험상 데이터 가져오기와 정리를 먼저 배우는 것은 최선의 방법이 아닙니다. 왜냐하면 80%의 시간 동안은 일상적이고 지루하며, 나머지 20%의 시간 동안은 이상하고 답답하기 때문입니다. 새로운 주제를 배우기에 좋은 시작점이 아닙니다! 대신, 이미 가져와서 정리된 데이터의 시각화와 변형부터 시작하겠습니다. 그렇게 하면 나중에 직접 데이터를 가져와서 정리할 때, 그 고통이 노력할 가치가 있다는 것을 알기 때문에 동기를 유지할 수 있습니다.</p>
+<p>각 장 내에서는 일관된 패턴을 따르려고 노력합니다. 큰 그림을 볼 수 있도록 동기 부여가 되는 예제로 시작한 다음, 세부 사항으로 들어갑니다. 책의 각 섹션에는 배운 내용을 연습할 수 있는 연습문제들이 짝을 이루고 있습니다. 연습문제를 건너뛰고 싶은 유혹이 들 수 있지만, 실제 문제로 연습하는 것보다 더 좋은 학습 방법은 없습니다.</p>
+</section><section id="배우지-않을-내용" class="level2"><h2 class="anchored" data-anchor-id="배우지-않을-내용">배우지 않을 내용</h2>
+<p>이 책에서 다루지 않는 몇 가지 중요한 주제가 있습니다. 우리는 가능한 한 빨리 시작하고 실행할 수 있도록 필수적인 것에 무자비하게 집중하는 것이 중요하다고 믿습니다. 즉, 이 책은 모든 중요한 주제를 다룰 수는 없습니다.</p>
+<section id="모델링" class="level3"><h3 class="anchored" data-anchor-id="모델링">모델링</h3>
+<p>모델링은 데이터 과학에서 매우 중요하지만 큰 주제이며, 안타깝게도 여기서는 그에 걸맞은 분량을 할애할 공간이 없습니다. 모델링에 대해 더 배우고 싶다면 동료 Max Kuhn과 Julia Silge가 쓴 <a href="https://www.tmwr.org">Tidy Modeling with R</a>을 강력히 추천합니다. 이 책은 tidymodels 패키지 제품군을 가르쳐 주는데, 이름에서 짐작할 수 있듯이 이 책에서 사용하는 tidyverse 패키지들과 많은 관례를 공유합니다.</p>
+</section><section id="빅-데이터" class="level3"><h3 class="anchored" data-anchor-id="빅-데이터">빅 데이터</h3>
+<p>이 책은 자랑스럽게 그리고 주로 작은 인메모리(in-memory) 데이터셋에 초점을 맞춥니다. 작은 데이터를 다뤄본 경험이 없으면 빅 데이터를 다룰 수 없기 때문에 이것이 올바른 시작점입니다. 이 책의 대부분에서 배우는 도구들은 수백 메가바이트의 데이터를 쉽게 처리할 수 있으며, 조금만 주의를 기울이면 일반적으로 몇 기가바이트의 데이터도 작업할 수 있습니다. 또한 빅 데이터를 저장하는 데 자주 사용되는 데이터베이스와 파켓(parquet) 파일에서 데이터를 가져오는 방법도 보여드릴 것입니다. 전체 데이터셋을 가지고 작업할 수 없을 수도 있지만, 관심 있는 질문에 답하기 위해서는 부분집합이나 샘플만 있으면 되므로 문제되지 않습니다.</p>
+<p>만약 일상적으로 더 큰 데이터(예: 10–100 GB)를 다룬다면, <a href="https://github.com/Rdatatable/data.table">data.table</a>에 대해 더 배우는 것을 추천합니다. 여기서는 가르치지 않는데, tidyverse와는 다른 인터페이스를 사용하고 다른 관례를 배워야 하기 때문입니다. 하지만 믿을 수 없을 정도로 빠르며, 큰 데이터를 다룬다면 성능상의 이점이 학습에 투자할 가치가 있습니다.</p>
+</section><section id="파이썬-줄리아-그리고-친구들" class="level3"><h3 class="anchored" data-anchor-id="파이썬-줄리아-그리고-친구들">파이썬, 줄리아, 그리고 친구들</h3>
+<p>이 책에서는 파이썬(Python), 줄리아(Julia) 또는 데이터 과학에 유용한 다른 프로그래밍 언어에 대해 배우지 않습니다. 이 도구들이 나빠서가 아닙니다. 그렇지 않습니다! 실제로 대부분의 데이터 과학 팀은 여러 언어를 섞어서 사용하며, 종종 적어도 R과 파이썬을 함께 사용합니다. 하지만 우리는 한 번에 하나의 도구를 마스터하는 것이 가장 좋다고 굳게 믿으며, R은 시작하기에 훌륭한 곳입니다.</p>
+</section></section><section id="선수-지식" class="level2"><h2 class="anchored" data-anchor-id="선수-지식">선수 지식</h2>
+<p>이 책을 최대한 활용하기 위해 여러분이 이미 알고 있다고 가정한 몇 가지가 있습니다. 일반적으로 수치적인 이해도가 있어야 하며, 기본적인 프로그래밍 경험이 있다면 도움이 됩니다. 프로그래밍을 한 번도 해본 적이 없다면, Garrett이 쓴 <a href="https://rstudio-education.github.io/hopr/">Hands on Programming with R</a>이 이 책의 훌륭한 보조 교재가 될 것입니다.</p>
+<p>이 책의 코드를 실행하려면 네 가지가 필요합니다: R, RStudio, <strong>tidyverse</strong>라고 불리는 R 패키지 모음, 그리고 몇 가지 다른 패키지들입니다. 패키지는 재현 가능한 R 코드의 기본 단위입니다. 패키지에는 재사용 가능한 함수, 사용법을 설명하는 문서, 그리고 샘플 데이터가 포함되어 있습니다.</p>
+<section id="r" class="level3"><h3 class="anchored" data-anchor-id="r">R</h3>
+<p>R을 다운로드하려면 CRAN(<strong>C</strong>omprehensive <strong>R</strong> <strong>A</strong>rchive <strong>N</strong>etwork), <a href="https://cloud.r-project.org" class="uri">https://cloud.r-project.org</a>에 접속하세요. 새로운 R의 메이저 버전은 1년에 한 번 나오며, 마이너 릴리스는 1년에 2-3회 있습니다. 정기적으로 업데이트하는 것이 좋습니다. 업그레이드는 다소 번거로울 수 있으며, 특히 모든 패키지를 다시 설치해야 하는 메이저 버전의 경우 더욱 그렇지만, 미루면 더 나빠질 뿐입니다. 이 책에서는 R 4.2.0 이상을 권장합니다.</p>
+</section><section id="rstudio" class="level3"><h3 class="anchored" data-anchor-id="rstudio">RStudio</h3>
+<p>RStudio는 R 프로그래밍을 위한 통합 개발 환경(IDE)으로, <a href="https://posit.co/download/rstudio-desktop/" class="uri">https://posit.co/download/rstudio-desktop/</a>에서 다운로드할 수 있습니다. RStudio는 일 년에 몇 번 업데이트되며, 새 버전이 나오면 자동으로 알려주므로 다시 확인할 필요가 없습니다. 최신 기능을 활용하기 위해 정기적으로 업그레이드하는 것이 좋습니다. 이 책을 위해서는 최소 RStudio 2022.02.0 버전이 필요합니다.</p>
+<p>RStudio를 시작하면(<a href="#fig-rstudio-console" class="quarto-xref">Figure&nbsp;<span>2</span></a>), 인터페이스에 두 가지 주요 영역, 즉 콘솔(console) 창과 출력(output) 창이 보일 것입니다. 지금은 콘솔 창에 R 코드를 입력하고 엔터를 눌러 실행한다는 것만 알면 됩니다. 진행하면서 더 배우게 될 것입니다.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rstudio-console" class="quarto-float quarto-figure quarto-figure-center anchored" alt="콘솔과 출력 창이 강조 표시된 RStudio IDE.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-rstudio-console-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/rstudio/console.png" class="img-fluid figure-img" alt="콘솔과 출력 창이 강조 표시된 RStudio IDE." width="520">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rstudio-console-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: RStudio IDE에는 두 가지 주요 영역이 있습니다. 왼쪽의 콘솔 창에 R 코드를 입력하고, 오른쪽의 출력 창에서 플롯을 확인하세요.
+</figcaption></figure>
+</div>
+</div>
+</div>
+</section><section id="tidyverse" class="level3"><h3 class="anchored" data-anchor-id="tidyverse">tidyverse</h3>
+<p>몇 가지 R 패키지도 설치해야 합니다. R <strong>패키지</strong>는 기본 R의 기능을 확장하는 함수, 데이터, 문서의 모음입니다. 패키지 사용은 R을 성공적으로 사용하는 데 있어 핵심입니다. 이 책에서 배우게 될 대부분의 패키지는 소위 tidyverse의 일부입니다. tidyverse의 모든 패키지는 데이터와 R 프로그래밍에 대한 공통된 철학을 공유하며 함께 작동하도록 설계되었습니다.</p>
+<p>코드 한 줄로 전체 tidyverse를 설치할 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>컴퓨터의 콘솔에 해당 코드를 입력하고 엔터를 눌러 실행하세요. R이 CRAN에서 패키지를 다운로드하여 컴퓨터에 설치합니다.</p>
+<p>패키지를 <code><a href="https://rdrr.io/r/base/library.html">library()</a></code>로 로드하기 전까지는 패키지의 함수, 객체 또는 도움말 파일을 사용할 수 없습니다. 패키지를 설치한 후에는 <code><a href="https://rdrr.io/r/base/library.html">library()</a></code> 함수를 사용하여 로드할 수 있습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'ggplot2' was built under R version 4.5.2</span></span>
+<span><span class="co">#&gt; Warning: package 'readr' was built under R version 4.5.2</span></span>
+<span><span class="co">#&gt; ── Attaching core tidyverse packages ───────────────────── tidyverse 2.0.0 ──</span></span>
+<span><span class="co">#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.6</span></span>
+<span><span class="co">#&gt; ✔ forcats   1.0.1     ✔ stringr   1.6.0</span></span>
+<span><span class="co">#&gt; ✔ ggplot2   4.0.1     ✔ tibble    3.3.0</span></span>
+<span><span class="co">#&gt; ✔ lubridate 1.9.4     ✔ tidyr     1.3.1</span></span>
+<span><span class="co">#&gt; ✔ purrr     1.2.0     </span></span>
+<span><span class="co">#&gt; ── Conflicts ─────────────────────────────────────── tidyverse_conflicts() ──</span></span>
+<span><span class="co">#&gt; ✖ dplyr::filter() masks stats::filter()</span></span>
+<span><span class="co">#&gt; ✖ dplyr::lag()    masks stats::lag()</span></span>
+<span><span class="co">#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>이것은 tidyverse가 9개의 패키지(dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble, tidyr)를 로드한다고 알려줍니다. 이들은 거의 모든 분석에서 사용하기 때문에 tidyverse의 <strong>핵심(core)</strong> 으로 간주됩니다.</p>
+<p>tidyverse의 패키지들은 꽤 자주 변경됩니다. <code><a href="https://tidyverse.tidyverse.org/reference/tidyverse_update.html">tidyverse_update()</a></code>를 실행하여 업데이트가 있는지 확인할 수 있습니다.</p>
+</section><section id="그-외-패키지들" class="level3"><h3 class="anchored" data-anchor-id="그-외-패키지들">그 외 패키지들</h3>
+<p>다른 도메인의 문제를 해결하거나 다른 기본 원칙으로 설계되었기 때문에 tidyverse에 포함되지 않은 훌륭한 패키지들이 많이 있습니다. 그렇다고 해서 더 좋거나 나쁜 것은 아니며, 단지 다를 뿐입니다. 즉, tidyverse의 보완재는 지저분한(messy) verse가 아니라 상호 연관된 패키지들의 다른 많은 우주들입니다. R로 더 많은 데이터 과학 프로젝트를 수행함에 따라 새로운 패키지와 데이터를 생각하는 새로운 방식을 배우게 될 것입니다.</p>
+<p>이 책에서는 tidyverse 외부의 많은 패키지를 사용할 것입니다. 예를 들어, R을 배우는 과정에서 작업할 흥미로운 데이터셋을 제공하기 때문에 다음 패키지들을 사용할 것입니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"arrow"</span>, <span class="st">"babynames"</span>, <span class="st">"curl"</span>, <span class="st">"duckdb"</span>, <span class="st">"gapminder"</span>, </span>
+<span>    <span class="st">"ggrepel"</span>, <span class="st">"ggridges"</span>, <span class="st">"ggthemes"</span>, <span class="st">"hexbin"</span>, <span class="st">"janitor"</span>, <span class="st">"Lahman"</span>, </span>
+<span>    <span class="st">"leaflet"</span>, <span class="st">"maps"</span>, <span class="st">"nycflights13"</span>, <span class="st">"openxlsx"</span>, <span class="st">"palmerpenguins"</span>, </span>
+<span>    <span class="st">"repurrrsive"</span>, <span class="st">"tidymodels"</span>, <span class="st">"writexl"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>또한 일회성 예제를 위해 다른 패키지들도 선택적으로 사용할 것입니다. 지금 당장 설치할 필요는 없지만, 다음과 같은 오류가 보일 때를 기억하세요:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggrepel.slowkow.com/">ggrepel</a></span><span class="op">)</span></span>
+<span><span class="co">#&amp;gt; Error in library(ggrepel) : there is no package called ‘ggrepel’</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>패키지를 설치하려면 <code>install.packages("ggrepel")</code>을 실행해야 합니다.</p>
+</section></section><section id="r-코드-실행하기" class="level2"><h2 class="anchored" data-anchor-id="r-코드-실행하기">R 코드 실행하기</h2>
+<p>이전 섹션에서는 R 코드를 실행하는 몇 가지 예제를 보여주었습니다. 책에 있는 코드는 다음과 같습니다:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fl">1</span> <span class="op">+</span> <span class="fl">2</span></span>
+<span><span class="co">#&gt; [1] 3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>동일한 코드를 로컬 콘솔에서 실행하면 다음과 같이 보일 것입니다:</p>
+<pre><code>&gt; 1 + 2
+[1] 3</code></pre>
+<p>두 가지 주요 차이점이 있습니다. 콘솔에서는 <strong>프롬프트(prompt)</strong> 라고 불리는 <code>&gt;</code> 뒤에 입력하지만, 책에서는 프롬프트를 보여주지 않습니다. 책에서는 출력이 <code>#&amp;gt;</code>로 주석 처리되어 있지만, 콘솔에서는 코드 바로 뒤에 나타납니다. 이 두 가지 차이점 덕분에 전자책으로 작업하는 경우 책에서 코드를 쉽게 복사하여 콘솔에 붙여넣을 수 있습니다.</p>
+<p>책 전반에 걸쳐 코드를 지칭할 때 일관된 규칙을 사용합니다:</p>
+<ul>
+<li><p>함수는 <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code> 또는 <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code>과 같이 코드 글꼴로 표시되고 뒤에 괄호가 붙습니다.</p></li>
+<li><p>데이터나 함수 인자와 같은 다른 R 객체는 <code>flights</code>나 <code>x</code>와 같이 괄호 없이 코드 글꼴로 표시됩니다.</p></li>
+<li><p>때때로 객체가 어떤 패키지에서 왔는지 명확히 하기 위해 <code><a href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr::mutate()</a></code> 또는 <code><a href="https://rdrr.io/pkg/nycflights13/man/flights.html">nycflights13::flights</a></code>와 같이 패키지 이름 뒤에 콜론 두 개를 사용합니다. 이 또한 유효한 R 코드입니다.</p></li>
+</ul></section><section id="감사의-말" class="level2"><h2 class="anchored" data-anchor-id="감사의-말">감사의 말</h2>
+<p>이 책은 Hadley, Mine, Garrett만의 결과물이 아니라 R 커뮤니티의 많은 사람들과 (대면 및 온라인으로) 나눈 수많은 대화의 결과입니다. 여러분 모두와 나눈 모든 대화에 진심으로 감사드립니다. 정말 고맙습니다!</p>
+<p>이 책은 공개적으로 작성되었으며, 많은 분들이 풀 리퀘스트(pull request)를 통해 기여해 주셨습니다. GitHub 풀 리퀘스트를 통해 개선에 기여해 주신 259명의 모든 분들께 특별한 감사를 전합니다(사용자명 알파벳 순): @a-rosenberg, Tim Becker (@a2800276), Abinash Satapathy (@Abinashbunty), Adam Gruer (@adam-gruer), adi pradhan (@adidoit), A. s. (@Adrianzo), Aep Hidyatuloh (@aephidayatuloh), Andrea Gilardi (@agila5), Ajay Deonarine (@ajay-d), @AlanFeder, Daihe Sui (@alansuidaihe), @alberto-agudo, @AlbertRapp, @aleloi, pete (@alonzi), Alex (@ALShum), Andrew M. (@amacfarland), Andrew Landgraf (@andland), @andyhuynh92, Angela Li (@angela-li), Antti Rask (@AnttiRask), LOU Xun (@aquarhead), @ariespirgel, @august-18, Michael Henry (@aviast), Azza Ahmed (@azzaea), Steven Moran (@bambooforest), Brian G. Barkley (@BarkleyBG), Mara Averick (@batpigandme), Oluwafemi OYEDELE (@BB1464), Brent Brewington (@bbrewington), Bill Behrman (@behrman), Ben Herbertson (@benherbertson), Ben Marwick (@benmarwick), Ben Steinberg (@bensteinberg), Benjamin Yeh (@bentyeh), Betul Turkoglu (@betulturkoglu), Brandon Greenwell (@bgreenwell), Bianca Peterson (@BinxiePeterson), Birger Niklas (@BirgerNi), Brett Klamer (@bklamer), @boardtc, Christian (@c-hoh), Caddy (@caddycarine), Camille V Leonard (@camillevleonard), @canovasjm, Cedric Batailler (@cedricbatailler), Christina Wei (@christina-wei), Christian Mongeau (@chrMongeau), Cooper Morris (@coopermor), Colin Gillespie (@csgillespie), Rademeyer Vermaak (@csrvermaak), Chloe Thierstein (@cthierst), Chris Saunders (@ctsa), Abhinav Singh (@curious-abhinav), Curtis Alexander (@curtisalexander), Christian G. Warden (@cwarden), Charlotte Wickham (@cwickham), Kenny Darrell (@darrkj), David Kane (@davidkane9), David (@davidrsch), David Rubinger (@davidrubinger), David Clark (@DDClark), Derwin McGeary (@derwinmcgeary), Daniel Gromer (@dgromer), @Divider85, @djbirke, Danielle Navarro (@djnavarro), Russell Shean (@DOH-RPS1303), Zhuoer Dong (@dongzhuoer), Devin Pastoor (@dpastoor), @DSGeoff, Devarshi Thakkar (@dthakkar09), Julian During (@duju211), Dylan Cashman (@dylancashman), Dirk Eddelbuettel (@eddelbuettel), Edwin Thoen (@EdwinTh), Ahmed El-Gabbas (@elgabbas), Henry Webel (@enryH), Ercan Karadas (@ercan7), Eric Kitaif (@EricKit), Eric Watt (@ericwatt), Erik Erhardt (@erikerhardt), Etienne B. Racine (@etiennebr), Everett Robinson (@evjrob), @fellennert, Flemming Miguel (@flemmingmiguel), Floris Vanderhaeghe (@florisvdh), @funkybluehen, @gabrivera, Garrick Aden-Buie (@gadenbuie), Peter Ganong (@ganong123), Gerome Meyer (@GeroVanMi), Gleb Ebert (@gl-eb), Josh Goldberg (@GoldbergData), bahadir cankardes (@gridgrad), Gustav W Delius (@gustavdelius), Hao Chen (@hao-trivago), Harris McGehee (@harrismcgehee), @hendrikweisser, Hengni Cai (@hengnicai), Iain (@Iain-S), Ian Sealy (@iansealy), Ian Lyttle (@ijlyttle), Ivan Krukov (@ivan-krukov), Jacob Kaplan (@jacobkap), Jazz Weisman (@jazzlw), John Blischak (@jdblischak), John D. Storey (@jdstorey), Gregory Jefferis (@jefferis), Jeffrey Stevens (@JeffreyRStevens), 蒋雨蒙 (@JeldorPKU), Jennifer (Jenny) Bryan (@jennybc), Jen Ren (@jenren), Jeroen Janssens (@jeroenjanssens), @jeromecholewa, Janet Wesner (@jilmun), Jim Hester (@jimhester), JJ Chen (@jjchern), Jacek Kolacz (@jkolacz), Joanne Jang (@joannejang), @johannes4998, John Sears (@johnsears), @jonathanflint, Jon Calder (@jonmcalder), Jonathan Page (@jonpage), Jon Harmon (@jonthegeek), JooYoung Seo (@jooyoungseo), Justinas Petuchovas (@jpetuchovas), Jordan (@jrdnbradford), Jeffrey Arnold (@jrnold), Jose Roberto Ayala Solares (@jroberayalas), Joyce Robbins (@jtr13), @juandering, Julia Stewart Lowndes (@jules32), Sonja (@kaetschap), Kara Woo (@karawoo), Katrin Leinweber (@katrinleinweber), Karandeep Singh (@kdpsingh), Kevin Perese (@kevinxperese), Kevin Ferris (@kferris10), Kirill Sevastyanenko (@kirillseva), Jonathan Kitt (@KittJonathan), @koalabearski, Kirill Müller (@krlmlr), Rafał Kucharski (@kucharsky), Kevin Wright (@kwstat), Noah Landesberg (@landesbergn), Lawrence Wu (@lawwu), @lindbrook, Luke W Johnston (@lwjohnst86), Kara de la Marck (@MarckK), Kunal Marwaha (@marwahaha), Matan Hakim (@matanhakim), Matthias Liew (@MatthiasLiew), Matt Wittbrodt (@MattWittbrodt), Mauro Lepore (@maurolepore), Mark Beveridge (@mbeveridge), @mcewenkhundi, mcsnowface, PhD (@mcsnowface), Matt Herman (@mfherman), Michael Boerman (@michaelboerman), Mitsuo Shiota (@mitsuoxv), Matthew Hendrickson (@mjhendrickson), @MJMarshall, Misty Knight-Finley (@mkfin7), Mohammed Hamdy (@mmhamdy), Maxim Nazarov (@mnazarov), Maria Paula Caldas (@mpaulacaldas), Mustafa Ascha (@mustafaascha), Nelson Areal (@nareal), Nate Olson (@nate-d-olson), Nathanael (@nateaff), @nattalides, Ned Western (@NedJWestern), Nick Clark (@nickclark1000), @nickelas, Nirmal Patel (@nirmalpatel), Nischal Shrestha (@nischalshrestha), Nicholas Tierney (@njtierney), Jakub Nowosad (@Nowosad), Nick Pullen (@nstjhp), @olivier6088, Olivier Cailloux (@oliviercailloux), Robin Penfold (@p0bs), Pablo E. Garcia (@pabloedug), Paul Adamson (@padamson), Penelope Y (@penelopeysm), Peter Hurford (@peterhurford), Peter Baumgartner (@petzi53), Patrick Kennedy (@pkq), Pooya Taherkhani (@pooyataher), Y. Yu (@PursuitOfDataScience), Radu Grosu (@radugrosu), Ranae Dietzel (@Ranae), Ralph Straumann (@rastrau), Rayna M Harris (@raynamharris), @ReeceGoding, Robin Gertenbach (@rgertenbach), Jajo (@RIngyao), Riva Quiroga (@rivaquiroga), Richard Knight (@RJHKnight), Richard Zijdeman (@rlzijdeman), @robertchu03, Robin Kohrs (@RobinKohrs), Robin (@Robinlovelace), Emily Robinson (@robinsones), Rob Tenorio (@robtenorio), Rod Mazloomi (@RodAli), Rohan Alexander (@RohanAlexander), Romero Morais (@RomeroBarata), Albert Y. Kim (@rudeboybert), Saghir (@saghirb), Hojjat Salmasian (@salmasian), Jonas (@sauercrowd), Vebash Naidoo (@sciencificity), Seamus McKinsey (@seamus-mckinsey), @seanpwilliams, Luke Smith (@seasmith), Matthew Sedaghatfar (@sedaghatfar), Sebastian Kraus (@sekR4), Sam Firke (@sfirke), Shannon Ellis (@ShanEllis), @shoili, Christian Heinrich (@Shurakai), S’busiso Mkhondwane (@sibusiso16), SM Raiyyan (@sm-raiyyan), Jakob Krigovsky (@sonicdoe), Stephan Koenig (@stephan-koenig), Stephen Balogun (@stephenbalogun), Steven M. Mortimer (@StevenMMortimer), Stéphane Guillou (@stragu), Sulgi Kim (@sulgik), Sergiusz Bleja (@svenski), Tal Galili (@talgalili), Alec Fisher (@Taurenamo), Todd Gerarden (@tgerarden), Tom Godfrey (@thomasggodfrey), Tim Broderick (@timbroderick), Tim Waterhouse (@timwaterhouse), TJ Mahr (@tjmahr), Thomas Klebel (@tklebel), Tom Prior (@tomjamesprior), Terence Teo (@tteo), @twgardner2, Ulrik Lyngs (@ulyngs), Shinya Uryu (@uribo), Martin Van der Linden (@vanderlindenma), Walter Somerville (@waltersom), @werkstattcodes, Will Beasley (@wibeasley), Yihui Xie (@yihui), Yiming (Paul) Li (@yimingli), @yingxingwu, Hiroaki Yutani (@yutannihilation), Yu Yu Aung (@yuyu-aung), Zach Bogart (@zachbogart), @zeal626, Zeki Akyol (@zekiakyol).</p>
+</section><section id="판권" class="level2"><h2 class="anchored" data-anchor-id="판권">판권</h2>
+<p>이 책의 온라인 버전은 <a href="https://r4ds.hadley.nz" class="uri">https://r4ds.hadley.nz</a>에서 이용할 수 있습니다. 실물 책이 재인쇄되는 사이에도 계속 발전할 것입니다. 책의 소스는 <a href="https://github.com/hadley/r4ds" class="uri">https://github.com/hadley/r4ds</a>에서 확인할 수 있습니다. 이 책은 텍스트와 실행 가능한 코드를 결합한 책을 쉽게 쓸 수 있게 해주는 <a href="https://quarto.org">Quarto</a>로 제작되었습니다.</p>
+
+
+</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+<ol>
+<li id="fn1"><p>RStudio의 모든 기능에 대한 포괄적인 개요를 보려면 <a href="https://docs.posit.co/ide/user" class="uri">https://docs.posit.co/ide/user</a>의 RStudio 사용자 가이드를 참조하세요.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/r4ds\.hadley\.nz\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./preface-2e.html" class="pagination-link" aria-label="제2판 서문">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">제2판 서문</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./whole-game.html" class="pagination-link" aria-label="전체 게임">
+        <span class="nav-page-text">전체 게임</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>R for Data Science (2e) was written by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hadley/r4ds/edit/main/intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hadley/r4ds/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>
