@@ -1,30 +1,30 @@
-# A field guide to base R {#sec-base-r}
+# 기본 R 필드 가이드 {#sec-base-r}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## 소개
 
-To finish off the programming section, we're going to give you a quick tour of the most important base R functions that we don't otherwise discuss in the book.
-These tools are particularly useful as you do more programming and will help you read code you'll encounter in the wild.
+프로그래밍 섹션을 마무리하기 위해, 이 책에서 다루지 않은 가장 중요한 기본(base) R 함수들을 간단히 살펴보겠습니다.
+이 도구들은 프로그래밍을 더 많이 할 때 특히 유용하며, 야생에서 만날 코드를 읽는 데 도움이 될 것입니다.
 
-This is a good place to remind you that the tidyverse is not the only way to solve data science problems.
-We teach the tidyverse in this book because tidyverse packages share a common design philosophy, increasing the consistency across functions, and making each new function or package a little easier to learn and use.
-It's not possible to use the tidyverse without using base R, so we've actually already taught you a **lot** of base R functions: from `library()` to load packages, to `sum()` and `mean()` for numeric summaries, to the factor, date, and POSIXct data types, and of course all the basic operators like `+`, `-`, `/`, `*`, `|`, `&`, and `!`.
-What we haven't focused on so far is base R workflows, so we will highlight a few of those in this chapter.
+이 시점에서 tidyverse만이 데이터 과학 문제를 해결하는 유일한 방법이 아니라는 점을 상기시키는 것이 좋겠습니다.
+이 책에서 tidyverse를 가르치는 이유는 tidyverse 패키지들이 공통된 디자인 철학을 공유하여 함수 간의 일관성을 높이고 새로운 함수나 패키지를 배우고 사용하기 조금 더 쉽게 만들기 때문입니다.
+기본 R을 사용하지 않고는 tidyverse를 사용할 수 없으므로, 패키지를 로드하기 위한 `library()`, 수치 요약을 위한 `sum()`과 `mean()`, 팩터, 날짜, POSIXct 데이터 유형, 그리고 물론 `+`, `-`, `/`, `*`, `|`, `&`, `!`와 같은 모든 기본 연산자에 이르기까지 이미 **많은** 기본 R 함수를 가르쳐 드렸습니다. 
+지금까지 우리가 집중하지 않았던 것은 기본 R 워크플로우이므로, 이 장에서는 그 중 몇 가지를 강조할 것입니다.
 
-After you read this book, you'll learn other approaches to the same problems using base R, data.table, and other packages.
-You'll undoubtedly encounter these other approaches when you start reading R code written by others, particularly if you're using StackOverflow.
-It's 100% okay to write code that uses a mix of approaches, and don't let anyone tell you otherwise!
+이 책을 읽고 나면 기본 R, data.table 및 기타 패키지를 사용하여 동일한 문제에 대한 다른 접근 방식을 배우게 될 것입니다.
+특히 StackOverflow를 사용하는 경우 다른 사람이 작성한 R 코드를 읽기 시작할 때 의심할 여지 없이 이러한 다른 접근 방식을 접하게 될 것입니다.
+다양한 접근 방식을 혼합하여 코드를 작성하는 것은 100% 괜찮습니다. 다른 사람의 말에 휘둘리지 마세요!
 
-In this chapter, we'll focus on four big topics: subsetting with `[`, subsetting with `[[` and `$`, the apply family of functions, and `for` loops.
-To finish off, we'll briefly discuss two essential plotting functions.
+이 장에서는 `[`를 사용한 부분집합, `[[`와 `$`를 사용한 부분집합, apply 계열 함수, `for` 루프라는 네 가지 큰 주제에 중점을 둘 것입니다.
+마지막으로 두 가지 필수 플롯 함수에 대해 간단히 설명하겠습니다.
 
-### Prerequisites
+### 선수 지식
 
-This package focuses on base R so doesn't have any real prerequisites, but we'll load the tidyverse in order to explain some of the differences.
+이 장은 기본 R에 중점을 두므로 실제 전제 조건은 없지만, 차이점 중 일부를 설명하기 위해 tidyverse를 로드할 것입니다.
 
 ```{r}
 #| label: setup
@@ -32,75 +32,75 @@ This package focuses on base R so doesn't have any real prerequisites, but we'll
 library(tidyverse)
 ```
 
-## Selecting multiple elements with `[` {#sec-subset-many}
+## `[`로 여러 요소 선택하기 {#sec-subset-many}
 
-`[` is used to extract sub-components from vectors and data frames, and is called like `x[i]` or `x[i, j]`.
-In this section, we'll introduce you to the power of `[`, first showing you how you can use it with vectors, then how the same principles extend in a straightforward way to two-dimensional (2d) structures like data frames.
-We'll then help you cement that knowledge by showing how various dplyr verbs are special cases of `[`.
+`[`는 벡터와 데이터 프레임에서 하위 구성 요소를 추출하는 데 사용되며 `x[i]` 또는 `x[i, j]`와 같이 호출됩니다.
+이 섹션에서는 `[`의 힘을 소개합니다. 먼저 벡터와 함께 사용하는 방법을 보여준 다음, 데이터 프레임과 같은 2차원(2d) 구조로 동일한 원리가 어떻게 간단하게 확장되는지 보여줍니다.
+그런 다음 다양한 dplyr 동사가 `[`의 특수한 경우임을 보여줌으로써 지식을 굳히는 데 도움을 줄 것입니다.
 
-### Subsetting vectors
+### 벡터 부분집합하기
 
-There are five main types of things that you can subset a vector with, i.e., that can be the `i` in `x[i]`:
+벡터를 부분집합할 수 있는, 즉 `x[i]`에서 `i`가 될 수 있는 주요 유형은 다섯 가지입니다:
 
-1.  **A vector of positive integers**.
-    Subsetting with positive integers keeps the elements at those positions:
+1.  **양의 정수 벡터**.
+    양의 정수로 부분집합하면 해당 위치의 요소가 유지됩니다:
 
     ```{r}
     x <- c("one", "two", "three", "four", "five")
     x[c(3, 2, 5)]
     ```
 
-    By repeating a position, you can actually make a longer output than input, making the term "subsetting" a bit of a misnomer.
+    위치를 반복함으로써 실제로 입력보다 더 긴 출력을 만들 수 있으므로 "부분집합"이라는 용어는 다소 부적절할 수 있습니다.
 
     ```{r}
     x[c(1, 1, 5, 5, 5, 2)]
     ```
 
-2.  **A vector of negative integers**.
-    Negative values drop the elements at the specified positions:
+2.  **음의 정수 벡터**.
+    음수 값은 지정된 위치의 요소를 삭제합니다:
 
     ```{r}
     x[c(-1, -3, -5)]
     ```
 
-3.  **A logical vector**.
-    Subsetting with a logical vector keeps all values corresponding to a `TRUE` value.
-    This is most often useful in conjunction with the comparison functions.
+3.  **논리형 벡터**.
+    논리형 벡터로 부분집합하면 `TRUE` 값에 해당하는 모든 값이 유지됩니다.
+    이것은 비교 함수와 함께 사용할 때 가장 유용합니다.
 
     ```{r}
     x <- c(10, 3, NA, 5, 8, 1, NA)
 
-    # All non-missing values of x
+    # x의 모든 결측되지 않은 값
     x[!is.na(x)]
 
-    # All even (or missing!) values of x
+    # x의 모든 짝수(또는 결측!) 값
     x[x %% 2 == 0]
     ```
 
-    Unlike `filter()`, `NA` indices will be included in the output as `NA`s.
+    `filter()`와 달리 `NA` 인덱스는 출력에 `NA`로 포함됩니다.
 
-4.  **A character vector**.
-    If you have a named vector, you can subset it with a character vector:
+4.  **문자형 벡터**.
+    명명된 벡터가 있는 경우 문자형 벡터로 부분집합할 수 있습니다:
 
     ```{r}
     x <- c(abc = 1, def = 2, xyz = 5)
     x[c("xyz", "def")]
     ```
 
-    As with subsetting with positive integers, you can use a character vector to duplicate individual entries.
+    양의 정수로 부분집합하는 것과 마찬가지로 문자형 벡터를 사용하여 개별 항목을 복제할 수 있습니다.
 
-5.  **Nothing**.
-    The final type of subsetting is nothing, `x[]`, which returns the complete `x`.
-    This is not useful for subsetting vectors, but as we'll see shortly, it is useful when subsetting 2d structures like tibbles.
+5.  **없음**.
+    마지막 유형의 부분집합은 아무것도 없는 `x[]`이며, 이는 완전한 `x`를 반환합니다.
+    이것은 벡터를 부분집합하는 데는 유용하지 않지만, 곧 보게 되겠지만 티블과 같은 2차원 구조를 부분집합할 때 유용합니다.
 
-### Subsetting data frames
+### 데이터 프레임 부분집합하기
 
-There are quite a few different ways[^base-r-1] that you can use `[` with a data frame, but the most important way is to select rows and columns independently with `df[rows, cols]`. Here `rows` and `cols` are vectors as described above.
-For example, `df[rows, ]` and `df[, cols]` select just rows or just columns, using the empty subset to preserve the other dimension.
+데이터 프레임과 함께 `[`를 사용할 수 있는 꽤 다양한 방법[^base-r-1]이 있지만, 가장 중요한 방법은 `df[rows, cols]`로 행과 열을 독립적으로 선택하는 것입니다. 여기서 `rows`와 `cols`는 위에서 설명한 벡터입니다.
+예를 들어 `df[rows, ]`와 `df[, cols]`는 행만 선택하거나 열만 선택하며, 빈 부분집합을 사용하여 다른 차원을 보존합니다.
 
-[^base-r-1]: Read <https://adv-r.hadley.nz/subsetting.html#subset-multiple> to see how you can also subset a data frame like it is a 1d object and how you can subset it with a matrix.
+[^base-r-1]: <https://adv-r.hadley.nz/subsetting.html#subset-multiple>을 읽어보고 데이터 프레임을 1차원 객체처럼 부분집합하는 방법과 행렬로 부분집합하는 방법을 확인하세요.
 
-Here are a couple of examples:
+다음은 몇 가지 예입니다:
 
 ```{r}
 df <- tibble(
@@ -109,24 +109,24 @@ df <- tibble(
   z = runif(3)
 )
 
-# Select first row and second column
+# 첫 번째 행과 두 번째 열 선택
 df[1, 2]
 
-# Select all rows and columns x and y
+# 모든 행과 x, y 열 선택
 df[, c("x" , "y")]
 
-# Select rows where `x` is greater than 1 and all columns
+# `x`가 1보다 큰 행과 모든 열 선택
 df[df$x > 1, ]
 ```
 
-We'll come back to `$` shortly, but you should be able to guess what `df$x` does from the context: it extracts the `x` variable from `df`.
-We need to use it here because `[` doesn't use tidy evaluation, so you need to be explicit about the source of the `x` variable.
+곧 `$`로 돌아오겠지만 문맥상 `df$x`가 무엇을 하는지 짐작할 수 있을 것입니다: `df`에서 `x` 변수를 추출합니다.
+여기서 `[`는 tidy evaluation을 사용하지 않으므로 `x` 변수의 출처를 명시해야 하기 때문에 이것을 사용해야 합니다.
 
-There's an important difference between tibbles and data frames when it comes to `[`.
-In this book, we've mainly used tibbles, which *are* data frames, but they tweak some behaviors to make your life a little easier.
-In most places, you can use "tibble" and "data frame" interchangeably, so when we want to draw particular attention to R's built-in data frame, we'll write `data.frame`.
-If `df` is a `data.frame`, then `df[, cols]` will return a vector if `col` selects a single column and a data frame if it selects more than one column.
-If `df` is a tibble, then `[` will always return a tibble.
+`[`와 관련하여 티블과 데이터 프레임 사이에는 중요한 차이점이 있습니다.
+이 책에서 우리는 주로 티블을 사용했는데, 티블은 데이터 프레임이지만 삶을 조금 더 쉽게 만들기 위해 일부 동작을 조정합니다.
+대부분의 경우 "티블"과 "데이터 프레임"을 상호 교환적으로 사용할 수 있으므로 R의 내장 데이터 프레임에 특히 주의를 기울이고 싶을 때 `data.frame`이라고 쓸 것입니다.
+`df`가 `data.frame`인 경우 `df[, cols]`는 `col`이 단일 열을 선택하면 벡터를 반환하고 둘 이상의 열을 선택하면 데이터 프레임을 반환합니다.
+`df`가 티블이면 `[`는 항상 티블을 반환합니다.
 
 ```{r}
 df1 <- data.frame(x = 1:3)
@@ -136,58 +136,58 @@ df2 <- tibble(x = 1:3)
 df2[, "x"]
 ```
 
-One way to avoid this ambiguity with `data.frame`s is to explicitly specify `drop = FALSE`:
+`data.frame`의 이러한 모호성을 피하는 한 가지 방법은 `drop = FALSE`를 명시적으로 지정하는 것입니다:
 
 ```{r}
 df1[, "x" , drop = FALSE]
 ```
 
-### dplyr equivalents
+### dplyr 등가물
 
-Several dplyr verbs are special cases of `[`:
+여러 dplyr 동사는 `[`의 특수한 경우입니다:
 
--   `filter()` is equivalent to subsetting the rows with a logical vector, taking care to exclude missing values:
+-   `filter()`는 결측값을 제외하도록 주의하면서 논리형 벡터로 행을 부분집합하는 것과 같습니다:
 
     ```{r}
     #| results: false
     df <- tibble(
       x = c(2, 3, 1, 1, NA), 
-      y = letters[1:5], 
+      y = letters[1:5],
       z = runif(5)
     )
     df |> filter(x > 1)
 
-    # same as
+    # 다음은 동일함
     df[!is.na(df$x) & df$x > 1, ]
     ```
 
-    Another common technique in the wild is to use `which()` for its side-effect of dropping missing values: `df[which(df$x > 1), ]`.
+    야생에서 흔히 볼 수 있는 또 다른 기술은 결측값을 삭제하는 부작용을 위해 `which()`를 사용하는 것입니다: `df[which(df$x > 1), ]`.
 
--   `arrange()` is equivalent to subsetting the rows with an integer vector, usually created with `order()`:
+-   `arrange()`는 정수 벡터로 행을 부분집합하는 것과 같으며, 보통 `order()`로 생성됩니다:
 
     ```{r}
     #| results: false
     df |> arrange(x, y)
 
-    # same as
+    # 다음은 동일함
     df[order(df$x, df$y), ]
     ```
 
-    You can use `order(decreasing = TRUE)` to sort all columns in descending order or `-rank(col)` to sort columns in decreasing order individually.
+    `order(decreasing = TRUE)`를 사용하여 모든 열을 내림차순으로 정렬하거나 `-rank(col)`을 사용하여 개별적으로 열을 내림차순으로 정렬할 수 있습니다.
 
--   Both `select()` and `relocate()` are similar to subsetting the columns with a character vector:
+-   `select()`와 `relocate()`는 모두 문자형 벡터로 열을 부분집합하는 것과 비슷합니다:
 
     ```{r}
     #| results: false
     df |> select(x, z)
 
-    # same as
+    # 다음은 동일함
     df[, c("x", "z")]
     ```
 
-Base R also provides a function that combines the features of `filter()` and `select()`[^base-r-2] called `subset()`:
+기본 R은 `subset()`이라는 `filter()`와 `select()`[^base-r-2]의 기능을 결합한 함수도 제공합니다:
 
-[^base-r-2]: But it doesn't handle grouped data frames differently and it doesn't support selection helper functions like `starts_with()`.
+[^base-r-2]: 하지만 그룹화된 데이터 프레임을 다르게 처리하지 않으며 `starts_with()`와 같은 선택 도우미 함수를 지원하지 않습니다.
 
 ```{r}
 df |> 
@@ -197,32 +197,32 @@ df |>
 
 ```{r}
 #| results: false
-# same as
+# 다음은 동일함
 df |> subset(x > 1, c(y, z))
 ```
 
-This function was the inspiration for much of dplyr's syntax.
+이 함수는 dplyr 구문의 많은 부분에 영감을 주었습니다.
 
-### Exercises
+### 연습문제
 
-1.  Create functions that take a vector as input and return:
+1.  벡터를 입력으로 받아 다음을 반환하는 함수를 만드세요:
 
-    a.  The elements at even-numbered positions.
-    b.  Every element except the last value.
-    c.  Only even values (and no missing values).
+    a.  짝수 위치에 있는 요소.
+    b.  마지막 값을 제외한 모든 요소.
+    c.  짝수 값만(결측값 없음).
 
-2.  Why is `x[-which(x > 0)]` not the same as `x[x <= 0]`?
-    Read the documentation for `which()` and do some experiments to figure it out.
+2.  `x[-which(x > 0)]`이 `x[x <= 0]`과 같지 않은 이유는 무엇입니까?
+    `which()`에 대한 문서를 읽고 실험을 통해 알아내세요.
 
-## Selecting a single element with `$` and `[[` {#sec-subset-one}
+## `$`와 `[[`로 단일 요소 선택하기 {#sec-subset-one}
 
-`[`, which selects many elements, is paired with `[[` and `$`, which extract a single element.
-In this section, we'll show you how to use `[[` and `$` to pull columns out of data frames, discuss a couple more differences between `data.frames` and tibbles, and emphasize some important differences between `[` and `[[` when used with lists.
+많은 요소를 선택하는 `[`는 단일 요소를 추출하는 `[[` 및 `$`와 짝을 이룹니다.
+이 섹션에서는 `[[`와 `$`를 사용하여 데이터 프레임에서 열을 뽑아내는 방법을 보여주고, `data.frame`과 티블 간의 몇 가지 차이점에 대해 논의하며, 리스트와 함께 사용할 때 `[`와 `[[`의 중요한 차이점을 강조합니다.
 
-### Data frames
+### 데이터 프레임
 
-`[[` and `$` can be used to extract columns out of a data frame.
-`[[` can access by position or by name, and `$` is specialized for access by name:
+`[[`와 `$`는 데이터 프레임에서 열을 추출하는 데 사용할 수 있습니다.
+`[[`는 위치나 이름으로 액세스할 수 있으며 `$`는 이름에 의한 액세스에 특화되어 있습니다:
 
 ```{r}
 tb <- tibble(
@@ -230,26 +230,26 @@ tb <- tibble(
   y = c(10, 4, 1, 21)
 )
 
-# by position
+# 위치로
 tb[[1]]
 
-# by name
+# 이름으로
 tb[["x"]]
 tb$x
 ```
 
-They can also be used to create new columns, the base R equivalent of `mutate()`:
+또한 기본 R에서 `mutate()`에 해당하는 새로운 열을 만드는 데에도 사용할 수 있습니다:
 
 ```{r}
 tb$z <- tb$x + tb$y
 tb
 ```
 
-There are several other base R approaches to creating new columns including with `transform()`, `with()`, and `within()`.
-Hadley collected a few examples at <https://gist.github.com/hadley/1986a273e384fb2d4d752c18ed71bedf>.
+`transform()`, `with()`, `within()`을 포함하여 새 열을 만드는 다른 여러 기본 R 접근 방식이 있습니다.
+Hadley는 <https://gist.github.com/hadley/1986a273e384fb2d4d752c18ed71bedf>에 몇 가지 예제를 모았습니다.
 
-Using `$` directly is convenient when performing quick summaries.
-For example, if you just want to find the size of the biggest diamond or the possible values of `cut`, there's no need to use `summarize()`:
+빠른 요약을 수행할 때 `$`를 직접 사용하는 것이 편리합니다.
+예를 들어 가장 큰 다이아몬드의 크기나 `cut`의 가능한 값을 찾고 싶다면 `summarize()`를 사용할 필요가 없습니다:
 
 ```{r}
 max(diamonds$carat)
@@ -257,9 +257,9 @@ max(diamonds$carat)
 levels(diamonds$cut)
 ```
 
-dplyr also provides an equivalent to `[[`/`$` that we didn't mention in @sec-data-transform: `pull()`.
-`pull()` takes either a variable name or variable position and returns just that column.
-That means we could rewrite the above code to use the pipe:
+dplyr는 @sec-data-transform 에서 언급하지 않은 `[[`/`$`에 해당하는 `pull()`을 제공합니다.
+`pull()`은 변수 이름이나 변수 위치를 취하고 해당 열만 반환합니다.
+즉, 위의 코드를 파이프를 사용하도록 다시 쓸 수 있습니다:
 
 ```{r}
 diamonds |> pull(carat) |> max()
@@ -267,10 +267,10 @@ diamonds |> pull(carat) |> max()
 diamonds |> pull(cut) |> levels()
 ```
 
-### Tibbles
+### 티블
 
-There are a couple of important differences between tibbles and base `data.frame`s when it comes to `$`.
-Data frames match the prefix of any variable names (so-called **partial matching**) and don't complain if a column doesn't exist:
+`$`와 관련하여 티블과 기본 `data.frame` 사이에는 몇 가지 중요한 차이점이 있습니다.
+데이터 프레임은 변수 이름의 접두사를 일치시키고(**부분 일치**라고 함) 열이 존재하지 않아도 불평하지 않습니다:
 
 ```{r}
 df <- data.frame(x1 = 1)
@@ -278,7 +278,7 @@ df$x
 df$z
 ```
 
-Tibbles are more strict: they only ever match variable names exactly and they will generate a warning if the column you are trying to access doesn't exist:
+티블은 더 엄격합니다: 변수 이름을 정확히 일치시키며 액세스하려는 열이 존재하면 경고를 생성합니다:
 
 ```{r}
 tb <- tibble(x1 = 1)
@@ -287,24 +287,24 @@ tb$x
 tb$z
 ```
 
-For this reason we sometimes joke that tibbles are lazy and surly: they do less and complain more.
+이런 이유로 우리는 때때로 티블이 게으르고 무뚝뚝하다고 농담합니다: 덜 일하고 더 많이 불평합니다.
 
-### Lists
+### 리스트
 
-`[[` and `$` are also really important for working with lists, and it's important to understand how they differ from `[`.
-Let's illustrate the differences with a list named `l`:
+`[[`와 `$`는 리스트 작업에도 정말 중요하며 `[`와 어떻게 다른지 이해하는 것이 중요합니다.
+`l`이라는 이름의 리스트로 차이점을 설명해 보겠습니다:
 
 ```{r}
 l <- list(
   a = 1:3, 
   b = "a string", 
-  c = pi, 
+  c = pi,
   d = list(-1, -5)
 )
 ```
 
--   `[` extracts a sub-list.
-    It doesn't matter how many elements you extract, the result will always be a list.
+-   `[`는 하위 리스트를 추출합니다.
+    추출하는 요소의 수에 관계없이 결과는 항상 리스트입니다.
 
     ```{r}
     str(l[1:2])
@@ -314,10 +314,10 @@ l <- list(
     str(l[4])
     ```
 
-    Like with vectors, you can subset with a logical, integer, or character vector.
+    벡터와 마찬가지로 논리형, 정수형 또는 문자형 벡터로 부분집합할 수 있습니다.
 
--   `[[` and `$` extract a single component from a list.
-    They remove a level of hierarchy from the list.
+-   `[[`와 `$`는 리스트에서 단일 구성 요소를 추출합니다.
+    그들은 리스트에서 계층 구조의 한 수준을 제거합니다.
 
     ```{r}
     str(l[[1]])
@@ -327,82 +327,81 @@ l <- list(
     str(l$a)
     ```
 
-The difference between `[` and `[[` is particularly important for lists because `[[` drills down into the list while `[` returns a new, smaller list.
-To help you remember the difference, take a look at the unusual pepper shaker shown in @fig-pepper.
-If this pepper shaker is your list `pepper`, then, `pepper[1]` is a pepper shaker containing a single pepper packet.
-`pepper[2]` would look the same, but would contain the second packet.
-`pepper[1:2]` would be a pepper shaker containing two pepper packets.
-`pepper[[1]]` would extract the pepper packet itself.
+`[`와 `[[`의 차이점은 리스트의 경우 특히 중요합니다. `[[`는 리스트를 파고드는 반면 `[`는 새롭고 더 작은 리스트를 반환하기 때문입니다.
+차이점을 기억하는 데 도움이 되도록 @fig-pepper 에 표시된 특이한 후추통을 살펴보세요.
+이 후추통이 리스트 `pepper`라면 `pepper[1]`은 단일 후추 패킷이 들어 있는 후추통입니다.
+`pepper[2]`는 똑같이 보이지만 두 번째 패킷이 들어 있을 것입니다.
+`pepper[1:2]`는 두 개의 후추 패킷이 들어 있는 후추통일 것입니다.
+`pepper[[1]]`은 후추 패킷 자체를 추출합니다.
 
 ```{r}
 #| label: fig-pepper
 #| echo: false
 #| out-width: "100%"
 #| fig-cap: |
-#|   (Left) A pepper shaker that Hadley once found in his hotel room.
-#|   (Middle) `pepper[1]`.
-#|   (Right) `pepper[[1]]`
+#|   (왼쪽) Hadley가 호텔 방에서 한 번 발견한 후추통.
+#|   (가운데) `pepper[1]`.
+#|   (오른쪽) `pepper[[1]]`
 #| fig-alt: |
-#|   Three photos. On the left is a photo of a glass pepper shaker. Instead of 
-#|   the pepper shaker containing pepper, it contains a single packet of pepper.
-#|   In the middle is a photo of a single packet of pepper. On the right is a 
-#|   photo of the contents of a packet of pepper.
+#|   세 장의 사진. 왼쪽은 유리 후추통 사진입니다. 후추통에는 후추 대신 
+#|   단일 후추 패킷이 들어 있습니다. 가운데는 단일 후추 패킷 사진입니다. 
+#|   오른쪽은 후추 패킷의 내용물 사진입니다.
 knitr::include_graphics("diagrams/pepper.png")
 ```
 
-This same principle applies when you use 1d `[` with a data frame: `df["x"]` returns a one-column data frame and `df[["x"]]` returns a vector.
+데이터 프레임에 1차원 `[`를 사용할 때도 동일한 원칙이 적용됩니다: `df["x"]`는 1열 데이터 프레임을 반환하고 `df[["x"]]`는 벡터를 반환합니다.
 
-### Exercises
+### 연습문제
 
-1.  What happens when you use `[[` with a positive integer that's bigger than the length of the vector?
-    What happens when you subset with a name that doesn't exist?
+1.  벡터의 길이보다 큰 양의 정수로 `[[`를 사용하면 어떻게 됩니까?
+    존재하지 않는 이름으로 부분집합하면 어떻게 됩니까?
 
-2.  What would `pepper[[1]][1]` be?
-    What about `pepper[[1]][[1]]`?
+2.  `pepper[[1]][1]`은 무엇일까요?
+    `pepper[[1]][[1]]`은 어떻습니까?
 
-## Apply family
+## Apply 계열
 
-In @sec-iteration, you learned tidyverse techniques for iteration like `dplyr::across()` and the map family of functions.
-In this section, you'll learn about their base equivalents, the **apply family**.
-In this context apply and map are synonyms because another way of saying "map a function over each element of a vector" is "apply a function over each element of a vector".
-Here we'll give you a quick overview of this family so you can recognize them in the wild.
+@sec-iteration 에서 `dplyr::across()` 및 map 함수 계열과 같은 반복을 위한 tidyverse 기술을 배웠습니다.
+이 섹션에서는 이들의 기본 등가물인 **apply 계열**에 대해 배울 것입니다.
+이 문맥에서 apply와 map은 동의어입니다. "벡터의 각 요소에 함수를 매핑"하는 것을 "벡터의 각 요소에 함수를 적용(apply)"한다고 말할 수 있기 때문입니다.
+여기서는 야생에서 이들을 인식할 수 있도록 이 계열에 대한 빠른 개요를 제공합니다.
 
-The most important member of this family is `lapply()`, which is very similar to `purrr::map()`[^base-r-3].
-In fact, because we haven't used any of `map()`'s more advanced features, you can replace every `map()` call in @sec-iteration with `lapply()`.
+이 계열의 가장 중요한 멤버는 `lapply()`이며, 이는 `purrr::map()`[^base-r-3]과 매우 유사합니다.
+실제로 `map()`의 고급 기능을 사용하지 않았기 때문에 @sec-iteration 의 모든 `map()` 호출을 `lapply()`로 바꿀 수 있습니다.
 
-[^base-r-3]: It just lacks convenient features like progress bars and reporting which element caused the problem if there's an error.
+[^base-r-3]: 진행률 표시줄과 오류 발생 시 문제가 발생한 요소를 보고하는 것과 같은 편리한 기능만 없습니다.
 
-There's no exact base R equivalent to `across()` but you can get close by using `[` with `lapply()`.
-This works because under the hood, data frames are lists of columns, so calling `lapply()` on a data frame applies the function to each column.
+`across()`에 해당하는 정확한 기본 R 등가물은 없지만 `lapply()`와 함께 `[`를 사용하여 근접하게 할 수 있습니다.
+이것이 작동하는 이유는 내부적으로 데이터 프레임이 열의 리스트이기 때문에 데이터 프레임에서 `lapply()`를 호출하면 각 열에 함수가 적용되기 때문입니다.
 
 ```{r}
 df <- tibble(a = 1, b = 2, c = "a", d = "b", e = 4)
 
-# First find numeric columns
+# 먼저 수치형 열 찾기
 num_cols <- sapply(df, is.numeric)
 num_cols
 
-# Then transform each column with lapply() then replace the original values
+# 그런 다음 lapply()로 각 열을 변환한 다음 원래 값을 대체
 df[, num_cols] <- lapply(df[, num_cols, drop = FALSE], \(x) x * 2)
 df
 ```
 
-The code above uses a new function, `sapply()`.
-It's similar to `lapply()` but it always tries to simplify the result, hence the `s` in its name, here producing a logical vector instead of a list.
-We don't recommend using it for programming, because the simplification can fail and give you an unexpected type, but it's usually fine for interactive use.
-purrr has a similar function called `map_vec()` that we didn't mention in @sec-iteration.
+위의 코드는 새로운 함수 `sapply()`를 사용합니다.
+`lapply()`와 비슷하지만 항상 결과를 단순화하려고 시도하므로 이름에 `s`가 붙어 있습니다. 여기서는 리스트 대신 논리형 벡터를 생성합니다.
+단순화가 실패하여 예상치 못한 유형을 제공할 수 있으므로 프로그래밍에는 사용하지 않는 것이 좋지만 대화형 사용에는 일반적으로 괜찮습니다.
+purrr에는 @sec-iteration 에서 언급하지 않은 `map_vec()`이라는 유사한 함수가 있습니다.
 
-Base R provides a stricter version of `sapply()` called `vapply()`, short for **v**ector apply.
-It takes an additional argument that specifies the expected type, ensuring that simplification occurs the same way regardless of the input.
-For example, we could replace the `sapply()` call above with this `vapply()` where we specify that we expect `is.numeric()` to return a logical vector of length 1:
+기본 R은 `vapply()`라는 `sapply()`의 더 엄격한 버전을 제공합니다. 이는 **v**ector apply의 줄임말입니다.
+이것은 예상되는 유형을 지정하는 추가 인수를 취하여 입력에 관계없이 동일한 방식으로 단순화가 발생하도록 합니다.
+예를 들어 위의 `sapply()` 호출을 `is.numeric()`이 길이 1의 논리형 벡터를 반환할 것으로 예상한다고 지정하는 이 `vapply()`로 바꿀 수 있습니다:
 
 ```{r}
 vapply(df, is.numeric, logical(1))
 ```
 
-The distinction between `sapply()` and `vapply()` is really important when they're inside a function (because it makes a big difference to the function's robustness to unusual inputs), but it doesn't usually matter in data analysis.
+`sapply()`와 `vapply()`의 구별은 함수 내부에 있을 때 정말 중요하지만(비정상적인 입력에 대한 함수의 견고성에 큰 차이를 만들기 때문입니다), 데이터 분석에서는 일반적으로 중요하지 않습니다.
 
-Another important member of the apply family is `tapply()` which computes a single grouped summary:
+apply 계열의 또 다른 중요한 멤버는 단일 그룹화된 요약을 계산하는 `tapply()`입니다:
 
 ```{r}
 diamonds |> 
@@ -412,35 +411,35 @@ diamonds |>
 tapply(diamonds$price, diamonds$cut, mean)
 ```
 
-Unfortunately `tapply()` returns its results in a named vector which requires some gymnastics if you want to collect multiple summaries and grouping variables into a data frame (it's certainly possible to not do this and just work with free floating vectors, but in our experience that just delays the work).
-If you want to see how you might use `tapply()` or other base techniques to perform other grouped summaries, Hadley has collected a few techniques [in a gist](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec).
+불행히도 `tapply()`는 결과를 명명된 벡터로 반환하므로 여러 요약 및 그룹화 변수를 데이터 프레임으로 수집하려면 약간의 체조가 필요합니다(이렇게 하지 않고 자유 부동 벡터로 작업하는 것은 확실히 가능하지만 경험상 작업이 지연될 뿐입니다).
+`tapply()` 또는 기타 기본 기술을 사용하여 다른 그룹화된 요약을 수행하는 방법을 보고 싶다면 Hadley가 [gist](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec)에 몇 가지 기술을 모아두었습니다.
 
-The final member of the apply family is the titular `apply()`, which works with matrices and arrays.
-In particular, watch out for `apply(df, 2, something)`, which is a slow and potentially dangerous way of doing `lapply(df, something)`.
-This rarely comes up in data science because we usually work with data frames and not matrices.
+apply 계열의 마지막 멤버는 행렬 및 배열과 함께 작동하는 이름 그대로의 `apply()`입니다.
+특히 `lapply(df, something)`을 수행하는 느리고 잠재적으로 위험한 방법인 `apply(df, 2, something)`을 주의하세요.
+우리는 일반적으로 행렬이 아닌 데이터 프레임으로 작업하기 때문에 데이터 과학에서는 거의 나타나지 않습니다.
 
-## `for` loops
+## `for` 루프
 
-`for` loops are the fundamental building block of iteration that both the apply and map families use under the hood.
-`for` loops are powerful and general tools that are important to learn as you become a more experienced R programmer.
-The basic structure of a `for` loop looks like this:
+`for` 루프는 apply 및 map 계열 모두 내부적으로 사용하는 반복의 기본 구성 요소입니다.
+`for` 루프는 더 경험이 많은 R 프로그래머가 됨에 따라 배워야 할 강력하고 일반적인 도구입니다.
+`for` 루프의 기본 구조는 다음과 같습니다:
 
 ```{r}
 #| eval: false
 for (element in vector) {
-  # do something with element
+  # 요소로 무언가를 수행
 }
 ```
 
-The most straightforward use of `for` loops is to achieve the same effect as `walk()`: call some function with a side-effect on each element of a list.
-For example, in @sec-save-database instead of using `walk()`:
+`for` 루프의 가장 간단한 사용은 `walk()`와 동일한 효과를 얻는 것입니다: 리스트의 각 요소에 대해 부작용이 있는 함수를 호출합니다.
+예를 들어, @sec-save-database 에서 `walk()`를 사용하는 대신:
 
 ```{r}
 #| eval: false
 paths |> walk(append_file)
 ```
 
-We could have used a `for` loop:
+`for` 루프를 사용할 수 있었습니다:
 
 ```{r}
 #| eval: false
@@ -449,27 +448,27 @@ for (path in paths) {
 }
 ```
 
-Things get a little trickier if you want to save the output of the `for` loop, for example reading all of the excel files in a directory like we did in @sec-iteration:
+`for` 루프의 출력을 저장하려는 경우, 예를 들어 @sec-iteration 에서와 같이 디렉토리의 모든 엑셀 파일을 읽으려는 경우 상황이 조금 더 까다로워집니다:
 
 ```{r}
 paths <- dir("data/gapminder", pattern = "\\.xlsx$", full.names = TRUE)
 files <- map(paths, readxl::read_excel)
 ```
 
-There are a few different techniques that you can use, but we recommend being explicit about what the output is going to look like upfront.
-In this case, we're going to want a list the same length as `paths`, which we can create with `vector()`:
+사용할 수 있는 몇 가지 다른 기술이 있지만, 출력이 어떻게 보일지 미리 명시하는 것이 좋습니다.
+이 경우 `paths`와 길이가 같은 리스트를 원하므로 `vector()`로 만들 수 있습니다:
 
 ```{r}
 files <- vector("list", length(paths))
 ```
 
-Then instead of iterating over the elements of `paths`, we'll iterate over their indices, using `seq_along()` to generate one index for each element of paths:
+그런 다음 `paths`의 요소를 반복하는 대신 `seq_along()`을 사용하여 paths의 각 요소에 대한 하나의 인덱스를 생성하여 인덱스를 반복합니다:
 
 ```{r}
 seq_along(paths)
 ```
 
-Using the indices is important because it allows us to link to each position in the input with the corresponding position in the output:
+인덱스를 사용하는 것은 입력의 각 위치를 출력의 해당 위치와 연결할 수 있기 때문에 중요합니다:
 
 ```{r}
 for (i in seq_along(paths)) {
@@ -477,13 +476,13 @@ for (i in seq_along(paths)) {
 }
 ```
 
-To combine the list of tibbles into a single tibble you can use `do.call()` + `rbind()`:
+티블 리스트를 단일 티블로 결합하려면 `do.call()` + `rbind()`를 사용할 수 있습니다:
 
 ```{r}
 do.call(rbind, files)
 ```
 
-Rather than making a list and saving the results as we go, a simpler approach is to build up the data frame piece-by-piece:
+리스트를 만들고 진행하면서 결과를 저장하는 대신, 데이터 프레임을 조각별로 쌓아 올리는 더 간단한 접근 방식이 있습니다:
 
 ```{r}
 out <- NULL
@@ -492,16 +491,16 @@ for (path in paths) {
 }
 ```
 
-We recommend avoiding this pattern because it can become very slow when the vector is very long.
-This is the source of the persistent canard that `for` loops are slow: they're not, but iteratively growing a vector is.
+벡터가 매우 길어지면 매우 느려질 수 있으므로 이 패턴은 피하는 것이 좋습니다.
+이것이 `for` 루프가 느리다는 지속적인 헛소문의 원인입니다: 루프가 아니라 벡터를 반복적으로 키우는 것이 느린 것입니다.
 
-## Plots
+## 플롯
 
-Many R users who don't otherwise use the tidyverse prefer ggplot2 for plotting due to helpful features like sensible defaults, automatic legends, and a modern look.
-However, base R plotting functions can still be useful because they're so concise --- it takes very little typing to do a basic exploratory plot.
+그렇지 않으면 tidyverse를 사용하지 않는 많은 R 사용자가 합리적인 기본값, 자동 범례, 현대적인 모양과 같은 유용한 기능 때문에 플롯을 위해 ggplot2를 선호합니다.
+그러나 기본 R 플롯 함수는 매우 간결하기 때문에 여전히 유용할 수 있습니다 --- 기본 탐색 플롯을 수행하는 데 입력이 거의 필요하지 않습니다.
 
-There are two main types of base plot you'll see in the wild: scatterplots and histograms, produced with `plot()` and `hist()` respectively.
-Here's a quick example from the diamonds dataset:
+야생에서 볼 수 있는 두 가지 주요 유형의 기본 플롯은 각각 `plot()`과 `hist()`로 생성되는 산점도와 히스토그램입니다.
+다음은 diamonds 데이터셋의 간단한 예입니다:
 
 ```{r}
 #| dev: png
@@ -509,27 +508,26 @@ Here's a quick example from the diamonds dataset:
 #| fig-asp: 1
 #| layout-ncol: 2
 #| fig-alt: |
-#|   On the left, histogram of carats of diamonds, ranging from 0 to 5 carats.
-#|   The distribution is unimodal and right-skewed. On the right, scatter 
-#|   plot of price vs. carat of diamonds, showing a positive relationship 
-#|   that fans out as both price and carat increases. The scatter plot 
-#|   shows very few diamonds bigger than 3 carats compared to diamonds between 
-#|   0 to 3 carats.
-# Left
+#|   왼쪽에는 0에서 5캐럿 사이의 다이아몬드 캐럿 히스토그램이 있습니다. 
+#|   분포는 단봉형이며 오른쪽으로 치우쳐 있습니다. 오른쪽에는 다이아몬드의 
+#|   가격 대 캐럿 산점도가 있으며, 가격과 캐럿이 모두 증가함에 따라 
+#|   부채꼴로 퍼지는 양의 관계를 보여줍니다. 산점도는 0에서 3캐럿 사이의 
+#|   다이아몬드에 비해 3캐럿보다 큰 다이아몬드가 매우 적음을 보여줍니다.
+# 왼쪽
 hist(diamonds$carat)
 
-# Right
+# 오른쪽
 plot(diamonds$carat, diamonds$price)
 ```
 
-Note that base plotting functions work with vectors, so you need to pull columns out of the data frame using `$` or some other technique.
+기본 플롯 함수는 벡터와 함께 작동하므로 `$` 또는 다른 기술을 사용하여 데이터 프레임에서 열을 뽑아내야 합니다.
 
-## Summary
+## 요약
 
-In this chapter, we've shown you a selection of base R functions useful for subsetting and iteration.
-Compared to approaches discussed elsewhere in the book, these functions tend to have more of a "vector" flavor than a "data frame" flavor because base R functions tend to take individual vectors, rather than a data frame and some column specification.
-This often makes life easier for programming and so becomes more important as you write more functions and begin to write your own packages.
+이 장에서는 부분집합 및 반복에 유용한 기본 R 함수들을 보여주었습니다.
+책의 다른 곳에서 논의된 접근 방식과 비교할 때, 이러한 함수는 데이터 프레임과 일부 열 사양보다는 개별 벡터를 취하는 경향이 있기 때문에 "데이터 프레임" 풍미보다는 "벡터" 풍미가 더 강합니다.
+이것은 종종 프로그래밍을 더 쉽게 만들므로 더 많은 함수를 작성하고 자신의 패키지를 작성하기 시작할 때 더 중요해집니다.
 
-This chapter concludes the programming section of the book.
-You've made a solid start on your journey to becoming not just a data scientist who uses R, but a data scientist who can *program* in R.
-We hope these chapters have sparked your interest in programming and that you're looking forward to learning more outside of this book.
+이 장으로 책의 프로그래밍 섹션이 끝납니다.
+여러분은 R을 사용하는 데이터 과학자가 될 뿐만 아니라 R로 *프로그래밍*할 수 있는 데이터 과학자가 되는 여정의 확실한 시작을 했습니다.
+이 장들이 프로그래밍에 대한 관심을 불러일으켰고 이 책 밖에서 더 배우기를 고대하고 있기를 바랍니다.

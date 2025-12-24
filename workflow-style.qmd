@@ -1,36 +1,36 @@
-# Workflow: code style {#sec-workflow-style}
+# 워크플로우: 코드 스타일 {#sec-workflow-style}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread.
-Even as a very new programmer, it's a good idea to work on your code style.
-Using a consistent style makes it easier for others (including future-you!) to read your work and is particularly important if you need to get help from someone else.
-This chapter will introduce the most important points of the [tidyverse style guide](https://style.tidyverse.org), which is used throughout this book.
+좋은 코딩 스타일은 올바른 문장 부호와 같습니다: 없어도 어떻게든 할 수는 있지만, 그것이있으면확실히읽기가더쉬워집니다.
+이제 막 시작한 프로그래머라도 코드 스타일에 신경 쓰는 것이 좋습니다.
+일관된 스타일을 사용하면 다른 사람(미래의 자신 포함!)이 작업을 더 쉽게 읽을 수 있으며, 다른 사람에게 도움을 받아야 할 때 특히 중요합니다.
+이 장에서는 이 책 전체에서 사용되는 [tidyverse 스타일 가이드](https://style.tidyverse.org)의 가장 중요한 요점을 소개합니다.
 
-Styling your code will feel a bit tedious to start with, but if you practice it, it will soon become second nature.
-Additionally, there are some great tools to quickly restyle existing code, like the [**styler**](https://styler.r-lib.org) package by Lorenz Walthert.
-Once you've installed it with `install.packages("styler")`, an easy way to use it is via RStudio's **command palette**.
-The command palette lets you use any built-in RStudio command and many addins provided by packages.
-Open the palette by pressing Cmd/Ctrl + Shift + P, then type "styler" to see all the shortcuts offered by styler.
-@fig-styler shows the results.
+코드를 스타일링하는 것은 처음에는 약간 지루하게 느껴질 수 있지만, 연습하면 곧 제2의 천성이 될 것입니다.
+또한 Lorenz Walthert가 만든 [**styler**](https://styler.r-lib.org) 패키지처럼 기존 코드를 빠르게 다시 스타일링할 수 있는 훌륭한 도구도 있습니다.
+`install.packages("styler")`로 설치한 후 사용하는 쉬운 방법은 RStudio의 **명령 팔레트(command palette)** 를 통하는 것입니다.
+명령 팔레트를 사용하면 내장된 RStudio 명령과 패키지에서 제공하는 많은 애드인을 사용할 수 있습니다.
+Cmd/Ctrl + Shift + P를 눌러 팔레트를 연 다음 "styler"를 입력하여 styler가 제공하는 모든 단축키를 확인하세요.
+@fig-styler 는 결과를 보여줍니다.
 
 ```{r}
 #| label: fig-styler
 #| echo: false
 #| out-width: null
 #| fig-cap: | 
-#|   RStudio's command palette makes it easy to access every RStudio command
-#|   using only the keyboard.
+#|   RStudio의 명령 팔레트를 사용하면 키보드만으로 모든 RStudio 명령에 
+#|   쉽게 액세스할 수 있습니다.
 #| fig-alt: |
-#|   A screenshot showing the command palette after typing "styler", showing
-#|   the four styling tool provided by the package.
+#|   "styler"를 입력한 후의 명령 팔레트를 보여주는 스크린샷으로, 
+#|   패키지에서 제공하는 네 가지 스타일링 도구를 보여줍니다.
 knitr::include_graphics("screenshots/rstudio-palette.png")
 ```
 
-We'll use the tidyverse and nycflights13 packages for code examples in this chapter.
+이 장의 코드 예제에는 tidyverse 및 nycflights13 패키지를 사용합니다.
 
 ```{r}
 #| label: setup
@@ -39,58 +39,58 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-## Names
+## 이름
 
-We talked briefly about names in @sec-whats-in-a-name.
-Remember that variable names (those created by `<-` and those created by `mutate()`) should use only lowercase letters, numbers, and `_`.
-Use `_` to separate words within a name.
+@sec-whats-in-a-name 에서 이름에 대해 간략하게 이야기했습니다.
+변수 이름(`<-`로 생성된 변수와 `mutate()`로 생성된 변수)은 소문자, 숫자, `_`만 사용해야 한다는 것을 기억하세요.
+이름 내에서 단어를 구분하려면 `_`를 사용하세요.
 
 ```{r}
 #| eval: false
-# Strive for:
+# 권장:
 short_flights <- flights |> filter(air_time < 60)
 
-# Avoid:
+# 피해야 할 것:
 SHORTFLIGHTS <- flights |> filter(air_time < 60)
 ```
 
-As a general rule of thumb, it's better to prefer long, descriptive names that are easy to understand rather than concise names that are fast to type.
-Short names save relatively little time when writing code (especially since autocomplete will help you finish typing them), but it can be time-consuming when you come back to old code and are forced to puzzle out a cryptic abbreviation.
+일반적인 경험 법칙으로, 입력하기 빠른 간결한 이름보다는 이해하기 쉬운 길고 서술적인 이름을 선호하는 것이 좋습니다.
+짧은 이름은 코드를 작성할 때 상대적으로 적은 시간을 절약하지만(특히 자동 완성이 입력을 완료하는 데 도움이 되기 때문에), 오래된 코드로 돌아와서 암호 같은 약어를 파악해야 할 때는 많은 시간이 걸릴 수 있습니다.
 
-If you have a bunch of names for related things, do your best to be consistent.
-It's easy for inconsistencies to arise when you forget a previous convention, so don't feel bad if you have to go back and rename things.
-In general, if you have a bunch of variables that are a variation on a theme, you're better off giving them a common prefix rather than a common suffix because autocomplete works best on the start of a variable.
+관련된 것들에 대해 여러 이름이 있는 경우 일관성을 유지하도록 최선을 다하세요.
+이전 관례를 잊어버리면 불일치가 발생하기 쉬우므로 돌아가서 이름을 바꿔야 하더라도 기분 나빠하지 마세요.
+일반적으로 주제에 대한 변형인 변수가 여러 개 있는 경우, 자동 완성은 변수의 시작 부분에서 가장 잘 작동하므로 공통 접미사보다는 공통 접두사를 부여하는 것이 좋습니다.
 
-## Spaces
+## 공백
 
-Put spaces on either side of mathematical operators apart from `^` (i.e. `+`, `-`, `==`, `<`, ...), and around the assignment operator (`<-`).
+`^`를 제외한 수학 연산자(즉, `+`, `-`, `==`, `<`, ...)의 양쪽과 할당 연산자(`<-`) 주위에 공백을 넣으세요.
 
 ```{r}
 #| eval: false
-# Strive for
+# 권장
 z <- (a + b)^2 / d
 
-# Avoid
+# 피해야 할 것
 z<-( a + b ) ^ 2/d
 ```
 
-Don't put spaces inside or outside parentheses for regular function calls.
-Always put a space after a comma, just like in standard English.
+일반적인 함수 호출의 경우 괄호 안이나 밖에 공백을 넣지 마세요.
+표준 영어에서와 마찬가지로 항상 쉼표 뒤에 공백을 넣으세요.
 
 ```{r}
 #| eval: false
-# Strive for
+# 권장
 mean(x, na.rm = TRUE)
 
-# Avoid
+# 피해야 할 것
 mean (x ,na.rm=TRUE)
 ```
 
-It's OK to add extra spaces if it improves alignment.
-For example, if you're creating multiple variables in `mutate()`, you might want to add spaces so that all the `=` line up.[^workflow-style-1]
-This makes it easier to skim the code.
+정렬을 개선하는 경우 공백을 추가해도 괜찮습니다.
+예를 들어 `mutate()`에서 여러 변수를 생성하는 경우 모든 `=`가 일렬로 정렬되도록 공백을 추가하고 싶을 수 있습니다.[^workflow-style-1]
+이렇게 하면 코드를 훑어보기가 더 쉬워집니다.
 
-[^workflow-style-1]: Since `dep_time` is in `HMM` or `HHMM` format, we use integer division (`%/%`) to get hour and remainder (also known as modulo, `%%`) to get minute.
+[^workflow-style-1]: `dep_time`은 `HMM` 또는 `HHMM` 형식이므로 정수 나눗셈(`%/%`)을 사용하여 시간을 얻고 나머지(모듈로라고도 함, `%%`)를 사용하여 분을 얻습니다.
 
 ```{r}
 #| eval: false
@@ -102,28 +102,28 @@ flights |>
   )
 ```
 
-## Pipes {#sec-pipes}
+## 파이프 {#sec-pipes}
 
-`|>` should always have a space before it and should typically be the last thing on a line.
-This makes it easier to add new steps, rearrange existing steps, modify elements within a step, and get a 10,000 ft view by skimming the verbs on the left-hand side.
+`|>` 앞에는 항상 공백이 있어야 하며 일반적으로 줄의 마지막에 와야 합니다.
+이렇게 하면 새로운 단계를 추가하고, 기존 단계를 재정렬하고, 단계 내의 요소를 수정하고, 왼쪽의 동사를 훑어보며 전체적인 흐름(10,000피트 뷰)을 파악하기가 더 쉬워집니다.
 
 ```{r}
 #| eval: false
-# Strive for 
+# 권장 
 flights |>  
   filter(!is.na(arr_delay), !is.na(tailnum)) |> 
   count(dest)
 
-# Avoid
+# 피해야 할 것
 flights|>filter(!is.na(arr_delay), !is.na(tailnum))|>count(dest)
 ```
 
-If the function you're piping into has named arguments (like `mutate()` or `summarize()`), put each argument on a new line.
-If the function doesn't have named arguments (like `select()` or `filter()`), keep everything on one line unless it doesn't fit, in which case you should put each argument on its own line.
+파이핑하는 함수에 명명된 인수(예: `mutate()` 또는 `summarize()`)가 있는 경우 각 인수를 새 줄에 넣으세요.
+함수에 명명된 인수가 없는 경우(예: `select()` 또는 `filter()`), 맞지 않는 경우가 아니라면 모든 것을 한 줄에 유지하세요. 맞지 않는 경우에는 각 인수를 별도의 줄에 넣어야 합니다.
 
 ```{r}
 #| eval: false
-# Strive for
+# 권장
 flights |>  
   group_by(tailnum) |> 
   summarize(
@@ -131,7 +131,7 @@ flights |>
     n = n()
   )
 
-# Avoid
+# 피해야 할 것
 flights |>
   group_by(
     tailnum
@@ -139,14 +139,14 @@ flights |>
   summarize(delay = mean(arr_delay, na.rm = TRUE), n = n())
 ```
 
-After the first step of the pipeline, indent each line by two spaces.
-RStudio will automatically put the spaces in for you after a line break following a `|>` .
-If you're putting each argument on its own line, indent by an extra two spaces.
-Make sure `)` is on its own line, and un-indented to match the horizontal position of the function name.
+파이프라인의 첫 번째 단계 후에는 각 줄을 두 칸 들여쓰기하세요.
+RStudio는 `|>` 뒤에 줄바꿈을 하면 자동으로 공백을 넣어줍니다.
+각 인수를 별도의 줄에 넣는 경우 추가로 두 칸 더 들여쓰기하세요.
+`)`가 별도의 줄에 있고 함수 이름의 수평 위치와 일치하도록 들여쓰기가 해제되어 있는지 확인하세요.
 
 ```{r}
 #| eval: false
-# Strive for 
+# 권장 
 flights |>  
   group_by(tailnum) |> 
   summarize(
@@ -154,7 +154,7 @@ flights |>
     n = n()
   )
 
-# Avoid
+# 피해야 할 것
 flights|>
   group_by(tailnum) |> 
   summarize(
@@ -162,7 +162,7 @@ flights|>
              n = n()
            )
 
-# Avoid
+# 피해야 할 것
 flights|>
   group_by(tailnum) |> 
   summarize(
@@ -171,32 +171,32 @@ flights|>
   )
 ```
 
-It's OK to shirk some of these rules if your pipeline fits easily on one line.
-But in our collective experience, it's common for short snippets to grow longer, so you'll usually save time in the long run by starting with all the vertical space you need.
+파이프라인이 한 줄에 쉽게 들어가는 경우 이러한 규칙 중 일부를 어겨도 괜찮습니다.
+하지만 우리의 집단적인 경험에 따르면 짧은 스니펫이 길어지는 경우가 흔하므로 일반적으로 필요한 모든 수직 공간으로 시작하는 것이 장기적으로 시간을 절약할 수 있습니다.
 
 ```{r}
 #| eval: false
-# This fits compactly on one line
+# 이것은 한 줄에 간결하게 들어갑니다
 df |> mutate(y = x + 1)
 
-# While this takes up 4x as many lines, it's easily extended to 
-# more variables and more steps in the future
+# 이것은 4배나 많은 줄을 차지하지만, 
+# 나중에 더 많은 변수와 단계로 쉽게 확장할 수 있습니다
 df |> 
   mutate(
     y = x + 1
   )
 ```
 
-Finally, be wary of writing very long pipes, say longer than 10-15 lines.
-Try to break them up into smaller sub-tasks, giving each task an informative name.
-The names will help cue the reader into what's happening and makes it easier to check that intermediate results are as expected.
-Whenever you can give something an informative name, you should give it an informative name, for example when you fundamentally change the structure of the data, e.g., after pivoting or summarizing.
-Don't expect to get it right the first time!
-This means breaking up long pipelines if there are intermediate states that can get good names.
+마지막으로 10-15줄보다 긴 매우 긴 파이프를 작성하는 것을 경계하세요.
+더 작은 하위 작업으로 나누고 각 작업에 유익한 이름을 지정하세요.
+이름은 독자에게 무슨 일이 일어나고 있는지 알려주고 중간 결과가 예상대로인지 확인하기 쉽게 해줍니다.
+유익한 이름을 지정할 수 있을 때는 항상 유익한 이름을 지정해야 합니다. 예를 들어 피벗(pivoting)이나 요약(summarizing) 후와 같이 데이터의 구조를 근본적으로 변경할 때가 그렇습니다.
+처음부터 올바르게 할 것이라고 기대하지 마세요!
+이는 좋은 이름을 얻을 수 있는 중간 상태가 있는 경우 긴 파이프라인을 분할하는 것을 의미합니다.
 
 ## ggplot2
 
-The same basic rules that apply to the pipe also apply to ggplot2; just treat `+` the same way as `|>`.
+파이프에 적용되는 동일한 기본 규칙이 ggplot2에도 적용됩니다. `+`를 `|>`와 같은 방식으로 취급하면 됩니다.
 
 ```{r}
 #| eval: false
@@ -210,7 +210,7 @@ flights |>
   geom_line()
 ```
 
-Again, if you can't fit all of the arguments to a function on to a single line, put each argument on its own line:
+다시 말하지만, 함수의 모든 인수를 한 줄에 넣을 수 없는 경우 각 인수를 별도의 줄에 넣으세요:
 
 ```{r}
 #| eval: false
@@ -231,12 +231,12 @@ flights |>
   geom_point()
 ```
 
-Watch for the transition from `|>` to `+`.
-We wish this transition wasn't necessary, but unfortunately, ggplot2 was written before the pipe was discovered.
+`|>`에서 `+`로 전환되는 부분을 주의하세요.
+이 전환이 필요하지 않았으면 좋겠지만, 안타깝게도 ggplot2는 파이프가 발견되기 전에 작성되었습니다.
 
-## Sectioning comments
+## 섹션 주석
 
-As your scripts get longer, you can use **sectioning** comments to break up your file into manageable pieces:
+스크립트가 길어지면 **섹션(sectioning)** 주석을 사용하여 파일을 관리하기 쉬운 조각으로 나눌 수 있습니다:
 
 ```{r}
 #| eval: false
@@ -245,22 +245,21 @@ As your scripts get longer, you can use **sectioning** comments to break up your
 # Plot data --------------------------------------
 ```
 
-RStudio provides a keyboard shortcut to create these headers (Cmd/Ctrl + Shift + R), and will display them in the code navigation drop-down at the bottom-left of the editor, as shown in @fig-rstudio-sections.
+RStudio는 이러한 헤더를 생성하는 키보드 단축키(Cmd/Ctrl + Shift + R)를 제공하며, @fig-rstudio-sections 에 표시된 것처럼 편집기 왼쪽 하단의 코드 탐색 드롭다운에 표시합니다.
 
 ```{r}
 #| label: fig-rstudio-sections
 #| echo: false
 #| out-width: null
 #| fig-cap: | 
-#|   After adding sectioning comments to your script, you can
-#|   easily navigate to them using the code navigation tool in the
-#|   bottom-left of the script editor.
+#|   스크립트에 섹션 주석을 추가한 후 스크립트 편집기 왼쪽 하단의 
+#|   코드 탐색 도구를 사용하여 해당 섹션으로 쉽게 이동할 수 있습니다.
 knitr::include_graphics("screenshots/rstudio-nav.png")
 ```
 
-## Exercises
+## 연습문제
 
-1.  Restyle the following pipelines following the guidelines above.
+1.  위의 지침에 따라 다음 파이프라인의 스타일을 다시 지정하세요.
 
     ```{r}
     #| eval: false
@@ -272,14 +271,14 @@ knitr::include_graphics("screenshots/rstudio-nav.png")
     arr_delay,na.rm=TRUE),cancelled=sum(is.na(arr_delay)),n=n())|>filter(n>10)
     ```
 
-## Summary
+## 요약
 
-In this chapter, you've learned the most important principles of code style.
-These may feel like a set of arbitrary rules to start with (because they are!) but over time, as you write more code, and share code with more people, you'll see how important a consistent style is.
-And don't forget about the styler package: it's a great way to quickly improve the quality of poorly styled code.
+이 장에서는 코드 스타일의 가장 중요한 원칙을 배웠습니다.
+처음에는 임의의 규칙 집합처럼 느껴질 수 있지만(실제로 그렇습니다!) 시간이 지나면서 더 많은 코드를 작성하고 더 많은 사람과 코드를 공유하면 일관된 스타일이 얼마나 중요한지 알게 될 것입니다.
+그리고 styler 패키지를 잊지 마세요. 스타일이 좋지 않은 코드의 품질을 빠르게 개선할 수 있는 좋은 방법입니다.
 
-In the next chapter, we switch back to data science tools, learning about tidy data.
-Tidy data is a consistent way of organizing your data frames that is used throughout the tidyverse.
-This consistency makes your life easier because once you have tidy data, it just works with the vast majority of tidyverse functions.
-Of course, life is never easy, and most datasets you encounter in the wild will not already be tidy.
-So we'll also teach you how to use the tidyr package to tidy your untidy data.
+다음 장에서는 다시 데이터 과학 도구로 돌아가 깔끔한 데이터(tidy data)에 대해 배웁니다.
+깔끔한 데이터는 tidyverse 전체에서 사용되는 데이터 프레임을 구성하는 일관된 방법입니다.
+이러한 일관성은 삶을 더 쉽게 만듭니다. 깔끔한 데이터가 있으면 대부분의 tidyverse 함수와 잘 작동하기 때문입니다.
+물론 인생은 결코 쉽지 않으며, 야생에서 만나는 대부분의 데이터셋은 이미 깔끔하지 않을 것입니다.
+그래서 우리는 tidyr 패키지를 사용하여 깔끔하지 않은 데이터를 정리하는 방법도 가르칠 것입니다.

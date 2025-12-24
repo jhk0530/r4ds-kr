@@ -1,4 +1,4 @@
-# Whole game {#sec-whole-game-intro .unnumbered}
+# 전체 게임 {#sec-whole-game-intro .unnumbered}
 
 ```{r}
 #| results: "asis"
@@ -6,39 +6,38 @@
 source("_common.R")
 ```
 
-Our goal in this part of the book is to give you a rapid overview of the main tools of data science: **importing**, **tidying**, **transforming**, and **visualizing data**, as shown in @fig-ds-whole-game.
-We want to show you the "whole game" of data science giving you just enough of all the major pieces so that you can tackle real, if simple, datasets.
-The later parts of the book will hit each of these topics in more depth, increasing the range of data science challenges that you can tackle.
+이 파트의 목표는 @fig-ds-whole-game 에서 보여주는 것처럼 데이터 과학의 주요 도구인 **가져오기(importing)**, **정리(tidying)**, **변형(transforming)**, **시각화(visualizing)** 에 대한 빠른 개요를 제공하는 것입니다.
+데이터 과학의 "전체 게임"을 보여주어 간단하지만 실제 데이터셋을 다룰 수 있을 만큼의 주요 조각들을 충분히 제공하고자 합니다.
+책의 뒷부분에서는 이러한 각 주제를 더 깊이 있게 다루어, 여러분이 해결할 수 있는 데이터 과학 과제의 범위를 넓힐 것입니다.
 
 ```{r}
 #| label: fig-ds-whole-game 
 #| echo: false
 #| out.width: NULL
 #| fig-cap: |
-#|   In this section of the book, you'll learn how to import,
-#|   tidy, transform, and visualize data.
+#|   이 섹션에서는 데이터를 가져오고, 정리하고, 변형하고, 
+#|   시각화하는 방법을 배웁니다.
 #| fig-alt: |
-#|   A diagram displaying the data science cycle: Import -> Tidy ->
-#|   Understand  (which has the phases Transform -> Visualize -> Model in a
-#|   cycle) -> Communicate. Surrounding all of these is Program 
-#|   Import, Tidy, Transform, and Visualize is highlighted.
+#|   데이터 과학 주기를 보여주는 다이어그램: 가져오기 -> 정리 -> 이해 
+#|   (변형 -> 시각화 -> 모델링 주기를 포함) -> 소통. 
+#|   가져오기, 정리, 변형, 시각화가 강조되어 있습니다.
 knitr::include_graphics("diagrams/data-science/whole-game.png", dpi = 270)
 ```
 
-Four chapters focus on the tools of data science:
+네 개의 장에서 데이터 과학 도구에 초점을 맞춥니다:
 
--   Visualization is a great place to start with R programming, because the payoff is so clear: you get to make elegant and informative plots that help you understand data.
-    In @sec-data-visualization you'll dive into visualization, learning the basic structure of a ggplot2 plot, and powerful techniques for turning data into plots.
+-   시각화는 R 프로그래밍을 시작하기에 좋은 곳입니다. 보상이 매우 분명하기 때문입니다. 데이터를 이해하는 데 도움이 되는 우아하고 유익한 플롯을 만들 수 있습니다.
+    @sec-data-visualization 에서는 시각화에 뛰어들어 ggplot2 플롯의 기본 구조와 데이터를 플롯으로 바꾸는 강력한 기법들을 배웁니다.
 
--   Visualization alone is typically not enough, so in @sec-data-transform, you'll learn the key verbs that allow you to select important variables, filter out key observations, create new variables, and compute summaries.
+-   시각화만으로는 충분하지 않은 경우가 많으므로, @sec-data-transform 에서는 중요한 변수를 선택하고, 주요 관측값을 필터링하고, 새로운 변수를 생성하고, 요약을 계산할 수 있는 핵심 동사들을 배웁니다.
 
--   In @sec-data-tidy, you'll learn about tidy data, a consistent way of storing your data that makes transformation, visualization, and modelling easier.
-    You'll learn the underlying principles, and how to get your data into a tidy form.
+-   @sec-data-tidy 에서는 변형, 시각화, 모델링을 더 쉽게 만들어주는 일관된 데이터 저장 방식인 '깔끔한 데이터(tidy data)'에 대해 배웁니다.
+    기본 원칙과 데이터를 깔끔한 형태로 만드는 방법을 배우게 됩니다.
 
--   Before you can transform and visualize your data, you need to first get your data into R.
-    In @sec-data-import you'll learn the basics of getting `.csv` files into R.
+-   데이터를 변형하고 시각화하기 전에 먼저 데이터를 R로 가져와야 합니다.
+    @sec-data-import 에서는 `.csv` 파일을 R로 가져오는 기본 사항을 배웁니다.
 
-Nestled among these chapters are four other chapters that focus on your R workflow.
-In @sec-workflow-basics, @sec-workflow-style, and @sec-workflow-scripts-projects you'll learn good workflow practices for writing and organizing your R code.
-These will set you up for success in the long run, as they'll give you the tools to stay organized when you tackle real projects.
-Finally, @sec-workflow-getting-help will teach you how to get help and keep learning.
+이 장들 사이에는 R 워크플로우에 초점을 맞춘 다른 네 개의 장이 자리 잡고 있습니다.
+@sec-workflow-basics, @sec-workflow-style, @sec-workflow-scripts-projects 에서는 R 코드를 작성하고 구성하기 위한 좋은 워크플로우 관행을 배웁니다.
+이것들은 실제 프로젝트를 다룰 때 체계적으로 유지할 수 있는 도구를 제공하므로 장기적으로 성공할 수 있는 기반을 마련해 줄 것입니다.
+마지막으로, @sec-workflow-getting-help 에서는 도움을 받고 계속 학습하는 방법을 알려줍니다.

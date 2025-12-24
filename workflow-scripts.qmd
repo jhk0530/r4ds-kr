@@ -1,41 +1,40 @@
-# Workflow: scripts and projects {#sec-workflow-scripts-projects}
+# 워크플로우: 스크립트와 프로젝트 {#sec-workflow-scripts-projects}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-This chapter will introduce you to two essential tools for organizing your code: scripts and projects.
+이 장에서는 코드를 구성하는 두 가지 필수 도구인 스크립트와 프로젝트에 대해 소개합니다.
 
-## Scripts
+## 스크립트
 
-So far, you have used the console to run code.
-That's a great place to start, but you'll find it gets cramped pretty quickly as you create more complex ggplot2 graphics and longer dplyr pipelines.
-To give yourself more room to work, use the script editor.
-Open it up by clicking the File menu, selecting New File, then R script, or using the keyboard shortcut Cmd/Ctrl + Shift + N.
-Now you'll see four panes, as in @fig-rstudio-script.
-The script editor is a great place to experiment with your code.
-When you want to change something, you don't have to re-type the whole thing, you can just edit the script and re-run it.
-And once you have written code that works and does what you want, you can save it as a script file to easily return to later.
+지금까지는 콘솔을 사용하여 코드를 실행했습니다.
+콘솔은 시작하기에 좋은 곳이지만, 더 복잡한 ggplot2 그래픽과 더 긴 dplyr 파이프라인을 만들다 보면 금방 비좁게 느껴질 것입니다.
+작업할 공간을 더 확보하려면 스크립트 편집기를 사용하세요.
+File(파일) 메뉴를 클릭하고 New File(새 파일)을 선택한 다음 R script(R 스크립트)를 선택하거나 키보드 단축키 Cmd/Ctrl + Shift + N을 사용하여 엽니다.
+이제 @fig-rstudio-script 처럼 네 개의 창이 보일 것입니다.
+스크립트 편집기는 코드를 실험해 보기에 아주 좋은 곳입니다.
+무언가를 변경하고 싶을 때 전체를 다시 입력할 필요 없이 스크립트를 편집하고 다시 실행하기만 하면 됩니다.
+그리고 작동하고 원하는 대로 수행하는 코드를 작성하고 나면 나중에 쉽게 다시 볼 수 있도록 스크립트 파일로 저장할 수 있습니다.
 
 ```{r}
 #| label: fig-rstudio-script
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   Opening the script editor adds a new pane at the top-left of the
-#|   IDE.
+#|   스크립트 편집기를 열면 IDE의 왼쪽 상단에 새 창이 추가됩니다.
 #| fig-alt: |
-#|   RStudio IDE with Editor, Console, and Output highlighted.
+#|   편집기, 콘솔, 출력이 강조 표시된 RStudio IDE.
 knitr::include_graphics("diagrams/rstudio/script.png", dpi = 270)
 ```
 
-### Running code
+### 코드 실행하기
 
-The script editor is an excellent place for building complex ggplot2 plots or long sequences of dplyr manipulations.
-The key to using the script editor effectively is to memorize one of the most important keyboard shortcuts: Cmd/Ctrl + Enter.
-This executes the current R expression in the console.
-For example, take the code below.
+스크립트 편집기는 복잡한 ggplot2 플롯이나 긴 dplyr 조작 시퀀스를 구축하기에 훌륭한 장소입니다.
+스크립트 편집기를 효과적으로 사용하는 열쇠는 가장 중요한 키보드 단축키 중 하나인 Cmd/Ctrl + Enter를 외우는 것입니다.
+이 단축키는 콘솔에서 현재 R 표현식을 실행합니다.
+예를 들어 아래 코드를 보세요.
 
 ```{r}
 #| eval: false
@@ -43,80 +42,80 @@ library(dplyr)
 library(nycflights13)
 
 not_cancelled <- flights |> 
-  filter(!is.na(dep_delay)█, !is.na(arr_delay))
+  filter(!is.na(dep_delay))█, !is.na(arr_delay))
 
 not_cancelled |> 
   group_by(year, month, day) |> 
   summarize(mean = mean(dep_delay))
 ```
 
-If your cursor is at █, pressing Cmd/Ctrl + Enter will run the complete command that generates `not_cancelled`.
-It will also move the cursor to the following statement (beginning with `not_cancelled |>`).
-That makes it easy to step through your complete script by repeatedly pressing Cmd/Ctrl + Enter.
+커서가 █에 있을 때 Cmd/Ctrl + Enter를 누르면 `not_cancelled`를 생성하는 전체 명령이 실행됩니다.
+또한 커서가 다음 문(`not_cancelled |>`로 시작하는 부분)으로 이동합니다.
+따라서 Cmd/Ctrl + Enter를 반복해서 눌러 전체 스크립트를 쉽게 단계별로 실행할 수 있습니다.
 
-Instead of running your code expression-by-expression, you can also execute the complete script in one step with Cmd/Ctrl + Shift + S.
-Doing this regularly is a great way to ensure that you've captured all the important parts of your code in the script.
+코드를 표현식별로 실행하는 대신 Cmd/Ctrl + Shift + S로 전체 스크립트를 한 번에 실행할 수도 있습니다.
+이 작업을 정기적으로 수행하는 것은 코드의 모든 중요한 부분을 스크립트에 캡처했는지 확인하는 좋은 방법입니다.
 
-We recommend you always start your script with the packages you need.
-That way, if you share your code with others, they can easily see which packages they need to install.
-Note, however, that you should never include `install.packages()` in a script you share.
-It's inconsiderate to hand off a script that will change something on their computer if they're not being careful!
+항상 필요한 패키지로 스크립트를 시작하는 것이 좋습니다.
+그렇게 하면 코드를 다른 사람과 공유할 때 설치해야 할 패키지를 쉽게 알 수 있습니다.
+하지만 공유하는 스크립트에 `install.packages()`를 절대 포함해서는 안 됩니다.
+상대방이 주의하지 않으면 컴퓨터의 무언가를 변경할 수 있는 스크립트를 건네주는 것은 배려심 없는 행동입니다!
 
-When working through future chapters, we highly recommend starting in the script editor and practicing your keyboard shortcuts.
-Over time, sending code to the console in this way will become so natural that you won't even think about it.
+앞으로 나올 장들을 진행할 때 스크립트 편집기에서 시작하여 키보드 단축키를 연습하는 것을 강력히 추천합니다.
+시간이 지나면 이런 방식으로 콘솔에 코드를 보내는 것이 너무 자연스러워져서 생각조차 하지 않게 될 것입니다.
 
-### RStudio diagnostics
+### RStudio 진단
 
-In the script editor, RStudio will highlight syntax errors with a red squiggly line and a cross in the sidebar:
+스크립트 편집기에서 RStudio는 구문 오류를 빨간색 물결선과 사이드바의 X 표시로 강조 표시합니다:
 
 ```{r}
 #| echo: false
 #| out-width: ~
 #| fig-alt: |
-#|   Script editor with the script x y <- 10. A red X indicates that there is 
-#|   syntax error. The syntax error is also highlighted with a red squiggly line.
+#|   스크립트 x y <- 10이 있는 스크립트 편집기. 빨간색 X는 구문 오류가 있음을 
+#|   나타냅니다. 구문 오류는 빨간색 물결선으로도 강조 표시됩니다.
 knitr::include_graphics("screenshots/rstudio-diagnostic.png")
 ```
 
-Hover over the cross to see what the problem is:
+X 표시 위에 마우스를 올리면 문제가 무엇인지 확인할 수 있습니다:
 
 ```{r}
 #| echo: false
 #| out-width: ~
 #| fig-alt: |
-#|   Script editor with the script x y <- 10. A red X indicates that there is 
-#|   syntax error. The syntax error is also highlighted with a red squiggly line.
-#|   Hovering over the X shows a text box with the text unexpected token y and 
-#|   unexpected token <-.
+#|   스크립트 x y <- 10이 있는 스크립트 편집기. 빨간색 X는 구문 오류가 있음을 
+#|   나타냅니다. 구문 오류는 빨간색 물결선으로도 강조 표시됩니다.
+#|   X 위에 마우스를 올리면 예기치 않은 토큰 y와 예기치 않은 토큰 <-라는 
+#|   텍스트가 있는 텍스트 상자가 표시됩니다.
 knitr::include_graphics("screenshots/rstudio-diagnostic-tip.png")
 ```
 
-RStudio will also let you know about potential problems:
+RStudio는 잠재적인 문제에 대해서도 알려줍니다:
 
 ```{r}
 #| echo: false
 #| out-width: ~
 #| fig-alt: |
-#|   Script editor with the script 3 == NA. A yellow exclamation mark 
-#|   indicates that there may be a potential problem. Hovering over the 
-#|   exclamation mark shows a text box with the text use is.na to check 
-#|   whether expression evaluates to NA.
+#|   스크립트 3 == NA가 있는 스크립트 편집기. 노란색 느낌표는 잠재적인 
+#|   문제가 있을 수 있음을 나타냅니다. 느낌표 위에 마우스를 올리면 
+#|   표현식이 NA로 평가되는지 확인하기 위해 is.na를 사용하라는 텍스트가 
+#|   있는 텍스트 상자가 표시됩니다.
 knitr::include_graphics("screenshots/rstudio-diagnostic-warn.png")
 ```
 
-### Saving and naming
+### 저장 및 이름 지정
 
-RStudio automatically saves the contents of the script editor when you quit, and automatically reloads it when you re-open.
-Nevertheless, it's a good idea to avoid Untitled1, Untitled2, Untitled3, and so on and instead save your scripts and to give them informative names.
+RStudio는 종료할 때 스크립트 편집기의 내용을 자동으로 저장하고 다시 열 때 자동으로 다시 로드합니다.
+그럼에도 불구하고 Untitled1, Untitled2, Untitled3 등을 피하고 대신 스크립트를 저장하고 유익한 이름을 지정하는 것이 좋습니다.
 
-It might be tempting to name your files `code.R` or `myscript.R`, but you should think a bit harder before choosing a name for your file.
-Three important principles for file naming are as follows:
+파일 이름을 `code.R`이나 `myscript.R`로 짓고 싶은 유혹이 들 수 있지만, 파일 이름을 선택하기 전에 조금 더 깊이 생각해야 합니다.
+파일 이름 지정에 대한 세 가지 중요한 원칙은 다음과 같습니다:
 
-1.  File names should be **machine** readable: avoid spaces, symbols, and special characters. Don't rely on case sensitivity to distinguish files.
-2.  File names should be **human** readable: use file names to describe what's in the file.
-3.  File names should play well with default ordering: start file names with numbers so that alphabetical sorting puts them in the order they get used.
+1.  파일 이름은 **기계**가 읽을 수 있어야 합니다: 공백, 기호 및 특수 문자를 피하세요. 파일을 구별하기 위해 대소문자 구분에 의존하지 마세요.
+2.  파일 이름은 **사람**이 읽을 수 있어야 합니다: 파일 내용을 설명하는 파일 이름을 사용하세요.
+3.  파일 이름은 기본 정렬과 잘 어울려야 합니다: 알파벳순 정렬이 사용 순서대로 배치되도록 파일 이름을 숫자로 시작하세요.
 
-For example, suppose you have the following files in a project folder.
+예를 들어 프로젝트 폴더에 다음 파일들이 있다고 가정해 봅시다.
 
 ```         
 alternative model.R
@@ -130,11 +129,11 @@ run-first.r
 temp.txt
 ```
 
-There are a variety of problems here: it's hard to find which file to run first, file names contain spaces, there are two files with the same name but different capitalization (`finalreport` vs. `FinalReport`[^workflow-scripts-1]), and some names don't describe their contents (`run-first` and `temp`).
+여기에는 다양한 문제가 있습니다: 어떤 파일을 먼저 실행해야 하는지 찾기 어렵고, 파일 이름에 공백이 포함되어 있으며, 이름은 같지만 대소문자가 다른 두 파일(`finalreport` 대 `FinalReport`[^workflow-scripts-1])이 있고, 일부 이름은 내용(`run-first` 및 `temp`)을 설명하지 않습니다.
 
-[^workflow-scripts-1]: Not to mention that you're tempting fate by using "final" in the name 😆 The comic Piled Higher and Deeper has a [fun strip on this](https://phdcomics.com/comics/archive.php?comicid=1531).
+[^workflow-scripts-1]: 이름에 "final"을 사용하여 운명을 시험하는 것은 말할 것도 없고요 😆 만화 Piled Higher and Deeper에는 [이것에 대한 재미있는 스트립](https://phdcomics.com/comics/archive.php?comicid=1531)이 있습니다.
 
-Here's a better way of naming and organizing the same set of files:
+동일한 파일 세트의 이름을 지정하고 구성하는 더 좋은 방법은 다음과 같습니다:
 
 ```         
 01-load-data.R
@@ -148,85 +147,84 @@ report-2022-04-02.qmd
 report-draft-notes.txt
 ```
 
-Numbering the key scripts makes it obvious in which order to run them and a consistent naming scheme makes it easier to see what varies.
-Additionally, the figures are labelled similarly, the reports are distinguished by dates included in the file names, and `temp` is renamed to `report-draft-notes` to better describe its contents.
-If you have a lot of files in a directory, taking organization one step further and placing different types of files (scripts, figures, etc.) in different directories is recommended.
+주요 스크립트에 번호를 매기면 실행 순서가 분명해지고 일관된 명명 체계를 사용하면 변경되는 내용을 쉽게 파악할 수 있습니다.
+또한 그림에는 유사하게 라벨이 지정되어 있고, 보고서는 파일 이름에 포함된 날짜로 구분되며, `temp`는 내용을 더 잘 설명하기 위해 `report-draft-notes`로 이름이 변경되었습니다.
+디렉터리에 파일이 많은 경우 구성을 한 단계 더 발전시켜 다른 유형의 파일(스크립트, 그림 등)을 다른 디렉터리에 배치하는 것이 좋습니다.
 
-## Projects
+## 프로젝트
 
-One day, you will need to quit R, go do something else, and return to your analysis later.
-One day, you will be working on multiple analyses simultaneously and you want to keep them separate.
-One day, you will need to bring data from the outside world into R and send numerical results and figures from R back out into the world.
+언젠가 여러분은 R을 종료하고 다른 일을 하러 갔다가 나중에 분석으로 돌아와야 할 것입니다.
+언젠가 여러분은 여러 분석을 동시에 수행하게 되어 그것들을 분리하고 싶을 것입니다.
+언젠가 여러분은 외부 세계에서 데이터를 R로 가져오고 R의 수치 결과와 그림을 다시 세상 밖으로 보내야 할 것입니다.
 
-To handle these real life situations, you need to make two decisions:
+이러한 실제 상황을 처리하려면 두 가지 결정을 내려야 합니다:
 
-1.  What is the source of truth?
-    What will you save as your lasting record of what happened?
+1.  진실의 원천(source of truth)은 무엇입니까?
+    일어난 일에 대한 지속적인 기록으로 무엇을 저장하시겠습니까?
 
-2.  Where does your analysis live?
+2.  분석은 어디에 있습니까?
 
-### What is the source of truth?
+### 진실의 원천은 무엇입니까?
 
-As a beginner, it's okay to rely on your current Environment to contain all the objects you have created throughout your analysis.
-However, to make it easier to work on larger projects or collaborate with others, your source of truth should be the R scripts.
-With your R scripts (and your data files), you can recreate the environment.
-With only your environment, it's much harder to recreate your R scripts: you'll either have to retype a lot of code from memory (inevitably making mistakes along the way) or you'll have to carefully mine your R history.
+초보자에게는 현재 환경(Environment)에 분석 전체에서 생성한 모든 객체가 포함되어 있다고 믿는 것이 괜찮습니다.
+하지만 더 큰 프로젝트에서 작업하거나 다른 사람과 협업하기 쉽게 하려면 진실의 원천은 R 스크립트여야 합니다.
+R 스크립트(및 데이터 파일)를 사용하면 환경을 다시 만들 수 있습니다.
+환경만으로는 R 스크립트를 다시 만들기가 훨씬 더 어렵습니다. 기억을 더듬어 많은 코드를 다시 입력해야 하거나(도중에 필연적으로 실수를 하게 됨) R 기록을 주의 깊게 파헤쳐야 합니다.
 
-To help keep your R scripts as the source of truth for your analysis, we highly recommend that you instruct RStudio not to preserve your workspace between sessions.
-You can do this either by running `usethis::use_blank_slate()`[^workflow-scripts-2] or by mimicking the options shown in @fig-blank-slate. This will cause you some short-term pain, because now when you restart RStudio, it will no longer remember the code that you ran last time nor will the objects you created or the datasets you read be available to use.
-But this short-term pain saves you long-term agony because it forces you to capture all important procedures in your code.
-There's nothing worse than discovering three months after the fact that you've only stored the results of an important calculation in your environment, not the calculation itself in your code.
+R 스크립트를 분석의 진실의 원천으로 유지하는 데 도움이 되도록 RStudio가 세션 간에 작업 공간(workspace)을 보존하지 않도록 지시하는 것을 강력히 권장합니다.
+`usethis::use_blank_slate()`[^workflow-scripts-2]를 실행하거나 @fig-blank-slate 에 표시된 옵션을 모방하여 이 작업을 수행할 수 있습니다. 이렇게 하면 RStudio를 다시 시작할 때 지난번에 실행한 코드를 더 이상 기억하지 못하고 생성한 객체나 읽은 데이터셋을 사용할 수 없게 되므로 단기적인 고통을 겪게 될 것입니다.
+하지만 이 단기적인 고통은 코드에 모든 중요한 절차를 캡처하도록 강제하므로 장기적인 고통을 덜어줍니다.
+중요한 계산 결과를 환경에만 저장하고 코드에는 계산 자체를 저장하지 않았다는 사실을 3개월 후에 발견하는 것보다 더 나쁜 것은 없습니다.
 
-[^workflow-scripts-2]: If you don't have usethis installed, you can install it with `install.packages("usethis")`.
+[^workflow-scripts-2]: usethis가 설치되어 있지 않다면 `install.packages("usethis")`로 설치할 수 있습니다.
 
 ```{r}
 #| label: fig-blank-slate
 #| echo: false
 #| fig-cap: |
-#|   Copy these options in your RStudio options to always start your 
-#|   RStudio session with a clean slate.
+#|   항상 깨끗한 상태로 RStudio 세션을 시작하려면 RStudio 옵션에서 
+#|   이 옵션들을 복사하세요.
 #| fig-alt: |
-#|   RStudio Global Options window where the option Restore .RData into workspace 
-#|   at startup is not checked. Also, the option Save workspace to .RData 
-#|   on exit is set to Never.
+#|   'Restore .RData into workspace at startup' 옵션이 선택되어 있지 않은 
+#|   RStudio 글로벌 옵션 창. 또한 'Save workspace to .RData on exit' 옵션은 
+#|   Never로 설정되어 있습니다.
 #| out-width: ~
 knitr::include_graphics("diagrams/rstudio/clean-slate.png", dpi = 270)
 ```
 
-There is a great pair of keyboard shortcuts that will work together to make sure you've captured the important parts of your code in the editor:
+편집기에서 코드의 중요한 부분을 캡처했는지 확인하기 위해 함께 작동하는 훌륭한 키보드 단축키 쌍이 있습니다:
 
-1.  Press Cmd/Ctrl + Shift + 0/F10 to restart R.
-2.  Press Cmd/Ctrl + Shift + S to re-run the current script.
+1.  Cmd/Ctrl + Shift + 0/F10을 눌러 R을 다시 시작합니다.
+2.  Cmd/Ctrl + Shift + S를 눌러 현재 스크립트를 다시 실행합니다.
 
-We collectively use this pattern hundreds of times a week.
+우리는 집단적으로 일주일에 수백 번 이 패턴을 사용합니다.
 
-Alternatively, if you don't use keyboard shortcuts, you can go to Session \> Restart R and then highlight and re-run your current script.
+또는 키보드 단축키를 사용하지 않는 경우 Session(세션) > Restart R(R 다시 시작)로 이동한 다음 현재 스크립트를 강조 표시하고 다시 실행할 수 있습니다.
 
 ::: callout-note
-## RStudio server
+## RStudio 서버
 
-If you're using RStudio server, your R session is never restarted by default.
-When you close your RStudio server tab, it might feel like you're closing R, but the server actually keeps it running in the background.
-The next time you return, you'll be in exactly the same place you left.
-This makes it even more important to regularly restart R so that you're starting with a clean slate.
+RStudio 서버를 사용하는 경우 기본적으로 R 세션이 다시 시작되지 않습니다.
+RStudio 서버 탭을 닫으면 R을 닫는 것처럼 느껴질 수 있지만 실제로는 서버가 백그라운드에서 계속 실행합니다.
+다음에 돌아올 때는 떠났던 곳과 정확히 같은 곳에 있게 됩니다.
+따라서 깨끗한 상태에서 시작할 수 있도록 R을 정기적으로 다시 시작하는 것이 훨씬 더 중요합니다.
 :::
 
-### Where does your analysis live?
+### 분석은 어디에 있습니까?
 
-R has a powerful notion of the **working directory**.
-This is where R looks for files that you ask it to load, and where it will put any files that you ask it to save.
-RStudio shows your current working directory at the top of the console:
+R에는 **작업 디렉터리(working directory)** 라는 강력한 개념이 있습니다.
+이곳은 R이 로드하도록 요청한 파일을 찾고 저장하도록 요청한 파일을 두는 곳입니다.
+RStudio는 콘솔 상단에 현재 작업 디렉터리를 표시합니다:
 
 ```{r}
 #| echo: false
 #| fig-alt: |
-#|   The Console tab shows the current working directory as 
-#|   ~/Documents/r4ds.
+#|   콘솔 탭은 현재 작업 디렉터리가 ~/Documents/r4ds임을 보여줍니다.
 #| out-width: ~
 knitr::include_graphics("screenshots/rstudio-wd.png")
 ```
 
-And you can print this out in R code by running `getwd()`:
+그리고 `getwd()`를 실행하여 R 코드에서 이를 출력할 수 있습니다:
 
 ```{r}
 #| eval: false
@@ -234,64 +232,64 @@ getwd()
 #> [1] "/Users/hadley/Documents/r4ds"
 ```
 
-In this R session, the current working directory (think of it as "home") is in hadley's Documents folder, in a subfolder called r4ds.
-This code will return a different result when you run it, because your computer has a different directory structure than Hadley's!
+이 R 세션에서 현재 작업 디렉터리("홈"이라고 생각하세요)는 hadley의 Documents 폴더 안에 있는 r4ds라는 하위 폴더에 있습니다.
+이 코드는 여러분의 컴퓨터가 Hadley와 다른 디렉터리 구조를 가지고 있기 때문에 실행할 때 다른 결과를 반환할 것입니다!
 
-As a beginning R user, it's OK to let your working directory be your home directory, documents directory, or any other weird directory on your computer.
-But you're more than a handful of chapters into this book, and you're no longer a beginner.
-Very soon now you should evolve to organizing your projects into directories and, when working on a project, set R's working directory to the associated directory.
+초보 R 사용자라면 작업 디렉터리를 홈 디렉터리, 문서 디렉터리 또는 컴퓨터의 다른 이상한 디렉터리로 두어도 괜찮습니다.
+하지만 여러분은 이 책을 몇 장이나 읽었고 더 이상 초보자가 아닙니다.
+이제 곧 프로젝트를 디렉터리로 구성하고 프로젝트에서 작업할 때 R의 작업 디렉터리를 관련 디렉터리로 설정하도록 발전해야 합니다.
 
-You can set the working directory from within R but **we** **do not recommend it**:
+R 내에서 작업 디렉터리를 설정할 수 있지만 **우리는** **권장하지 않습니다**:
 
 ```{r}
 #| eval: false
 setwd("/path/to/my/CoolProject")
 ```
 
-There's a better way; a way that also puts you on the path to managing your R work like an expert.
-That way is the **RStudio** **project**.
+더 좋은 방법이 있습니다; 전문가처럼 R 작업을 관리할 수 있는 길로 안내하는 방법입니다.
+그 방법은 **RStudio** **프로젝트**입니다.
 
-### RStudio projects
+### RStudio 프로젝트
 
-Keeping all the files associated with a given project (input data, R scripts, analytical results, and figures) together in one directory is such a wise and common practice that RStudio has built-in support for this via **projects**.
-Let's make a project for you to use while you're working through the rest of this book.
-Click File \> New Project, then follow the steps shown in @fig-new-project.
+주어진 프로젝트와 관련된 모든 파일(입력 데이터, R 스크립트, 분석 결과 및 그림)을 한 디렉터리에 함께 보관하는 것은 매우 현명하고 일반적인 관행이므로 RStudio는 **프로젝트**를 통해 이에 대한 지원을 내장했습니다.
+이 책의 나머지 부분을 진행하는 동안 사용할 프로젝트를 만들어 보겠습니다.
+File(파일) > New Project(새 프로젝트)를 클릭한 다음 @fig-new-project 에 표시된 단계를 따르세요.
 
 ```{r}
 #| label: fig-new-project
 #| echo: false
-#| fig-cap: | 
-#|   To create new project: (top) first click New Directory, then (middle)
-#|   click New Project, then (bottom) fill in the directory (project) name,
-#|   choose a good subdirectory for its home and click Create Project.
+#| fig-cap: |
+#|   새 프로젝트를 만들려면: (상단) 먼저 New Directory를 클릭한 다음, 
+#|   (중간) New Project를 클릭하고, (하단) 디렉터리(프로젝트) 이름을 입력하고 
+#|   홈으로 사용할 적절한 하위 디렉터리를 선택한 다음 Create Project를 
+#|   클릭합니다.
 #| fig-alt: |
-#|   Three screenshots of the New Project menu. In the first screenshot, 
-#|   the Create Project window is shown and New Directory is selected. 
-#|   In the second screenshot, the Project Type window is shown and 
-#|   Empty Project is selected. In the third screenshot, the Create New
-#|   Project  window is shown and the directory name is given as r4ds and
-#|   the project is being created as subdirectory of the Desktop.
+#|   새 프로젝트 메뉴의 세 스크린샷. 첫 번째 스크린샷에서는 프로젝트 만들기 
+#|   창이 표시되고 New Directory가 선택되어 있습니다. 두 번째 스크린샷에서는 
+#|   프로젝트 유형 창이 표시되고 Empty Project가 선택되어 있습니다. 세 번째 
+#|   스크린샷에서는 새 프로젝트 만들기 창이 표시되고 디렉터리 이름이 
+#|   r4ds로 주어지며 프로젝트가 바탕 화면의 하위 디렉터리로 생성되고 있습니다.
 #| out-width: ~
 knitr::include_graphics("diagrams/new-project.png")
 ```
 
-Call your project `r4ds` and think carefully about which subdirectory you put the project in.
-If you don't store it somewhere sensible, it will be hard to find it in the future!
+프로젝트 이름을 `r4ds`라고 짓고 프로젝트를 어느 하위 디렉터리에 넣을지 신중하게 생각하세요.
+합리적인 곳에 저장하지 않으면 나중에 찾기 어려울 것입니다!
 
-Once this process is complete, you'll get a new RStudio project just for this book.
-Check that the "home" of your project is the current working directory:
+이 프로세스가 완료되면 이 책만을 위한 새로운 RStudio 프로젝트를 얻게 됩니다.
+프로젝트의 "홈"이 현재 작업 디렉터리인지 확인하세요:
 
 ```{r}
 #| eval: false
 getwd()
-#> [1] /Users/hadley/Documents/r4ds
+#> [1] "/Users/hadley/Documents/r4ds"
 ```
 
-Now enter the following commands in the script editor, and save the file, calling it "diamonds.R".
-Then, create a new folder called "data".
-You can do this by clicking on the "New Folder" button in the Files pane in RStudio.
-Finally, run the complete script which will save a PNG and CSV file into your project directory.
-Don't worry about the details, you'll learn them later in the book.
+이제 스크립트 편집기에 다음 명령을 입력하고 파일을 "diamonds.R"이라고 저장하세요.
+그런 다음 "data"라는 새 폴더를 만드세요.
+RStudio의 파일 창에서 "New Folder(새 폴더)" 버튼을 클릭하여 이 작업을 수행할 수 있습니다.
+마지막으로 전체 스크립트를 실행하여 프로젝트 디렉터리에 PNG 및 CSV 파일을 저장하세요.
+세부 사항에 대해서는 걱정하지 마세요. 나중에 책에서 배우게 될 것입니다.
 
 ```{r}
 #| label: toy-line
@@ -305,58 +303,57 @@ ggsave("diamonds.png")
 write_csv(diamonds, "data/diamonds.csv")
 ```
 
-Quit RStudio.
-Inspect the folder associated with your project --- notice the `.Rproj` file.
-Double-click that file to re-open the project.
-Notice you get back to where you left off: it's the same working directory and command history, and all the files you were working on are still open.
-Because you followed our instructions above, you will, however, have a completely fresh environment, guaranteeing that you're starting with a clean slate.
+RStudio를 종료하세요.
+프로젝트와 연결된 폴더를 검사해 보세요 --- `.Rproj` 파일이 보일 것입니다.
+해당 파일을 더블 클릭하여 프로젝트를 다시 여세요.
+중단했던 곳으로 돌아온 것을 알 수 있습니다. 동일한 작업 디렉터리와 명령 기록이 있고 작업 중이던 모든 파일이 여전히 열려 있습니다.
+하지만 위의 지시를 따랐으므로 완전히 새로운 환경을 갖게 되어 깨끗한 상태에서 시작하는 것이 보장됩니다.
 
-In your favorite OS-specific way, search your computer for `diamonds.png` and you will find the PNG (no surprise) but *also the script that created it* (`diamonds.R`).
-This is a huge win!
-One day, you will want to remake a figure or just understand where it came from.
-If you rigorously save figures to files **with R code** and never with the mouse or the clipboard, you will be able to reproduce old work with ease!
+좋아하는 OS별 방법으로 컴퓨터에서 `diamonds.png`를 검색하면 PNG뿐만 아니라(당연하지만) *그것을 만든 스크립트*(`diamonds.R`)도 찾을 수 있습니다.
+이것은 엄청난 승리입니다! 언젠가 여러분은 그림을 다시 만들거나 어디서 왔는지 이해하고 싶을 것입니다.
+마우스나 클립보드가 아니라 **R 코드**로 그림을 파일에 엄격하게 저장하면 옛날 작업을 쉽게 재현할 수 있습니다!
 
-### Relative and absolute paths
+### 상대 경로와 절대 경로
 
-Once you're inside a project, you should only ever use relative paths not absolute paths.
-What's the difference?
+프로젝트 내부에 들어가면 절대 경로가 아닌 상대 경로만 사용해야 합니다.
+차이점은 무엇일까요?
 A relative path is relative to the working directory, i.e. the project's home.
 When Hadley wrote `data/diamonds.csv` above it was a shortcut for `/Users/hadley/Documents/r4ds/data/diamonds.csv`.
 But importantly, if Mine ran this code on her computer, it would point to `/Users/Mine/Documents/r4ds/data/diamonds.csv`.
 This is why relative paths are important: they'll work regardless of where the R project folder ends up.
 
-Absolute paths point to the same place regardless of your working directory.
-They look a little different depending on your operating system.
-On Windows they start with a drive letter (e.g., `C:`) or two backslashes (e.g., `\\servername`) and on Mac/Linux they start with a slash "/" (e.g., `/users/hadley`).
-You should **never** use absolute paths in your scripts, because they hinder sharing: no one else will have exactly the same directory configuration as you.
+절대 경로는 작업 디렉터리에 관계없이 같은 곳을 가리킵니다.
+운영 체제에 따라 모양이 약간 다릅니다.
+Windows에서는 드라이브 문자(예: `C:`)나 두 개의 백슬래시(예: `\servername`)로 시작하고 Mac/Linux에서는 슬래시 "/"(예: `/users/hadley`)로 시작합니다.
+스크립트에서 절대 경로를 **절대** 사용해서는 안 됩니다. 공유를 방해하기 때문입니다. 다른 누구도 여러분과 정확히 같은 디렉터리 구성을 가지고 있지 않을 것입니다.
 
-There's another important difference between operating systems: how you separate the components of the path.
-Mac and Linux uses slashes (e.g., `data/diamonds.csv`) and Windows uses backslashes (e.g., `data\diamonds.csv`).
-R can work with either type (no matter what platform you're currently using), but unfortunately, backslashes mean something special to R, and to get a single backslash in the path, you need to type two backslashes!
-That makes life frustrating, so we recommend always using the Linux/Mac style with forward slashes.
+운영 체제 간에는 또 다른 중요한 차이점이 있습니다: 경로의 구성 요소를 구분하는 방법입니다.
+Mac과 Linux는 슬래시(예: `data/diamonds.csv`)를 사용하고 Windows는 백슬래시(예: `data\diamonds.csv`)를 사용합니다.
+R은 두 가지 유형 모두에서 작동할 수 있지만(현재 어떤 플랫폼을 사용하든 상관없이), 안타깝게도 백슬래시는 R에 특별한 의미가 있으며 경로에 단일 백슬래시를 얻으려면 백슬래시를 두 번 입력해야 합니다!
+이것은 삶을 좌절스럽게 만들므로 항상 슬래시가 있는 Linux/Mac 스타일을 사용하는 것이 좋습니다.
 
-## Exercises
+## 연습문제
 
-1.  Go to the RStudio Tips Twitter account, <https://twitter.com/rstudiotips> and find one tip that looks interesting.
-    Practice using it!
+1.  RStudio 팁 트위터 계정(<https://twitter.com/rstudiotips>)으로 이동하여 흥미로워 보이는 팁 하나를 찾으세요.
+    사용 연습을 해보세요!
 
-2.  What other common mistakes will RStudio diagnostics report?
-    Read <https://support.posit.co/hc/en-us/articles/205753617-Code-Diagnostics> to find out.
+2.  RStudio 진단은 또 어떤 일반적인 실수를 보고합니까?
+    <https://support.posit.co/hc/en-us/articles/205753617-Code-Diagnostics>를 읽고 확인하세요.
 
-## Summary
+## 요약
 
-In this chapter, you've learned how to organize your R code in scripts (files) and projects (directories).
-Much like code style, this may feel like busywork at first.
-But as you accumulate more code across multiple projects, you'll learn to appreciate how a little up front organisation can save you a bunch of time down the road.
+이 장에서는 스크립트(파일)와 프로젝트(디렉터리)로 R 코드를 구성하는 방법을 배웠습니다.
+코드 스타일과 마찬가지로 처음에는 바쁜 일처럼 느껴질 수 있습니다.
+하지만 여러 프로젝트에 걸쳐 더 많은 코드가 쌓이면, 초기에 약간의 조직화가 나중에 얼마나 많은 시간을 절약해 줄 수 있는지 알게 될 것입니다.
 
-In summary, scripts and projects give you a solid workflow that will serve you well in the future:
+요약하자면, 스크립트와 프로젝트는 미래에 큰 도움이 될 견고한 워크플로우를 제공합니다:
 
--   Create one RStudio project for each data analysis project.
--   Save your scripts (with informative names) in the project, edit them, run them in bits or as a whole. Restart R frequently to make sure you've captured everything in your scripts.
--   Only ever use relative paths, not absolute paths.
+-   각 데이터 분석 프로젝트마다 하나의 RStudio 프로젝트를 만드세요.
+-   프로젝트에 스크립트(유익한 이름으로)를 저장하고, 편집하고, 부분적으로 또는 전체적으로 실행하세요. 스크립트에 모든 것을 캡처했는지 확인하기 위해 R을 자주 다시 시작하세요.
+-   절대 경로가 아닌 상대 경로만 사용하세요.
 
-Then everything you need is in one place and cleanly separated from all the other projects that you are working on.
+그러면 필요한 모든 것이 한 곳에 있고 작업 중인 다른 모든 프로젝트와 깔끔하게 분리됩니다.
 
-So far, we've worked with datasets bundled inside of R packages.
-This makes it easier to get some practice on pre-prepared data, but obviously your data won't be available in this way.
-So in the next chapter, you're going to learn how load data from disk into your R session using the readr package.
+지금까지 우리는 R 패키지 안에 번들로 제공되는 데이터셋으로 작업했습니다.
+이렇게 하면 미리 준비된 데이터로 연습하기가 더 쉽지만, 당연히 여러분의 데이터는 이런 방식으로 사용할 수 없을 것입니다.
+따라서 다음 장에서는 readr 패키지를 사용하여 디스크에서 R 세션으로 데이터를 로드하는 방법을 배울 것입니다.

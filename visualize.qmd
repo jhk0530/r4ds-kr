@@ -1,36 +1,33 @@
-# Visualize {#sec-visualize .unnumbered}
+# 시각화 (Visualize) {#sec-visualize .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-After reading the first part of the book, you understand (at least superficially) the most important tools for doing data science.
-Now it's time to start diving into the details.
-In this part of the book, you'll learn about visualizing data in further depth.
+책의 첫 번째 파트를 읽고 난 후, 여러분은 데이터 과학을 수행하기 위한 가장 중요한 도구들을 (적어도 표면적으로는) 이해하게 되었습니다.
+이제 세부 사항으로 깊이 들어갈 때입니다.
+책의 이 파트에서는 데이터 시각화에 대해 더 깊이 있게 배울 것입니다.
 
 ```{r}
 #| label: fig-ds-visualize
 #| echo: false
 #| fig-cap: |
-#|   Data visualization is often the first step in data exploration.
+#|   데이터 시각화는 종종 데이터 탐색의 첫 번째 단계입니다.
 #| fig-alt: |
-#|   Our data science model, with visualize highlighted in blue.
+#|   시각화(visualize)가 파란색으로 강조된 데이터 과학 모델 다이어그램.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/visualize.png", dpi = 270)
 ```
 
-Each chapter addresses one to a few aspects of creating a data visualization.
+각 장은 데이터 시각화를 생성하는 한두 가지 측면을 다룹니다.
 
--   In @sec-layers you will learn about the layered grammar of graphics.
+-   @sec-layers 에서는 레이어드 그래픽 문법(layered grammar of graphics)에 대해 배웁니다.
 
--   In @sec-exploratory-data-analysis, you'll combine visualization with your curiosity and skepticism to ask and answer interesting questions about data.
+-   @sec-exploratory-data-analysis 에서는 시각화를 호기심 및 회의주의와 결합하여 데이터에 대한 흥미로운 질문을 던지고 답하는 방법을 배웁니다.
 
--   Finally, in @sec-communication you will learn how to take your exploratory graphics, elevate them, and turn them into expository graphics, graphics that help the newcomer to your analysis understand what's going on as quickly and easily as possible.
+-   마지막으로 @sec-communication 에서는 탐색적 그래픽을 가져와 이를 발전시켜 설명적 그래픽으로 바꾸는 방법을 배웁니다. 설명적 그래픽은 분석을 처음 접하는 사람이 무슨 일이 일어나고 있는지 가능한 한 쉽고 빠르게 이해할 수 있도록 돕는 그래픽입니다.
 
-These three chapters get you started in the world of visualization, but there is much more to learn.
-The absolute best place to learn more is the ggplot2 book: [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/).
-It goes into much more depth about the underlying theory, and has many more examples of how to combine the individual pieces to solve practical problems.
-Another great resource is the ggplot2 extensions gallery <https://exts.ggplot2.tidyverse.org/gallery/>.
-This site lists many of the packages that extend ggplot2 with new geoms and scales.
-It's a great place to start if you're trying to do something that seems hard with ggplot2.
+이 세 장은 여러분을 시각화의 세계로 안내하지만, 배워야 할 것이 훨씬 더 많습니다.
+더 배우기에 가장 좋은 곳은 ggplot2 책인 [*ggplot2: Elegant graphics for data analysis*](https://ggplot2-book.org/)입니다. 이 책은 기저 이론을 훨씬 더 깊이 있게 다루며, 실질적인 문제를 해결하기 위해 개별 조각들을 결합하는 더 많은 예제를 담고 있습니다.
+또 다른 훌륭한 리소스는 ggplot2 확장 갤러리 <https://exts.ggplot2.tidyverse.org/gallery/>입니다. 이 사이트에는 새로운 지옴(geoms)과 스케일(scales)로 ggplot2를 확장하는 많은 패키지들이 나열되어 있습니다. ggplot2로 하기에 어려워 보이는 작업을 하려 할 때 시작하기 좋은 곳입니다.

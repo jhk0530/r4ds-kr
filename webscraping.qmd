@@ -1,30 +1,30 @@
-# Web scraping {#sec-scraping}
+# 웹 스크래핑 {#sec-scraping}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## 소개
 
-This chapter introduces you to the basics of web scraping with [rvest](https://rvest.tidyverse.org).
-Web scraping is a very useful tool for extracting data from web pages.
-Some websites will offer an API, a set of structured HTTP requests that return data as JSON, which you handle using the techniques from @sec-rectangling.
-Where possible, you should use the API[^webscraping-1], because typically it will give you more reliable data.
-Unfortunately, however, programming with web APIs is out of scope for this book.
-Instead, we are teaching scraping, a technique that works whether or not a site provides an API.
+이 장에서는 [rvest](https://rvest.tidyverse.org)를 사용한 웹 스크래핑의 기초를 소개합니다.
+웹 스크래핑은 웹페이지에서 데이터를 추출하는 데 매우 유용한 도구입니다.
+일부 웹사이트는 API(데이터를 JSON으로 반환하는 구조화된 HTTP 요청 세트)를 제공하며, 이는 @sec-rectangling 의 기술을 사용하여 처리합니다.
+가능하면 API를 사용해야 합니다[^webscraping-1]. 일반적으로 더 신뢰할 수 있는 데이터를 제공하기 때문입니다.
+그러나 불행히도 웹 API 프로그래밍은 이 책의 범위를 벗어납니다.
+대신, 사이트가 API를 제공하는지 여부와 관계없이 작동하는 기술인 스크래핑을 가르칩니다.
 
-[^webscraping-1]: And many popular APIs already have CRAN packages that wrap them, so start with a little research first!
+[^webscraping-1]: 그리고 많은 인기 있는 API에는 이미 이를 래핑하는 CRAN 패키지가 있으므로 먼저 조사를 조금 해보세요!
 
-In this chapter, we'll first discuss the ethics and legalities of scraping before we dive into the basics of HTML.
-You'll then learn the basics of CSS selectors to locate specific elements on the page, and how to use rvest functions to get data from text and attributes out of HTML and into R.
-We'll then discuss some techniques to figure out what CSS selector you need for the page you're scraping, before finishing up with a couple of case studies, and a brief discussion of dynamic websites.
+이 장에서는 HTML의 기초를 다루기 전에 먼저 스크래핑의 윤리와 법적 측면에 대해 논의할 것입니다.
+그런 다음 페이지의 특정 요소를 찾기 위한 CSS 선택자의 기초와 rvest 함수를 사용하여 HTML에서 텍스트와 속성의 데이터를 가져와 R로 옮기는 방법을 배울 것입니다.
+그 후 두 가지 사례 연구와 동적 웹사이트에 대한 짧은 논의로 마무리하기 전에, 스크래핑하려는 페이지에 어떤 CSS 선택자가 필요한지 파악하는 몇 가지 기술을 논의할 것입니다.
 
-### Prerequisites
+### 선수 지식
 
-In this chapter, we'll focus on tools provided by rvest.
-rvest is a member of the tidyverse, but is not a core member so you'll need to load it explicitly.
-We'll also load the full tidyverse since we'll find it generally useful working with the data we've scraped.
+이 장에서는 rvest에서 제공하는 도구에 초점을 맞출 것입니다.
+rvest는 tidyverse의 멤버이지만 핵심 멤버는 아니므로 명시적으로 로드해야 합니다.
+스크래핑한 데이터를 다루는 데 일반적으로 유용하므로 전체 tidyverse도 로드할 것입니다.
 
 ```{r}
 #| label: setup
@@ -33,181 +33,181 @@ library(tidyverse)
 library(rvest)
 ```
 
-## Scraping ethics and legalities
+## 스크래핑 윤리 및 법적 측면
 
-Before we get started discussing the code you'll need to perform web scraping, we need to talk about whether it's legal and ethical for you to do so.
-Overall, the situation is complicated with regards to both of these.
+웹 스크래핑을 수행하는 데 필요한 코드를 논의하기 전에, 그렇게 하는 것이 합법적이고 윤리적인지 여부에 대해 이야기해야 합니다.
+전반적으로 이 두 가지와 관련하여 상황은 복잡합니다.
 
-Legalities depend a lot on where you live.
-However, as a general principle, if the data is public, non-personal, and factual, you're likely to be ok[^webscraping-2].
-These three factors are important because they're connected to the site's terms and conditions, personally identifiable information, and copyright, as we'll discuss below.
+법적 측면은 거주 지역에 따라 크게 달라집니다.
+그러나 일반적인 원칙으로서 데이터가 공개적이고, 비개인적이며, 사실적이라면 괜찮을 가능성이 높습니다[^webscraping-2].
+이 세 가지 요소는 아래에서 논의할 것처럼 사이트의 이용 약관, 개인 식별 정보 및 저작권과 연결되어 있기 때문에 중요합니다.
 
-[^webscraping-2]: Obviously we're not lawyers, and this is not legal advice.
-    But this is the best summary we can give having read a bunch about this topic.
+[^webscraping-2]: 분명히 우리는 변호사가 아니며 이것은 법률 자문이 아닙니다.
+    하지만 이 주제에 대해 많은 것을 읽은 후 우리가 줄 수 있는 최선의 요약입니다.
 
-If the data isn't public, non-personal, or factual or you're scraping the data specifically to make money with it, you'll need to talk to a lawyer.
-In any case, you should be respectful of the resources of the server hosting the pages you are scraping.
-Most importantly, this means that if you're scraping many pages, you should make sure to wait a little between each request.
-One easy way to do so is to use the [**polite**](https://dmi3kno.github.io/polite/) package by Dmytro Perepolkin.
-It will automatically pause between requests and cache the results so you never ask for the same page twice.
+데이터가 공개적이지 않거나, 비개인적이지 않거나, 사실적이지 않거나, 특히 돈을 벌기 위해 데이터를 스크래핑하는 경우 변호사와 상담해야 합니다.
+어떤 경우이든 스크래핑하는 페이지를 호스팅하는 서버의 리소스를 존중해야 합니다.
+가장 중요한 것은 많은 페이지를 스크래핑하는 경우 각 요청 사이에 잠시 기다려야 한다는 것입니다.
+그렇게 하는 한 가지 쉬운 방법은 Dmytro Perepolkin이 만든 [**polite**](https://dmi3kno.github.io/polite/) 패키지를 사용하는 것입니다.
+요청 사이에 자동으로 일시 중지하고 결과를 캐시하므로 동일한 페이지를 두 번 요청하지 않습니다.
 
-### Terms of service
+### 서비스 약관
 
-If you look closely, you'll find many websites include a "terms and conditions" or "terms of service" link somewhere on the page, and if you read that page closely you'll often discover that the site specifically prohibits web scraping.
-These pages tend to be a legal land grab where companies make very broad claims.
-It's polite to respect these terms of service where possible, but take any claims with a grain of salt.
+자세히 살펴보면 많은 웹사이트의 페이지 어딘가에 "이용 약관" 또는 "서비스 약관" 링크가 포함되어 있음을 알 수 있으며, 해당 페이지를 자세히 읽어보면 사이트가 웹 스크래핑을 명시적으로 금지하고 있음을 발견하는 경우가 많습니다.
+이러한 페이지는 회사가 매우 광범위한 주장을 하는 법적 토지 강탈이 되는 경향이 있습니다.
+가능한 한 이러한 서비스 약관을 존중하는 것이 예의이지만, 모든 주장을 곧이곧대로 받아들이지는 마세요.
 
-US courts have generally found that simply putting the terms of service in the footer of the website isn't sufficient for you to be bound by them, e.g., [HiQ Labs v. LinkedIn](https://en.wikipedia.org/wiki/HiQ_Labs_v._LinkedIn).
-Generally, to be bound to the terms of service, you must have taken some explicit action like creating an account or checking a box.
-This is why whether or not the data is **public** is important; if you don't need an account to access them, it is unlikely that you are bound to the terms of service.
-Note, however, the situation is rather different in Europe where courts have found that terms of service are enforceable even if you don't explicitly agree to them.
+미국 법원은 웹사이트 하단에 서비스 약관을 배치하는 것만으로는 귀하가 그에 구속되기에 충분하지 않다고 일반적으로 판결했습니다(예: [HiQ Labs v. LinkedIn](https://en.wikipedia.org/wiki/HiQ_Labs_v._LinkedIn)).
+일반적으로 서비스 약관에 구속되려면 계정 생성이나 확인란 선택과 같은 명시적인 조치를 취해야 합니다.
+이것이 데이터가 **공개적**인지 여부가 중요한 이유입니다. 액세스하는 데 계정이 필요하지 않다면 서비스 약관에 구속될 가능성이 낮습니다.
+그러나 법원이 명시적으로 동의하지 않더라도 서비스 약관을 집행할 수 있다고 판결한 유럽에서는 상황이 다소 다릅니다.
 
-### Personally identifiable information
+### 개인 식별 정보
 
-Even if the data is public, you should be extremely careful about scraping personally identifiable information like names, email addresses, phone numbers, dates of birth, etc.
-Europe has particularly strict laws about the collection or storage of such data ([GDPR](https://gdpr-info.eu/)), and regardless of where you live you're likely to be entering an ethical quagmire.
-For example, in 2016, a group of researchers scraped public profile information (e.g., usernames, age, gender, location, etc.) about 70,000 people on the dating site OkCupid and they publicly released these data without any attempts for anonymization.
-While the researchers felt that there was nothing wrong with this since the data were already public, this work was widely condemned due to ethics concerns around identifiability of users whose information was released in the dataset.
-If your work involves scraping personally identifiable information, we strongly recommend reading about the OkCupid study[^webscraping-3] as well as similar studies with questionable research ethics involving the acquisition and release of personally identifiable information.
+데이터가 공개적이더라도 이름, 이메일 주소, 전화번호, 생년월일 등과 같은 개인 식별 정보를 스크래핑할 때는 매우 주의해야 합니다.
+유럽은 이러한 데이터의 수집 또는 저장에 대해 특히 엄격한 법률([GDPR](https://gdpr-info.eu/))을 가지고 있으며, 거주 지역에 관계없이 윤리적 수렁에 빠질 가능성이 높습니다.
+예를 들어, 2016년에 한 연구 그룹은 데이팅 사이트인 OkCupid에서 약 70,000명의 공개 프로필 정보(예: 사용자 이름, 나이, 성별, 위치 등)를 스크래핑하여 익명화 시도 없이 이 데이터를 공개적으로 출시했습니다.
+연구원들은 데이터가 이미 공개되어 있었기 때문에 이에 문제가 없다고 느꼈지만, 이 작업은 데이터셋에 정보가 공개된 사용자의 식별 가능성에 대한 윤리적 우려로 인해 널리 비난받았습니다.
+작업에 개인 식별 정보 스크래핑이 포함된 경우 OkCupid 연구[^webscraping-3]와 개인 식별 정보의 획득 및 출시와 관련된 의심스러운 연구 윤리를 가진 유사한 연구에 대해 읽어보는 것을 강력히 추천합니다.
 
-[^webscraping-3]: One example of an article on the OkCupid study was published by Wired, <https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science>.
+[^webscraping-3]: OkCupid 연구에 대한 기사 중 하나가 Wired에 게시되었습니다: <https://www.wired.com/2016/05/okcupid-study-reveals-perils-big-data-science>.
 
-### Copyright
+### 저작권
 
-Finally, you also need to worry about copyright law.
-Copyright law is complicated, but it's worth taking a look at the [US law](https://www.law.cornell.edu/uscode/text/17/102) which describes exactly what's protected: "\[...\] original works of authorship fixed in any tangible medium of expression, \[...\]".
-It then goes on to describe specific categories that it applies like literary works, musical works, motion pictures and more.
-Notably absent from copyright protection are data.
-This means that as long as you limit your scraping to facts, copyright protection does not apply.
-(But note that Europe has a separate "[sui generis](https://en.wikipedia.org/wiki/Database_right)" right that protects databases.)
+마지막으로 저작권법에 대해서도 걱정해야 합니다.
+저작권법은 복잡하지만 무엇이 보호되는지 정확히 설명하는 [미국 법률](https://www.law.cornell.edu/uscode/text/17/102)을 살펴볼 가치가 있습니다: "\[...\] 모든 유형의 표현 매체에 고정된 저자의 독창적인 저작물, \[\]".
+그런 다음 문학 저작물, 음악 저작물, 영화 등과 같이 적용되는 특정 범주를 설명합니다.
+저작권 보호에서 눈에 띄게 빠진 것은 데이터입니다.
+즉, 스크래핑을 사실(facts)로 제한하는 한 저작권 보호는 적용되지 않습니다.
+(하지만 유럽에는 데이터베이스를 보호하는 별도의 "[sui generis](https://en.wikipedia.org/wiki/Database_right)" 권리가 있음에 유의하세요.)
 
-As a brief example, in the US, lists of ingredients and instructions are not copyrightable, so copyright can not be used to protect a recipe.
-But if that list of recipes is accompanied by substantial novel literary content, that is copyrightable.
-This is why when you're looking for a recipe on the internet there's always so much content beforehand.
+간단한 예로 미국에서는 재료 목록과 지침은 저작권으로 보호될 수 없으므로 저작권은 레시피를 보호하는 데 사용될 수 없습니다.
+하지만 그 레시피 목록에 실질적인 새로운 문학적 내용이 수반된다면 그것은 저작권으로 보호될 수 있습니다.
+이것이 인터넷에서 레시피를 찾을 때 항상 앞에 그렇게 많은 내용이 있는 이유입니다.
 
-If you do need to scrape original content (like text or images), you may still be protected under the [doctrine of fair use](https://en.wikipedia.org/wiki/Fair_use).
-Fair use is not a hard and fast rule, but weighs up a number of factors.
-It's more likely to apply if you are collecting the data for research or non-commercial purposes and if you limit what you scrape to just what you need.
+독창적인 콘텐츠(텍스트나 이미지 등)를 스크래핑해야 하는 경우에도 여전히 [공정 이용 원칙(doctrine of fair use)](https://en.wikipedia.org/wiki/Fair_use)에 따라 보호받을 수 있습니다.
+공정 이용은 고정된 규칙은 아니지만 여러 요소를 따져봅니다.
+연구 또는 비상업적 목적으로 데이터를 수집하고 스크래핑하는 내용을 필요한 것만으로 제한하는 경우 적용될 가능성이 더 높습니다.
 
-## HTML basics
+## HTML 기초
 
-To scrape webpages, you need to first understand a little bit about **HTML**, the language that describes web pages.
-HTML stands for **H**yper**T**ext **M**arkup **L**anguage and looks something like this:
+웹페이지를 스크래핑하려면 먼저 웹페이지를 설명하는 언어인 **HTML**에 대해 조금 이해해야 합니다.
+HTML은 **H**yper**T**ext **M**arkup **L**anguage의 약자로 다음과 같이 생겼습니다:
 
 ``` html
 <html>
 <head>
-  <title>Page title</title>
+  <title>페이지 제목</title>
 </head>
 <body>
-  <h1 id='first'>A heading</h1>
-  <p>Some text &amp; <b>some bold text.</b></p>
+  <h1 id='first'>제목</h1>
+  <p>일부 텍스트 및 <b>일부 굵은 텍스트.</b></p>
   <img src='myimg.png' width='100' height='100'>
 </body>
 ```
 
-HTML has a hierarchical structure formed by **elements** which consist of a start tag (e.g., `<tag>`), optional **attributes** (`id='first'`), an end tag[^webscraping-4] (like `</tag>`), and **contents** (everything in between the start and end tag).
+HTML은 시작 태그(예: `<tag>`), 선택적 **속성**(`id='first'`), 종료 태그[^webscraping-4](예: `</tag>`) 및 **내용**(시작 태그와 종료 태그 사이의 모든 것)으로 구성된 **요소(elements)** 에 의해 형성된 계층 구조를 가집니다.
 
-[^webscraping-4]: A number of tags (including `<p>` and `<li>)` don't require end tags, but we think it's best to include them because it makes seeing the structure of the HTML a little easier.
+[^webscraping-4]: 여러 태그( `<p>` 및 `<li>` 포함)는 종료 태그가 필요하지 않지만 HTML 구조를 보기가 조금 더 쉽기 때문에 포함하는 것이 가장 좋다고 생각합니다.
 
-Since `<` and `>` are used for start and end tags, you can't write them directly.
-Instead you have to use the HTML **escapes** `&gt;` (greater than) and `&lt;` (less than).
-And since those escapes use `&`, if you want a literal ampersand you have to escape it as `&amp;`.
-There are a wide range of possible HTML escapes but you don't need to worry about them too much because rvest automatically handles them for you.
+`<`와 `>`는 시작 및 종료 태그에 사용되므로 직접 작성할 수 없습니다.
+대신 HTML **이스케이프**인 `&gt;`(보다 큼)와 `&lt;`(보다 작음)를 사용해야 합니다.
+그리고 이러한 이스케이프는 `&`를 사용하므로 리터럴 앰퍼샌드를 원한다면 `&amp;`로 이스케이프해야 합니다.
+다양한 가능한 HTML 이스케이프가 있지만 rvest가 자동으로 처리해 주므로 너무 걱정할 필요는 없습니다.
 
-Web scraping is possible because most pages that contain data that you want to scrape generally have a consistent structure.
+웹 스크래핑이 가능한 이유는 스크래핑하려는 데이터가 포함된 대부분의 페이지가 일반적으로 일관된 구조를 가지고 있기 때문입니다.
 
-### Elements
+### 요소(Elements)
 
-There are over 100 HTML elements.
-Some of the most important are:
+100개 이상의 HTML 요소가 있습니다.
+가장 중요한 것들은 다음과 같습니다:
 
--   Every HTML page must be in an `<html>` element, and it must have two children: `<head>`, which contains document metadata like the page title, and `<body>`, which contains the content you see in the browser.
+-   모든 HTML 페이지는 `<html>` 요소 내에 있어야 하며 두 개의 자식을 가져야 합니다: 페이지 제목과 같은 문서 메타데이터를 포함하는 `<head>`와 브라우저에서 보는 내용을 포함하는 `<body>`입니다.
 
--   Block tags like `<h1>` (heading 1), `<section>` (section), `<p>` (paragraph), and `<ol>` (ordered list) form the overall structure of the page.
+-   `<h1>`(제목 1), `<section>`(섹션), `<p>`(단락) 및 `<ol>`(순서가 있는 목록)과 같은 블록 태그는 페이지의 전반적인 구조를 형성합니다.
 
--   Inline tags like `<b>` (bold), `<i>` (italics), and `<a>` (link) format text inside block tags.
+-   `<b>`(굵게), `<i>`(기울임꼴) 및 `<a>`(링크)와 같은 인라인 태그는 블록 태그 내부의 텍스트 형식을 지정합니다.
 
-If you encounter a tag that you've never seen before, you can find out what it does with a little googling.
-Another good place to start are the [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTML) which describe just about every aspect of web programming.
+처음 보는 태그를 만나면 약간의 구글링으로 그 역할을 찾을 수 있습니다.
+시작하기 좋은 또 다른 장소는 웹 프로그래밍의 거의 모든 측면을 설명하는 [MDN 웹 문서](https://developer.mozilla.org/en-US/docs/Web/HTML)입니다.
 
-Most elements can have content in between their start and end tags.
-This content can either be text or more elements.
-For example, the following HTML contains paragraph of text, with one word in bold.
+대부분의 요소는 시작 태그와 종료 태그 사이에 내용을 가질 수 있습니다.
+이 내용은 텍스트이거나 더 많은 요소일 수 있습니다.
+예를 들어 다음 HTML은 한 단어가 굵게 표시된 텍스트 단락을 포함합니다.
 
 ```         
 <p>
-  Hi! My <b>name</b> is Hadley.
+  안녕! 내 <b>이름</b>은 해들리야.
 </p>
 ```
 
-The **children** are the elements it contains, so the `<p>` element above has one child, the `<b>` element.
-The `<b>` element has no children, but it does have contents (the text "name").
+**자식(children)** 은 포함된 요소이므로 위의 `<p>` 요소는 하나의 자식인 `<b>` 요소를 가집니다.
+`<b>` 요소는 자식이 없지만 내용(텍스트 "이름")을 가집니다.
 
-### Attributes
+### 속성(Attributes)
 
-Tags can have named **attributes** which look like `name1='value1' name2='value2'`.
-Two of the most important attributes are `id` and `class`, which are used in conjunction with CSS (Cascading Style Sheets) to control the visual appearance of the page.
-These are often useful when scraping data off a page.
-Attributes are also used to record the destination of links (the `href` attribute of `<a>` elements) and the source of images (the `src` attribute of the `<img>` element).
+태그는 `name1='value1' name2='value2'`와 같이 생긴 이름이 지정된 **속성**을 가질 수 있습니다.
+가장 중요한 두 가지 속성은 `id`와 `class`로, CSS(Cascading Style Sheets)와 함께 사용되어 페이지의 시각적 모양을 제어합니다.
+이들은 페이지에서 데이터를 스크래핑할 때 종종 유용합니다.
+속성은 링크의 목적지(`<a>` 요소의 `href` 속성)와 이미지의 소스(`<img>` 요소의 `src` 속성)를 기록하는 데에도 사용됩니다.
 
-## Extracting data
+## 데이터 추출
 
-To get started scraping, you'll need the URL of the page you want to scrape, which you can usually copy from your web browser.
-You'll then need to read the HTML for that page into R with `read_html()`.
-This returns an `xml_document`[^webscraping-5] object which you'll then manipulate using rvest functions:
+스크래핑을 시작하려면 스크래핑하려는 페이지의 URL이 필요하며 이는 일반적으로 웹 브라우저에서 복사할 수 있습니다.
+그런 다음 `read_html()`을 사용하여 해당 페이지의 HTML을 R로 읽어들여야 합니다.
+이는 `xml_document`[^webscraping-5] 객체를 반환하며, 이를 rvest 함수를 사용하여 조작하게 됩니다:
 
-[^webscraping-5]: This class comes from the [xml2](https://xml2.r-lib.org) package.
-    xml2 is a low-level package that rvest builds on top of.
+[^webscraping-5]: 이 클래스는 [xml2](https://xml2.r-lib.org) 패키지에서 가져옵니다.
+    xml2는 rvest가 기반으로 하는 저수준 패키지입니다.
 
 ```{r}
 html <- read_html("http://rvest.tidyverse.org/")
 html
 ```
 
-rvest also includes a function that lets you write HTML inline.
-We'll use this a bunch in this chapter as we teach how the various rvest functions work with simple examples.
+rvest에는 HTML을 인라인으로 작성할 수 있게 해주는 함수도 포함되어 있습니다.
+이 장에서 다양한 rvest 함수가 간단한 예제와 함께 어떻게 작동하는지 가르치기 위해 이 함수를 자주 사용할 것입니다.
 
 ```{r}
 html <- minimal_html("
-  <p>This is a paragraph</p>
+  <p>이것은 단락입니다</p>
   <ul>
-    <li>This is a bulleted list</li>
+    <li>이것은 글머리 기호 목록입니다</li>
   </ul>
 ")
 html
 ```
 
-Now that you have the HTML in R, it's time to extract the data of interest.
-You'll first learn about the CSS selectors that allow you to identify the elements of interest and the rvest functions that you can use to extract data from them.
-Then we'll briefly cover HTML tables, which have some special tools.
+이제 R에 HTML이 있으므로 관심 있는 데이터를 추출할 차례입니다.
+먼저 관심 있는 요소를 식별할 수 있게 해주는 CSS 선택자와 거기서 데이터를 추출하는 데 사용할 수 있는 rvest 함수에 대해 배우게 될 것입니다.
+그런 다음 몇 가지 특수 도구가 있는 HTML 표에 대해 짧게 다룰 것입니다.
 
-### Find elements
+### 요소 찾기
 
-CSS is short for cascading style sheets, and is a tool for defining the visual styling of HTML documents.
-CSS includes a miniature language for selecting elements on a page called **CSS selectors**.
-CSS selectors define patterns for locating HTML elements, and are useful for scraping because they provide a concise way of describing which elements you want to extract.
+CSS는 Cascading Style Sheets의 약자로 HTML 문서의 시각적 스타일을 정의하기 위한 도구입니다.
+CSS에는 **CSS 선택자(selectors)** 라고 불리는 페이지의 요소를 선택하기 위한 미니어처 언어가 포함되어 있습니다.
+CSS 선택자는 HTML 요소를 찾기 위한 패턴을 정의하며, 추출하려는 요소를 설명하는 간결한 방법을 제공하므로 스크래핑에 유용합니다.
 
-We'll come back to CSS selectors in more detail in @sec-css-selectors, but luckily you can get a long way with just three:
+@sec-css-selectors 에서 CSS 선택자에 대해 더 자세히 다루겠지만, 다행히 다음 세 가지만으로도 많은 것을 할 수 있습니다:
 
--   `p` selects all `<p>` elements.
+-   `p`는 모든 `<p>` 요소를 선택합니다.
 
--   `.title` selects all elements with `class` "title".
+-   `.title`은 `class`가 "title"인 모든 요소를 선택합니다.
 
--   `#title` selects the element with the `id` attribute that equals "title".
-    Id attributes must be unique within a document, so this will only ever select a single element.
+-   `#title`은 `id` 속성이 "title"과 같은 요소를 선택합니다.
+    id 속성은 문서 내에서 고유해야 하므로 이는 항상 단일 요소만 선택합니다.
 
-Let's try out these selectors with a simple example:
+간단한 예제로 이 선택자들을 시도해 봅시다:
 
 ```{r}
 html <- minimal_html("
-  <h1>This is a heading</h1>
-  <p id='first'>This is a paragraph</p>
-  <p class='important'>This is an important paragraph</p>
+  <h1>이것은 제목입니다</h1>
+  <p id='first'>이것은 단락입니다</p>
+  <p class='important'>이것은 중요한 단락입니다</p>
 ")
 ```
 
-Use `html_elements()` to find all elements that match the selector:
+`html_elements()`를 사용하여 선택자와 일치하는 모든 요소를 찾으세요:
 
 ```{r}
 html |> html_elements("p")
@@ -215,74 +215,73 @@ html |> html_elements(".important")
 html |> html_elements("#first")
 ```
 
-Another important function is `html_element()` which always returns the same number of outputs as inputs.
-If you apply it to a whole document it'll give you the first match:
+또 다른 중요한 함수는 `html_element()`로, 항상 입력과 동일한 수의 출력을 반환합니다.
+전체 문서에 적용하면 첫 번째 일치 항목을 제공합니다:
 
 ```{r}
 html |> html_element("p")
 ```
 
-There's an important difference between `html_element()` and `html_elements()` when you use a selector that doesn't match any elements.
-`html_elements()` returns a vector of length 0, where `html_element()` returns a missing value.
-This will be important shortly.
+일치하는 요소가 없는 선택자를 사용할 때 `html_element()`와 `html_elements()` 사이에는 중요한 차이점이 있습니다.
+`html_elements()`는 길이가 0인 벡터를 반환하는 반면, `html_element()`는 결측값을 반환합니다.
+이것은 곧 중요해질 것입니다.
 
 ```{r}
 html |> html_elements("b")
 html |> html_element("b")
 ```
 
-### Nesting selections
+### 중첩 선택
 
-In most cases, you'll use `html_elements()` and `html_element()` together, typically using `html_elements()` to identify elements that will become observations then using `html_element()` to find elements that will become variables.
-Let's see this in action using a simple example.
-Here we have an unordered list (`<ul>)` where each list item (`<li>`) contains some information about four characters from StarWars:
+대부분의 경우 `html_elements()`와 `html_element()`를 함께 사용하게 되는데, 일반적으로 관측값이 될 요소를 식별하기 위해 `html_elements()`를 사용한 다음 변수가 될 요소를 찾기 위해 `html_element()`를 사용합니다.
+간단한 예제를 사용하여 이를 실제로 살펴보겠습니다. 여기에는 스타워즈(StarWars)의 네 캐릭터에 대한 정보가 포함된 순서가 없는 목록(`<ul>`)이 있습니다:
 
 ```{r}
 html <- minimal_html("
   <ul>
-    <li><b>C-3PO</b> is a <i>droid</i> that weighs <span class='weight'>167 kg</span></li>
-    <li><b>R4-P17</b> is a <i>droid</i></li>
-    <li><b>R2-D2</b> is a <i>droid</i> that weighs <span class='weight'>96 kg</span></li>
-    <li><b>Yoda</b> weighs <span class='weight'>66 kg</span></li>
+    <li><b>C-3PO</b>는 <span class='weight'>167 kg</span>인 <i>드로이드</i>입니다</li>
+    <li><b>R4-P17</b>은 <i>드로이드</i>입니다</li>
+    <li><b>R2-D2</b>는 <span class='weight'>96 kg</span>인 <i>드로이드</i>입니다</li>
+    <li><b>Yoda</b>는 <span class='weight'>66 kg</span>입니다</li>
   </ul>
-  ")
+")
 ```
 
-We can use `html_elements()` to make a vector where each element corresponds to a different character:
+`html_elements()`를 사용하여 각 요소가 서로 다른 캐릭터에 해당하는 벡터를 만들 수 있습니다:
 
 ```{r}
 characters <- html |> html_elements("li")
 characters
 ```
 
-To extract the name of each character, we use `html_element()`, because when applied to the output of `html_elements()` it's guaranteed to return one response per element:
+각 캐릭터의 이름을 추출하기 위해 `html_element()`를 사용합니다. `html_elements()`의 출력에 적용될 때 요소당 하나의 응답을 반환하는 것이 보장되기 때문입니다:
 
 ```{r}
 characters |> html_element("b")
 ```
 
-The distinction between `html_element()` and `html_elements()` isn't important for name, but it is important for weight.
-We want to get one weight for each character, even if there's no weight `<span>`.
-That's what `html_element()` does:
+`html_element()`와 `html_elements()`의 구별은 이름에 대해서는 중요하지 않지만 몸무게에 대해서는 중요합니다.
+몸무게 `<span>`이 없더라도 각 캐릭터에 대해 하나의 몸무게를 얻고 싶습니다.
+그것이 `html_element()`가 하는 일입니다:
 
 ```{r}
 characters |> html_element(".weight")
 ```
 
-`html_elements()` finds all weight `<span>`s that are children of `characters`.
-There's only three of these, so we lose the connection between names and weights:
+`html_elements()`는 `characters`의 자식인 모든 몸무게 `<span>`을 찾습니다.
+이들 중 세 개만 있으므로 이름과 몸무게 사이의 연결을 잃게 됩니다:
 
 ```{r}
 characters |> html_elements(".weight")
 ```
 
-Now that you've selected the elements of interest, you'll need to extract the data, either from the text contents or some attributes.
+이제 관심 있는 요소를 선택했으므로 텍스트 내용이나 일부 속성에서 데이터를 추출해야 합니다.
 
-### Text and attributes
+### 텍스트와 속성
 
-`html_text2()`[^webscraping-6] extracts the plain text contents of an HTML element:
+`html_text2()`[^webscraping-6]는 HTML 요소의 일반 텍스트 내용을 추출합니다:
 
-[^webscraping-6]: rvest also provides `html_text()` but you should almost always use `html_text2()` since it does a better job of converting nested HTML to text.
+[^webscraping-6]: rvest는 `html_text()`도 제공하지만 중첩된 HTML을 텍스트로 변환하는 작업을 더 잘 수행하므로 거의 항상 `html_text2()`를 사용해야 합니다.
 
 ```{r}
 characters |> 
@@ -294,14 +293,14 @@ characters |>
   html_text2()
 ```
 
-Note that any escapes will be automatically handled; you'll only ever see HTML escapes in the source HTML, not in the data returned by rvest.
+모든 이스케이프가 자동으로 처리된다는 점에 유의하세요. HTML 이스케이프는 소스 HTML에서만 볼 수 있으며 rvest에서 반환된 데이터에서는 볼 수 없습니다.
 
-`html_attr()` extracts data from attributes:
+`html_attr()`는 속성에서 데이터를 추출합니다:
 
 ```{r}
 html <- minimal_html("
-  <p><a href='https://en.wikipedia.org/wiki/Cat'>cats</a></p>
-  <p><a href='https://en.wikipedia.org/wiki/Dog'>dogs</a></p>
+  <p><a href='https://en.wikipedia.org/wiki/Cat'>고양이</a></p>
+  <p><a href='https://en.wikipedia.org/wiki/Dog'>개</a></p>
 ")
 
 html |> 
@@ -310,15 +309,15 @@ html |>
   html_attr("href")
 ```
 
-`html_attr()` always returns a string, so if you're extracting numbers or dates, you'll need to do some post-processing.
+`html_attr()`는 항상 문자열을 반환하므로 숫자나 날짜를 추출하는 경우 사후 처리를 좀 해야 합니다.
 
-### Tables
+### 표(Tables)
 
-If you're lucky, your data will be already stored in an HTML table, and it'll be a matter of just reading it from that table.
-It's usually straightforward to recognize a table in your browser: it'll have a rectangular structure of rows and columns, and you can copy and paste it into a tool like Excel.
+운이 좋다면 데이터가 이미 HTML 표에 저장되어 있을 것이고, 단순히 그 표에서 읽어오기만 하면 될 것입니다.
+브라우저에서 표를 인식하는 것은 대개 간단합니다: 행과 열의 직사각형 구조를 가질 것이며, Excel과 같은 도구에 복사해서 붙여넣을 수 있습니다.
 
-HTML tables are built up from four main elements: `<table>`, `<tr>` (table row), `<th>` (table heading), and `<td>` (table data).
-Here's a simple HTML table with two columns and three rows:
+HTML 표는 4개의 주요 요소로 구성됩니다: `<table>`, `<tr>`(표 행), `<th>`(표 머리글) 및 `<td>`(표 데이터).
+여기에 두 개의 열과 세 개의 행이 있는 간단한 HTML 표가 있습니다:
 
 ```{r}
 html <- minimal_html("
@@ -328,12 +327,12 @@ html <- minimal_html("
     <tr><td>4.9</td> <td>1.3</td></tr>
     <tr><td>7.2</td> <td>8.1</td></tr>
   </table>
-  ")
+")
 ```
 
-rvest provides a function that knows how to read this sort of data: `html_table()`.
-It returns a list containing one tibble for each table found on the page.
-Use `html_element()` to identify the table you want to extract:
+rvest는 이런 종류의 데이터를 읽는 방법을 아는 함수인 `html_table()`을 제공합니다.
+페이지에서 찾은 각 표에 대해 하나의 티블을 포함하는 리스트를 반환합니다.
+추출하려는 표를 식별하기 위해 `html_element()`를 사용하세요:
 
 ```{r}
 html |> 
@@ -341,45 +340,45 @@ html |>
   html_table()
 ```
 
-Note that `x` and `y` have automatically been converted to numbers.
-This automatic conversion doesn't always work, so in more complex scenarios you may want to turn it off with `convert = FALSE` and then do your own conversion.
+`x`와 `y`가 자동으로 숫자로 변환된 것을 주목하세요.
+이 자동 변환이 항상 작동하는 것은 아니므로 더 복잡한 시나리오에서는 `convert = FALSE`로 이를 끄고 직접 변환을 수행하고 싶을 수 있습니다.
 
-## Finding the right selectors {#sec-css-selectors}
+## 올바른 선택자 찾기 {#sec-css-selectors}
 
-Figuring out the selector you need for your data is typically the hardest part of the problem.
-You'll often need to do some experimenting to find a selector that is both specific (i.e. it doesn't select things you don't care about) and sensitive (i.e. it does select everything you care about).
-Lots of trial and error is a normal part of the process!
-There are two main tools that are available to help you with this process: SelectorGadget and your browser's developer tools.
+데이터에 필요한 선택자를 파악하는 것이 일반적으로 문제의 가장 어려운 부분입니다.
+구체적(즉, 관심 없는 것은 선택하지 않음)이면서 민감한(즉, 관심 있는 모든 것을 선택함) 선택자를 찾기 위해 종종 실험을 좀 해야 합니다.
+많은 시행착오는 프로세스의 정상적인 부분입니다! 
+이 프로세스를 돕기 위해 사용할 수 있는 두 가지 주요 도구가 있습니다: SelectorGadget과 브라우저의 개발자 도구입니다.
 
-[SelectorGadget](https://rvest.tidyverse.org/articles/selectorgadget.html) is a javascript bookmarklet that automatically generates CSS selectors based on the positive and negative examples that you provide.
-It doesn't always work, but when it does, it's magic!
-You can learn how to install and use SelectorGadget either by reading <https://rvest.tidyverse.org/articles/selectorgadget.html> or watching Mine's video at <https://www.youtube.com/watch?v=PetWV5g1Xsc>.
+[SelectorGadget](https://rvest.tidyverse.org/articles/selectorgadget.html)은 제공한 긍정적 예제와 부정적 예제를 기반으로 CSS 선택자를 자동으로 생성하는 자바스크립트 북마클릿입니다.
+항상 작동하는 것은 아니지만 작동할 때는 마법 같습니다! 
+<https://rvest.tidyverse.org/articles/selectorgadget.html>을 읽거나 Mine의 비디오 <https://www.youtube.com/watch?v=PetWV5g1Xsc>를 시청하여 SelectorGadget을 설치하고 사용하는 방법을 배울 수 있습니다.
 
-Every modern browser comes with some toolkit for developers, but we recommend Chrome, even if it isn't your regular browser: its web developer tools are some of the best and they're immediately available.
-Right click on an element on the page and click `Inspect`.
-This will open an expandable view of the complete HTML page, centered on the element that you just clicked.
-You can use this to explore the page and get a sense of what selectors might work.
-Pay particular attention to the class and id attributes, since these are often used to form the visual structure of the page, and hence make for good tools to extract the data that you're looking for.
+모든 현대 브라우저에는 개발자를 위한 툴킷이 함께 제공되지만, 일반 브라우저가 아니더라도 크롬(Chrome)을 권장합니다: 웹 개발자 도구가 가장 뛰어나고 즉시 사용할 수 있기 때문입니다.
+페이지의 요소를 마우스 오른쪽 버튼으로 클릭하고 `검사(Inspect)`를 클릭합니다.
+그러면 방금 클릭한 요소를 중심으로 전체 HTML 페이지의 확장 가능한 뷰가 열립니다.
+이를 사용하여 페이지를 탐색하고 어떤 선택자가 작동할지 감을 잡을 수 있습니다. 
+class와 id 속성은 종종 페이지의 시각적 구조를 형성하는 데 사용되므로 찾고 있는 데이터를 추출하기 위한 좋은 도구가 되므로 특히 주의를 기울이세요.
 
-Inside the Elements view, you can also right click on an element and choose `Copy as Selector` to generate a selector that will uniquely identify the element of interest.
+요소(Elements) 뷰 내에서 요소를 마우스 오른쪽 버튼으로 클릭하고 `Copy as Selector`를 선택하여 관심 있는 요소를 고유하게 식별할 선택자를 생성할 수도 있습니다.
 
-If either SelectorGadget or Chrome DevTools have generated a CSS selector that you don't understand, try [Selectors Explained](https://kittygiraudel.github.io/selectors-explained/){.uri} which translates CSS selectors into plain English.
-If you find yourself doing this a lot, you might want to learn more about CSS selectors generally.
-We recommend starting with the fun [CSS dinner](https://flukeout.github.io/) tutorial and then referring to the [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors).
+SelectorGadget이나 크롬 개발자 도구가 이해할 수 없는 CSS 선택자를 생성했다면 CSS 선택자를 평범한 영어로 번역해주는 [Selectors Explained](https://kittygiraudel.github.io/selectors-explained/){.uri}를 시도해 보세요.
+이 작업을 자주 하게 된다면 일반적으로 CSS 선택자에 대해 더 많이 배우고 싶을 것입니다.
+재미있는 [CSS dinner](https://flukeout.github.io/) 튜토리얼부터 시작하여 [MDN 웹 문서](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors)를 참조하는 것을 추천합니다.
 
-## Putting it all together
+## 종합하기
 
-Let's put this all together to scrape some websites.
-There's some risk that these examples may no longer work when you run them --- that's the fundamental challenge of web scraping; if the structure of the site changes, then you'll have to change your scraping code.
+웹사이트 몇 군데를 스크래핑하기 위해 이 모든 것을 종합해 봅시다.
+이 예제들이 실행할 때 더 이상 작동하지 않을 위험이 있습니다. 이것이 웹 스크래핑의 근본적인 과제입니다. 사이트 구조가 변경되면 스크래핑 코드를 변경해야 합니다.
 
-### StarWars
+### 스타워즈(StarWars)
 
-rvest includes a very simple example in `vignette("starwars")`.
-This is a simple page with minimal HTML so it's a good place to start.
-I'd encourage you to navigate to that page now and use "Inspect Element" to inspect one of the headings that's the title of a Star Wars movie.
-Use the keyboard or mouse to explore the hierarchy of the HTML and see if you can get a sense of the shared structure used by each movie.
+rvest는 `vignette("starwars")`에 매우 간단한 예제를 포함하고 있습니다.
+이것은 최소한의 HTML을 가진 간단한 페이지이므로 시작하기에 좋은 곳입니다.
+지금 해당 페이지로 이동하여 "요소 검사"를 사용하여 스타워즈 영화 제목인 제목 중 하나를 검사해 보시길 권장합니다.
+키보드나 마우스를 사용하여 HTML 계층 구조를 탐색하고 각 영화에서 사용되는 공유 구조에 대한 감을 잡을 수 있는지 확인해 보세요.
 
-You should be able to see that each movie has a shared structure that looks like this:
+각 영화가 다음과 같은 공유 구조를 가지고 있음을 볼 수 있을 것입니다:
 
 ``` html
 <section>
@@ -395,8 +394,8 @@ You should be able to see that each movie has a shared structure that looks like
 </section>
 ```
 
-Our goal is to turn this data into a 7 row data frame with variables `title`, `year`, `director`, and `intro`.
-We'll start by reading the HTML and extracting all the `<section>` elements:
+우리의 목표는 이 데이터를 `title`, `year`, `director`, `intro` 변수를 가진 7행 데이터 프레임으로 변환하는 것입니다.
+먼저 HTML을 읽고 모든 `<section>` 요소를 추출하는 것으로 시작하겠습니다:
 
 ```{r}
 url <- "https://rvest.tidyverse.org/articles/starwars.html"
@@ -406,9 +405,8 @@ section <- html |> html_elements("section")
 section
 ```
 
-This retrieves seven elements matching the seven movies found on that page, suggesting that using `section` as a selector is good.
-Extracting the individual elements is straightforward since the data is always found in the text.
-It's just a matter of finding the right selector:
+이 코드는 해당 페이지에서 찾은 7편의 영화와 일치하는 7개의 요소를 검색하므로 `section`을 선택자로 사용하는 것이 좋음을 시사합니다. 
+데이터는 항상 텍스트에서 발견되므로 개별 요소를 추출하는 것은 간단합니다. 올바른 선택자를 찾기만 하면 됩니다:
 
 ```{r}
 section |> html_element("h2") |> html_text2()
@@ -416,7 +414,7 @@ section |> html_element("h2") |> html_text2()
 section |> html_element(".director") |> html_text2()
 ```
 
-Once we've done that for each component, we can wrap all the results up into a tibble:
+각 구성 요소에 대해 이 작업을 완료하면 모든 결과를 티블로 묶을 수 있습니다:
 
 ```{r}
 tibble(
@@ -437,27 +435,26 @@ tibble(
 )
 ```
 
-We did a little more processing of `released` to get a variable that will be easy to use later in our analysis.
+나중에 분석에서 쉽게 사용할 수 있는 변수를 얻기 위해 `released`에 대해 처리를 조금 더 했습니다.
 
-### IMDB top films
+### IMDB 인기 영화
 
-For our next task we'll tackle something a little trickier, extracting the top 250 movies from the internet movie database (IMDb).
-At the time we wrote this chapter, the page looked like @fig-scraping-imdb.
+다음 과제로 인터넷 영화 데이터베이스(IMDb)에서 상위 250개 영화를 추출하는 조금 더 까다로운 작업을 처리해 보겠습니다.
+우리가 이 장을 썼을 때 페이지는 @fig-scraping-imdb 처럼 보였습니다.
 
 ```{r}
 #| label: fig-scraping-imdb
 #| echo: false
 #| fig-cap: | 
-#|   Screenshot of the IMDb top movies web page taken on 2022-12-05.
-#| fig-alt: |
-#|   The screenshot shows a table with columns "Rank and Title",
-#|   "IMDb Rating", and "Your Rating". 9 movies out of the top 250
-#|   are shown. The top 5 are the Shawshank Redemption, The Godfather,
-#|   The Dark Knight, The Godfather: Part II, and 12 Angry Men.
+#|   2022-12-05에 찍은 IMDb 상위 영화 웹페이지의 스크린샷.
+#| fig-alt: | 
+#|   스크린샷은 "Rank and Title", "IMDb Rating", "Your Rating" 열이 있는 
+#|   표를 보여줍니다. 상위 250개 중 9개 영화가 표시됩니다. 상위 5위는 
+#|   쇼생크 탈출, 대부, 다크 나이트, 대부 2, 12인의 성난 사람들입니다.
 knitr::include_graphics("screenshots/scraping-imdb.png", dpi = 300)
 ```
 
-This data has a clear tabular structure so it's worth starting with `html_table()`:
+이 데이터는 명확한 표 구조를 가지고 있으므로 `html_table()`로 시작할 가치가 있습니다:
 
 ```{r}
 url <- "https://web.archive.org/web/20220201012049/https://www.imdb.com/chart/top/"
@@ -469,11 +466,11 @@ table <- html |>
 table
 ```
 
-This includes a few empty columns, but overall does a good job of capturing the information from the table.
-However, we need to do some more processing to make it easier to use.
-First, we'll rename the columns to be easier to work with, and remove the extraneous whitespace in rank and title.
-We will do this with `select()` (instead of `rename()`) to do the renaming and selecting of just these two columns in one step.
-Then we'll remove the new lines and extra spaces, and then apply `separate_wider_regex()` (from @sec-extract-variables) to pull out the title, year, and rank into their own variables.
+여기에는 몇 개의 빈 열이 포함되어 있지만 전반적으로 표의 정보를 잘 캡처합니다.
+그러나 사용하기 쉽게 만들려면 처리를 좀 더 해야 합니다.
+먼저 열의 이름을 작업하기 쉽게 바꾸고 순위(rank)와 제목(title)에 있는 불필요한 공백을 제거하겠습니다.
+한 단계에서 이 두 열만 선택하고 이름을 바꾸기 위해 `select()`(`rename()` 대신)를 사용하여 이 작업을 수행할 것입니다.
+그런 다음 줄바꿈과 추가 공백을 제거한 다음, `separate_wider_regex()`(@sec-extract-variables 에서 배움)를 적용하여 제목, 연도 및 순위를 자체 변수로 뽑아내겠습니다.
 
 ```{r}
 ratings <- table |>
@@ -495,9 +492,9 @@ ratings <- table |>
 ratings
 ```
 
-Even in this case where most of the data comes from table cells, it's still worth looking at the raw HTML.
-If you do so, you'll discover that we can add a little extra data by using one of the attributes.
-This is one of the reasons it's worth spending a little time spelunking the source of the page; you might find extra data, or might find a parsing route that's slightly easier.
+대부분의 데이터가 표 셀에서 나오는 경우에도 여전히 원시 HTML을 살펴볼 가치가 있습니다.
+그렇게 하면 속성 중 하나를 사용하여 약간의 추가 데이터를 더할 수 있다는 것을 발견하게 될 것입니다.
+이것이 페이지 소스를 탐색하는 데 시간을 조금 투자할 가치가 있는 이유 중 하나입니다. 추가 데이터를 찾거나 약간 더 쉬운 파싱 경로를 찾을 수도 있습니다.
 
 ```{r}
 html |> 
@@ -506,7 +503,7 @@ html |>
   html_attr("title")
 ```
 
-We can combine this with the tabular data and again apply `separate_wider_regex()` to extract out the bit of data we care about:
+이를 표 형식의 데이터와 결합하고 다시 `separate_wider_regex()`를 적용하여 관심 있는 데이터 조각을 추출할 수 있습니다:
 
 ```{r}
 ratings |>
@@ -526,26 +523,26 @@ ratings |>
   )
 ```
 
-## Dynamic sites
+## 동적 사이트
 
-So far we have focused on websites where `html_elements()` returns what you see in the browser and discussed how to parse what it returns and how to organize that information in tidy data frames.
-From time-to-time, however, you'll hit a site where `html_elements()` and friends don't return anything like what you see in the browser.
-In many cases, that's because you're trying to scrape a website that dynamically generates the content of the page with javascript.
-This doesn't currently work with rvest, because rvest downloads the raw HTML and doesn't run any javascript.
+지금까지는 `html_elements()`가 브라우저에서 보는 내용을 반환하는 웹사이트에 집중하여 반환된 내용을 파싱하는 방법과 해당 정보를 깔끔한 데이터 프레임으로 구성하는 방법을 논의했습니다.
+그러나 때때로 `html_elements()`와 친구들이 브라우저에서 보는 것과 전혀 다른 내용을 반환하는 사이트를 만나게 될 것입니다.
+많은 경우 자바스크립트로 페이지 내용을 동적으로 생성하는 웹사이트를 스크래핑하려고 하기 때문입니다.
+rvest는 원시 HTML을 다운로드하고 자바스크립트를 실행하지 않기 때문에 현재는 이런 방식이 작동하지 않습니다.
 
-It's still possible to scrape these types of sites, but rvest needs to use a more expensive process: fully simulating the web browser including running all javascript.
-This functionality is not available at the time of writing, but it's something we're actively working on and might be available by the time you read this.
-It uses the [chromote package](https://rstudio.github.io/chromote/index.html) which actually runs the Chrome browser in the background, and gives you additional tools to interact with the site, like a human typing text and clicking buttons.
-Check out the [rvest website](http://rvest.tidyverse.org/) for more details.
+이런 유형의 사이트를 스크래핑하는 것은 여전히 가능하지만 rvest는 모든 자바스크립트 실행을 포함하여 웹 브라우저를 완전히 시뮬레이션하는 더 비용이 많이 드는 프로세스를 사용해야 합니다.
+이 기능은 이 글을 쓰는 시점에는 사용할 수 없지만 우리가 적극적으로 작업 중인 기능이며 여러분이 이 글을 읽을 때쯤이면 사용할 수 있을 것입니다.
+배경에서 실제로 크롬(Chrome) 브라우저를 실행하는 [chromote 패키지](https://rstudio.github.io/chromote/index.html)를 사용하며, 사람이 텍스트를 입력하고 버튼을 클릭하는 것과 같이 사이트와 상호 작용할 수 있는 추가 도구를 제공합니다.
+자세한 내용은 [rvest 웹사이트](http://rvest.tidyverse.org/)를 확인하세요.
 
-## Summary
+## 요약
 
-In this chapter, you've learned about the why, the why not, and the how of scraping data from web pages.
-First, you've learned about the basics of HTML and using CSS selectors to refer to specific elements, then you've learned about using the rvest package to get data out of HTML into R.
-We then demonstrated web scraping with two case studies: a simpler scenario on scraping data on StarWars films from the rvest package website and a more complex scenario on scraping the top 250 films from IMDB.
+이 장에서는 웹페이지에서 데이터를 스크래핑하는 이유와 이유가 아닌 것, 그리고 방법에 대해 배웠습니다.
+먼저 HTML의 기초와 특정 요소를 참조하기 위해 CSS 선택자를 사용하는 방법을 배웠고, 그런 다음 rvest 패키지를 사용하여 HTML에서 R로 데이터를 가져오는 방법을 배웠습니다.
+그런 다음 두 가지 사례 연구로 웹 스크래핑을 시연했습니다: rvest 패키지 웹사이트에서 스타워즈 영화에 대한 데이터를 스크래핑하는 간단한 시나리오와 IMDB에서 상위 250개 영화를 스크래핑하는 더 복잡한 시나리오입니다.
 
-Technical details of scraping data off the web can be complex, particularly when dealing with sites, however legal and ethical considerations can be even more complex.
-It's important for you to educate yourself about both of these before setting out to scrape data.
+웹에서 데이터를 스크래핑하는 기술적 세부 사항은 특히 사이트를 다룰 때 복잡할 수 있지만, 법적 및 윤리적 고려 사항은 훨씬 더 복잡할 수 있습니다.
+데이터를 스크래핑하기 전에 이 두 가지 모두에 대해 스스로 교육하는 것이 중요합니다.
 
-This brings us to the end of the import part of the book where you've learned techniques to get data from where it lives (spreadsheets, databases, JSON files, and web sites) into a tidy form in R.
-Now it's time to turn our sights to a new topic: making the most of R as a programming language.
+이로써 데이터가 있는 곳(스프레드시트, 데이터베이스, JSON 파일 및 웹사이트)에서 R의 깔끔한 형태로 데이터를 가져오는 기술을 배운 책의 가져오기(import) 파트가 끝납니다.
+이제 새로운 주제인 프로그래밍 언어로서의 R을 최대한 활용하는 것으로 시선을 돌릴 때입니다.

@@ -1,202 +1,202 @@
-# Introduction {#sec-intro .unnumbered}
+# 소개 {#sec-intro .unnumbered}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-Data science is an exciting discipline that allows you to transform raw data into understanding, insight, and knowledge.
-The goal of "R for Data Science" is to help you learn the most important tools in R that will allow you to do data science efficiently and reproducibly, and to have some fun along the way 😃.
-After reading this book, you'll have the tools to tackle a wide variety of data science challenges using the best parts of R.
+데이터 과학은 원시 데이터를 이해, 통찰력, 지식으로 변환할 수 있게 해주는 흥미로운 분야입니다.
+"R for Data Science"의 목표는 데이터를 효율적이고 재현 가능하게 과학적으로 다루는 데 필요한 R의 가장 중요한 도구들을 배우고, 그 과정에서 재미도 느낄 수 있도록 돕는 것입니다 😃.
+이 책을 다 읽고 나면, R의 장점들을 활용하여 다양한 데이터 과학 과제를 해결할 수 있는 도구를 갖추게 될 것입니다.
 
-## What you will learn
+## 무엇을 배우게 되나요
 
-Data science is a vast field, and there's no way you can master it all by reading a single book.
-This book aims to give you a solid foundation in the most important tools and enough knowledge to find the resources to learn more when necessary.
-Our model of the steps of a typical data science project looks something like @fig-ds-diagram.
+데이터 과학은 방대한 분야이며, 책 한 권으로 모든 것을 마스터할 수는 없습니다.
+이 책은 가장 중요한 도구들에 대한 탄탄한 기초를 제공하고, 필요할 때 더 많은 것을 배울 수 있는 리소스를 찾을 수 있는 지식을 제공하는 것을 목표로 합니다.
+우리가 생각하는 일반적인 데이터 과학 프로젝트의 단계는 @fig-ds-diagram 과 같습니다.
 
 ```{r}
 #| label: fig-ds-diagram
 #| echo: false
 #| fig-cap: |
-#|   In our model of the data science process, you start with data import
-#|   and tidying. Next, you understand your data with an iterative cycle of
-#|   transforming, visualizing, and modeling. You finish the process 
-#|   by communicating your results to other humans.
+#|   우리의 데이터 과학 프로세스 모델에서는 데이터 가져오기(import)와 
+#|   정리(tidy)로 시작합니다. 다음으로 변형(transform), 시각화(visualize), 
+#|   모델링(model)의 반복적인 주기를 통해 데이터를 이해합니다. 
+#|   마지막으로 결과를 다른 사람들에게 소통(communicate)하며 프로세스를 마칩니다.
 #| fig-alt: |
-#|   A diagram displaying the data science cycle: Import -> Tidy -> Understand 
-#|   (which has the phases Transform -> Visualize -> Model in a cycle) -> 
-#|   Communicate. Surrounding all of these is Program.
+#|   데이터 과학 주기를 보여주는 다이어그램: 가져오기 -> 정리 -> 이해 
+#|   (변형 -> 시각화 -> 모델링 주기를 포함) -> 소통. 
+#|   이 모든 것을 프로그래밍이 감싸고 있습니다.
 #| out.width: NULL
 knitr::include_graphics("diagrams/data-science/base.png", dpi = 270)
 ```
 
-First, you must **import** your data into R.
-This typically means that you take data stored in a file, database, or web application programming interface (API) and load it into a data frame in R.
-If you can't get your data into R, you can't do data science on it!
+먼저, 데이터를 R로 **가져와야(import)** 합니다.
+이는 일반적으로 파일, 데이터베이스, 또는 웹 애플리케이션 프로그래밍 인터페이스(API)에 저장된 데이터를 가져와 R의 데이터 프레임으로 로드하는 것을 의미합니다.
+데이터를 R로 가져오지 못하면 데이터 과학을 할 수 없습니다!
 
-Once you've imported your data, it is a good idea to **tidy** it.
-Tidying your data means storing it in a consistent form that matches the semantics of the dataset with how it is stored.
-In brief, when your data is tidy, each column is a variable and each row is an observation.
-Tidy data is important because the consistent structure lets you focus your efforts on answering questions about the data, not fighting to get the data into the right form for different functions.
+데이터를 가져온 후에는 **정리(tidy)** 하는 것이 좋습니다.
+데이터를 정리한다는 것은 데이터의 의미와 저장 방식이 일치하도록 일관된 형태로 저장하는 것을 의미합니다.
+간단히 말해, 데이터가 깔끔하면(tidy) 각 열은 변수이고 각 행은 관측값입니다.
+깔끔한(tidy) 데이터가 중요한 이유는 일관된 구조를 통해 데이터를 다양한 함수에 맞게 억지로 끼워 맞추는 대신 데이터에 대한 질문에 답하는 데 노력을 집중할 수 있게 해주기 때문입니다.
 
-Once you have tidy data, a common next step is to **transform** it.
-Transformation includes narrowing in on observations of interest (like all people in one city or all data from the last year), creating new variables that are functions of existing variables (like computing speed from distance and time), and calculating a set of summary statistics (like counts or means).
-Together, tidying and transforming are called **wrangling** because getting your data in a form that's natural to work with often feels like a fight!
+깔끔한 데이터를 확보했다면, 일반적인 다음 단계는 **변형(transform)** 입니다.
+변형에는 관심 있는 관측값(예: 특정 도시의 모든 사람 또는 작년의 모든 데이터)으로 좁히거나, 기존 변수의 함수로 새로운 변수를 생성하거나(예: 거리와 시간으로 속도 계산), 요약 통계량(예: 개수 또는 평균)을 계산하는 것이 포함됩니다.
+정리와 변형을 합쳐서 **랭글링(wrangling)** 이라고 부르는데, 데이터를 작업하기 자연스러운 형태로 만드는 것이 종종 싸움처럼 느껴지기 때문입니다!
 
-Once you have tidy data with the variables you need, there are two main engines of knowledge generation: visualization and modeling.
-These have complementary strengths and weaknesses, so any real data analysis will iterate between them many times.
+필요한 변수를 갖춘 깔끔한 데이터가 준비되었다면, 지식 생성의 두 가지 주요 엔진은 시각화와 모델링입니다.
+이들은 상호 보완적인 장단점을 가지고 있으므로, 실제 데이터 분석에서는 이 둘 사이를 여러 번 반복하게 됩니다.
 
-**Visualization** is a fundamentally human activity.
-A good visualization will show you things you did not expect or raise new questions about the data.
-A good visualization might also hint that you're asking the wrong question or that you need to collect different data.
-Visualizations can surprise you, but they don't scale particularly well because they require a human to interpret them.
+**시각화(Visualization)** 는 근본적으로 인간적인 활동입니다.
+좋은 시각화는 예상치 못한 것을 보여주거나 데이터에 대한 새로운 질문을 제기합니다.
+또한 좋은 시각화는 잘못된 질문을 하고 있다거나 다른 데이터를 수집해야 한다는 힌트를 줄 수도 있습니다.
+시각화는 놀라움을 줄 수 있지만, 해석하는 데 사람이 필요하기 때문에 확장성이 그리 좋지는 않습니다.
 
-**Models** are complementary tools to visualization.
-Once you have made your questions sufficiently precise, you can use a model to answer them.
-Models are fundamentally mathematical or computational tools, so they generally scale well.
-Even when they don't, it's usually cheaper to buy more computers than it is to buy more brains!
-But every model makes assumptions, and by its very nature, a model cannot question its own assumptions.
-That means a model cannot fundamentally surprise you.
+**모델(Model)** 은 시각화를 보완하는 도구입니다.
+질문을 충분히 구체화했다면 모델을 사용하여 답을 얻을 수 있습니다.
+모델은 근본적으로 수학적 또는 계산적 도구이므로 일반적으로 확장성이 좋습니다.
+그렇지 않더라도, 더 많은 두뇌를 사는 것보다 더 많은 컴퓨터를 사는 것이 보통 더 저렴합니다!
+하지만 모든 모델은 가정을 전제로 하며, 그 본질상 모델은 자신의 가정에 대해 의문을 제기할 수 없습니다.
+즉, 모델은 근본적으로 여러분을 놀라게 할 수 없습니다.
 
-The last step of data science is **communication**, an absolutely critical part of any data analysis project.
-It doesn't matter how well your models and visualization have led you to understand the data unless you can also communicate your results to others.
+데이터 과학의 마지막 단계는 **소통(communication)** 으로, 모든 데이터 분석 프로젝트에서 절대적으로 중요한 부분입니다.
+모델과 시각화가 데이터를 이해하는 데 아무리 큰 도움을 주었더라도, 그 결과를 다른 사람에게 전달할 수 없다면 의미가 없습니다.
 
-Surrounding all these tools is **programming**.
-Programming is a cross-cutting tool that you use in nearly every part of a data science project.
-You don't need to be an expert programmer to be a successful data scientist, but learning more about programming pays off because becoming a better programmer allows you to automate common tasks and solve new problems with greater ease.
+이 모든 도구를 감싸고 있는 것은 **프로그래밍(programming)** 입니다.
+프로그래밍은 데이터 과학 프로젝트의 거의 모든 부분에서 사용하는 교차적인 도구입니다.
+성공적인 데이터 과학자가 되기 위해 전문 프로그래머가 될 필요는 없지만, 프로그래밍을 더 배우는 것은 가치가 있습니다. 더 나은 프로그래머가 되면 반복적인 작업을 자동화하고 새로운 문제를 더 쉽게 해결할 수 있기 때문입니다.
 
-You'll use these tools in every data science project, but they're not enough for most projects.
-There's a rough 80/20 rule at play: you can tackle about 80% of every project using the tools you'll learn in this book, but you'll need other tools to tackle the remaining 20%.
-Throughout this book, we'll point you to resources where you can learn more.
+모든 데이터 과학 프로젝트에서 이 도구들을 사용하게 되지만, 대부분의 프로젝트에서는 이것만으로는 충분하지 않습니다.
+대략 80/20 법칙이 적용됩니다. 이 책에서 배우는 도구들로 프로젝트의 약 80%를 해결할 수 있지만, 나머지 20%를 해결하려면 다른 도구들이 필요합니다.
+책 전반에 걸쳐 더 배울 수 있는 리소스를 안내해 드릴 것입니다.
 
-## How this book is organized
+## 이 책의 구성
 
-The previous description of the tools of data science is organized roughly according to the order in which you use them in an analysis (although, of course, you'll iterate through them multiple times).
-In our experience, however, learning data importing and tidying first is suboptimal because, 80% of the time, it's routine and boring, and the other 20% of the time, it's weird and frustrating.
-That's a bad place to start learning a new subject!
-Instead, we'll start with visualization and transformation of data that's already been imported and tidied.
-That way, when you ingest and tidy your own data, your motivation will stay high because you know the pain is worth the effort.
+앞서 설명한 데이터 과학 도구들은 분석에서 사용하는 순서에 따라 대략적으로 구성되어 있습니다(물론 여러 번 반복하게 되겠지만요).
+하지만 저희 경험상 데이터 가져오기와 정리를 먼저 배우는 것은 최선의 방법이 아닙니다. 왜냐하면 80%의 시간 동안은 일상적이고 지루하며, 나머지 20%의 시간 동안은 이상하고 답답하기 때문입니다.
+새로운 주제를 배우기에 좋은 시작점이 아닙니다!
+대신, 이미 가져와서 정리된 데이터의 시각화와 변형부터 시작하겠습니다.
+그렇게 하면 나중에 직접 데이터를 가져와서 정리할 때, 그 고통이 노력할 가치가 있다는 것을 알기 때문에 동기를 유지할 수 있습니다.
 
-Within each chapter, we try to adhere to a consistent pattern: start with some motivating examples so you can see the bigger picture, and then dive into the details.
-Each section of the book is paired with exercises to help you practice what you've learned.
-Although it can be tempting to skip the exercises, there's no better way to learn than by practicing on real problems.
+각 장 내에서는 일관된 패턴을 따르려고 노력합니다. 큰 그림을 볼 수 있도록 동기 부여가 되는 예제로 시작한 다음, 세부 사항으로 들어갑니다.
+책의 각 섹션에는 배운 내용을 연습할 수 있는 연습문제들이 짝을 이루고 있습니다.
+연습문제를 건너뛰고 싶은 유혹이 들 수 있지만, 실제 문제로 연습하는 것보다 더 좋은 학습 방법은 없습니다.
 
-## What you won't learn
+## 배우지 않을 내용
 
-There are several important topics that this book doesn't cover.
-We believe it's important to stay ruthlessly focused on the essentials so you can get up and running as quickly as possible.
-That means this book can't cover every important topic.
+이 책에서 다루지 않는 몇 가지 중요한 주제가 있습니다.
+우리는 가능한 한 빨리 시작하고 실행할 수 있도록 필수적인 것에 무자비하게 집중하는 것이 중요하다고 믿습니다.
+즉, 이 책은 모든 중요한 주제를 다룰 수는 없습니다.
 
-### Modeling
+### 모델링
 
-Modeling is super important for data science, but it's a big topic, and unfortunately, we just don't have the space to give it the coverage it deserves here.
-To learn more about modeling, we highly recommend [Tidy Modeling with R](https://www.tmwr.org) by our colleagues Max Kuhn and Julia Silge.
-This book will teach you the tidymodels family of packages, which, as you might guess from the name, share many conventions with the tidyverse packages we use in this book.
+모델링은 데이터 과학에서 매우 중요하지만 큰 주제이며, 안타깝게도 여기서는 그에 걸맞은 분량을 할애할 공간이 없습니다.
+모델링에 대해 더 배우고 싶다면 동료 Max Kuhn과 Julia Silge가 쓴 [Tidy Modeling with R](https://www.tmwr.org)을 강력히 추천합니다.
+이 책은 tidymodels 패키지 제품군을 가르쳐 주는데, 이름에서 짐작할 수 있듯이 이 책에서 사용하는 tidyverse 패키지들과 많은 관례를 공유합니다.
 
-### Big data
+### 빅 데이터
 
-This book proudly and primarily focuses on small, in-memory datasets.
-This is the right place to start because you can't tackle big data unless you have experience with small data.
-The tools you'll learn throughout the majority of this book will easily handle hundreds of megabytes of data, and with a bit of care, you can typically use them to work with a few gigabytes of data.
-We'll also show you how to get data out of databases and parquet files, both of which are often used to store big data.
-You won't necessarily be able to work with the entire dataset, but that's not a problem because you only need a subset or subsample to answer the question that you're interested in.
+이 책은 자랑스럽게 그리고 주로 작은 인메모리(in-memory) 데이터셋에 초점을 맞춥니다.
+작은 데이터를 다뤄본 경험이 없으면 빅 데이터를 다룰 수 없기 때문에 이것이 올바른 시작점입니다.
+이 책의 대부분에서 배우는 도구들은 수백 메가바이트의 데이터를 쉽게 처리할 수 있으며, 조금만 주의를 기울이면 일반적으로 몇 기가바이트의 데이터도 작업할 수 있습니다.
+또한 빅 데이터를 저장하는 데 자주 사용되는 데이터베이스와 파켓(parquet) 파일에서 데이터를 가져오는 방법도 보여드릴 것입니다.
+전체 데이터셋을 가지고 작업할 수 없을 수도 있지만, 관심 있는 질문에 답하기 위해서는 부분집합이나 샘플만 있으면 되므로 문제되지 않습니다.
 
-If you're routinely working with larger data (10--100 GB, say), we recommend learning more about [data.table](https://github.com/Rdatatable/data.table).
-We don't teach it here because it uses a different interface than the tidyverse and requires you to learn some different conventions.
-However, it is incredibly fast, and the performance payoff is worth investing some time in learning it if you're working with large data.
+만약 일상적으로 더 큰 데이터(예: 10--100 GB)를 다룬다면, [data.table](https://github.com/Rdatatable/data.table)에 대해 더 배우는 것을 추천합니다.
+여기서는 가르치지 않는데, tidyverse와는 다른 인터페이스를 사용하고 다른 관례를 배워야 하기 때문입니다.
+하지만 믿을 수 없을 정도로 빠르며, 큰 데이터를 다룬다면 성능상의 이점이 학습에 투자할 가치가 있습니다.
 
-### Python, Julia, and friends
+### 파이썬, 줄리아, 그리고 친구들
 
-In this book, you won't learn anything about Python, Julia, or any other programming language useful for data science.
-This isn't because we think these tools are bad.
-They're not!
-And in practice, most data science teams use a mix of languages, often at least R and Python.
-But we strongly believe that it's best to master one tool at a time, and R is a great place to start.
+이 책에서는 파이썬(Python), 줄리아(Julia) 또는 데이터 과학에 유용한 다른 프로그래밍 언어에 대해 배우지 않습니다.
+이 도구들이 나빠서가 아닙니다.
+그렇지 않습니다!
+실제로 대부분의 데이터 과학 팀은 여러 언어를 섞어서 사용하며, 종종 적어도 R과 파이썬을 함께 사용합니다.
+하지만 우리는 한 번에 하나의 도구를 마스터하는 것이 가장 좋다고 굳게 믿으며, R은 시작하기에 훌륭한 곳입니다.
 
-## Prerequisites
+## 선수 지식
 
-We've made a few assumptions about what you already know to get the most out of this book.
-You should be generally numerically literate, and it's helpful if you have some basic programming experience already.
-If you've never programmed before, you might find [Hands on Programming with R](https://rstudio-education.github.io/hopr/) by Garrett to be a valuable adjunct to this book.
+이 책을 최대한 활용하기 위해 여러분이 이미 알고 있다고 가정한 몇 가지가 있습니다.
+일반적으로 수치적인 이해도가 있어야 하며, 기본적인 프로그래밍 경험이 있다면 도움이 됩니다.
+프로그래밍을 한 번도 해본 적이 없다면, Garrett이 쓴 [Hands on Programming with R](https://rstudio-education.github.io/hopr/)이 이 책의 훌륭한 보조 교재가 될 것입니다.
 
-You need four things to run the code in this book: R, RStudio, a collection of R packages called the **tidyverse**, and a handful of other packages.
-Packages are the fundamental units of reproducible R code.
-They include reusable functions, documentation that describes how to use them, and sample data.
+이 책의 코드를 실행하려면 네 가지가 필요합니다: R, RStudio, **tidyverse**라고 불리는 R 패키지 모음, 그리고 몇 가지 다른 패키지들입니다.
+패키지는 재현 가능한 R 코드의 기본 단위입니다.
+패키지에는 재사용 가능한 함수, 사용법을 설명하는 문서, 그리고 샘플 데이터가 포함되어 있습니다.
 
 ### R
 
-To download R, go to CRAN, the **c**omprehensive **R** **a**rchive **n**etwork, <https://cloud.r-project.org>.
-A new major version of R comes out once a year, and there are 2-3 minor releases each year.
-It's a good idea to update regularly.
-Upgrading can be a bit of a hassle, especially for major versions that require you to re-install all your packages, but putting it off only makes it worse.
-We recommend R 4.2.0 or later for this book.
+R을 다운로드하려면 CRAN(**C**omprehensive **R** **A**rchive **N**etwork), <https://cloud.r-project.org>에 접속하세요.
+새로운 R의 메이저 버전은 1년에 한 번 나오며, 마이너 릴리스는 1년에 2-3회 있습니다.
+정기적으로 업데이트하는 것이 좋습니다.
+업그레이드는 다소 번거로울 수 있으며, 특히 모든 패키지를 다시 설치해야 하는 메이저 버전의 경우 더욱 그렇지만, 미루면 더 나빠질 뿐입니다.
+이 책에서는 R 4.2.0 이상을 권장합니다.
 
 ### RStudio
 
-RStudio is an integrated development environment, or IDE, for R programming, which you can download from <https://posit.co/download/rstudio-desktop/>.
-RStudio is updated a couple of times a year, and it will automatically let you know when a new version is out, so there's no need to check back.
-It's a good idea to upgrade regularly to take advantage of the latest and greatest features.
-For this book, make sure you have at least RStudio 2022.02.0.
+RStudio는 R 프로그래밍을 위한 통합 개발 환경(IDE)으로, <https://posit.co/download/rstudio-desktop/>에서 다운로드할 수 있습니다.
+RStudio는 일 년에 몇 번 업데이트되며, 새 버전이 나오면 자동으로 알려주므로 다시 확인할 필요가 없습니다.
+최신 기능을 활용하기 위해 정기적으로 업그레이드하는 것이 좋습니다.
+이 책을 위해서는 최소 RStudio 2022.02.0 버전이 필요합니다.
 
-When you start RStudio, @fig-rstudio-console, you'll see two key regions in the interface: the console pane and the output pane.
-For now, all you need to know is that you type the R code in the console pane and press enter to run it.
-You'll learn more as we go along![^intro-1]
+RStudio를 시작하면(@fig-rstudio-console), 인터페이스에 두 가지 주요 영역, 즉 콘솔(console) 창과 출력(output) 창이 보일 것입니다.
+지금은 콘솔 창에 R 코드를 입력하고 엔터를 눌러 실행한다는 것만 알면 됩니다.
+진행하면서 더 배우게 될 것입니다.[^intro-1]
 
-[^intro-1]: If you'd like a comprehensive overview of all of RStudio's features, see the RStudio User Guide at <https://docs.posit.co/ide/user>.
+[^intro-1]: RStudio의 모든 기능에 대한 포괄적인 개요를 보려면 <https://docs.posit.co/ide/user>의 RStudio 사용자 가이드를 참조하세요.
 
 ```{r}
 #| label: fig-rstudio-console
 #| echo: false
 #| out-width: ~
 #| fig-cap: |
-#|   The RStudio IDE has two key regions: type R code in the console pane
-#|   on the left, and look for plots in the output pane on the right.
+#|   RStudio IDE에는 두 가지 주요 영역이 있습니다. 왼쪽의 콘솔 창에 
+#|   R 코드를 입력하고, 오른쪽의 출력 창에서 플롯을 확인하세요.
 #| fig-alt: |
-#|   The RStudio IDE with the panes Console and Output highlighted.
+#|   콘솔과 출력 창이 강조 표시된 RStudio IDE.
 knitr::include_graphics("diagrams/rstudio/console.png", dpi = 270)
 ```
 
-### The tidyverse
+### tidyverse
 
-You'll also need to install some R packages.
-An R **package** is a collection of functions, data, and documentation that extends the capabilities of base R.
-Using packages is key to the successful use of R.
-The majority of the packages that you will learn in this book are part of the so-called tidyverse.
-All packages in the tidyverse share a common philosophy of data and R programming and are designed to work together.
+몇 가지 R 패키지도 설치해야 합니다.
+R **패키지**는 기본 R의 기능을 확장하는 함수, 데이터, 문서의 모음입니다.
+패키지 사용은 R을 성공적으로 사용하는 데 있어 핵심입니다.
+이 책에서 배우게 될 대부분의 패키지는 소위 tidyverse의 일부입니다.
+tidyverse의 모든 패키지는 데이터와 R 프로그래밍에 대한 공통된 철학을 공유하며 함께 작동하도록 설계되었습니다.
 
-You can install the complete tidyverse with a single line of code:
+코드 한 줄로 전체 tidyverse를 설치할 수 있습니다:
 
 ```{r}
 #| eval: false
 install.packages("tidyverse")
 ```
 
-On your computer, type that line of code in the console, and then press enter to run it.
-R will download the packages from CRAN and install them on your computer.
+컴퓨터의 콘솔에 해당 코드를 입력하고 엔터를 눌러 실행하세요.
+R이 CRAN에서 패키지를 다운로드하여 컴퓨터에 설치합니다.
 
-You will not be able to use the functions, objects, or help files in a package until you load it with `library()`.
-Once you have installed a package, you can load it using the `library()` function:
+패키지를 `library()`로 로드하기 전까지는 패키지의 함수, 객체 또는 도움말 파일을 사용할 수 없습니다.
+패키지를 설치한 후에는 `library()` 함수를 사용하여 로드할 수 있습니다:
 
 ```{r}
 library(tidyverse)
 ```
 
-This tells you that tidyverse loads nine packages: dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble, tidyr.
-These are considered the **core** of the tidyverse because you'll use them in almost every analysis.
+이것은 tidyverse가 9개의 패키지(dplyr, forcats, ggplot2, lubridate, purrr, readr, stringr, tibble, tidyr)를 로드한다고 알려줍니다.
+이들은 거의 모든 분석에서 사용하기 때문에 tidyverse의 **핵심(core)** 으로 간주됩니다.
 
-Packages in the tidyverse change fairly frequently.
-You can see if updates are available by running `tidyverse_update()`.
+tidyverse의 패키지들은 꽤 자주 변경됩니다.
+`tidyverse_update()`를 실행하여 업데이트가 있는지 확인할 수 있습니다.
 
-### Other packages
+### 그 외 패키지들
 
-There are many other excellent packages that are not part of the tidyverse because they solve problems in a different domain or are designed with a different set of underlying principles.
-This doesn't make them better or worse; it just makes them different.
-In other words, the complement to the tidyverse is not the messyverse but many other universes of interrelated packages.
-As you tackle more data science projects with R, you'll learn new packages and new ways of thinking about data.
+다른 도메인의 문제를 해결하거나 다른 기본 원칙으로 설계되었기 때문에 tidyverse에 포함되지 않은 훌륭한 패키지들이 많이 있습니다.
+그렇다고 해서 더 좋거나 나쁜 것은 아니며, 단지 다를 뿐입니다.
+즉, tidyverse의 보완재는 지저분한(messy) verse가 아니라 상호 연관된 패키지들의 다른 많은 우주들입니다.
+R로 더 많은 데이터 과학 프로젝트를 수행함에 따라 새로운 패키지와 데이터를 생각하는 새로운 방식을 배우게 될 것입니다.
 
-We'll use many packages from outside the tidyverse in this book.
-For example, we'll use the following packages because they provide interesting datasets for us to work with in the process of learning R:
+이 책에서는 tidyverse 외부의 많은 패키지를 사용할 것입니다.
+예를 들어, R을 배우는 과정에서 작업할 흥미로운 데이터셋을 제공하기 때문에 다음 패키지들을 사용할 것입니다:
 
 ```{r}
 #| eval: false
@@ -208,52 +208,52 @@ install.packages(
   )
 ```
 
-We'll also use a selection of other packages for one off examples.
-You don't need to install them now, just remember that whenever you see an error like this:
+또한 일회성 예제를 위해 다른 패키지들도 선택적으로 사용할 것입니다.
+지금 당장 설치할 필요는 없지만, 다음과 같은 오류가 보일 때를 기억하세요:
 
 ```{r}
 #| eval: false
 library(ggrepel)
-#> Error in library(ggrepel) : there is no package called ‘ggrepel’
+#&gt; Error in library(ggrepel) : there is no package called ‘ggrepel’
 ```
 
-You need to run `install.packages("ggrepel")` to install the package.
+패키지를 설치하려면 `install.packages("ggrepel")`을 실행해야 합니다.
 
-## Running R code
+## R 코드 실행하기
 
-The previous section showed you several examples of running R code.
-The code in the book looks like this:
+이전 섹션에서는 R 코드를 실행하는 몇 가지 예제를 보여주었습니다.
+책에 있는 코드는 다음과 같습니다:
 
 ```{r}
 #| eval: true
 1 + 2
 ```
 
-If you run the same code in your local console, it will look like this:
+동일한 코드를 로컬 콘솔에서 실행하면 다음과 같이 보일 것입니다:
 
 ```         
 > 1 + 2
 [1] 3
 ```
 
-There are two main differences.
-In your console, you type after the `>`, called the **prompt**; we don't show the prompt in the book.
-In the book, the output is commented out with `#>`; in your console, it appears directly after your code.
-These two differences mean that if you're working with an electronic version of the book, you can easily copy code out of the book and paste it into the console.
+두 가지 주요 차이점이 있습니다.
+콘솔에서는 **프롬프트(prompt)** 라고 불리는 `>` 뒤에 입력하지만, 책에서는 프롬프트를 보여주지 않습니다.
+책에서는 출력이 `#&gt; `로 주석 처리되어 있지만, 콘솔에서는 코드 바로 뒤에 나타납니다.
+이 두 가지 차이점 덕분에 전자책으로 작업하는 경우 책에서 코드를 쉽게 복사하여 콘솔에 붙여넣을 수 있습니다.
 
-Throughout the book, we use a consistent set of conventions to refer to code:
+책 전반에 걸쳐 코드를 지칭할 때 일관된 규칙을 사용합니다:
 
--   Functions are displayed in a code font and followed by parentheses, like `sum()` or `mean()`.
+-   함수는 `sum()` 또는 `mean()`과 같이 코드 글꼴로 표시되고 뒤에 괄호가 붙습니다.
 
--   Other R objects (such as data or function arguments) are in a code font, without parentheses, like `flights` or `x`.
+-   데이터나 함수 인자와 같은 다른 R 객체는 `flights`나 `x`와 같이 괄호 없이 코드 글꼴로 표시됩니다.
 
--   Sometimes, to make it clear which package an object comes from, we'll use the package name followed by two colons, like `dplyr::mutate()` or `nycflights13::flights`.
-    This is also valid R code.
+-   때때로 객체가 어떤 패키지에서 왔는지 명확히 하기 위해 `dplyr::mutate()` 또는 `nycflights13::flights`와 같이 패키지 이름 뒤에 콜론 두 개를 사용합니다.
+    이 또한 유효한 R 코드입니다.
 
-## Acknowledgments
+## 감사의 말
 
-This book isn't just the product of Hadley, Mine, and Garrett but is the result of many conversations (in person and online) that we've had with many people in the R community.
-We're incredibly grateful for all the conversations we've had with y'all; thank you so much!
+이 책은 Hadley, Mine, Garrett만의 결과물이 아니라 R 커뮤니티의 많은 사람들과 (대면 및 온라인으로) 나눈 수많은 대화의 결과입니다.
+여러분 모두와 나눈 모든 대화에 진심으로 감사드립니다. 정말 고맙습니다!
 
 ```{r}
 #| eval: false
@@ -303,21 +303,21 @@ contributors <- readr::read_csv("contributors.csv")
 contributors <- contributors |> 
   filter(!login %in% c("hadley", "garrettgman", "mine-cetinkaya-rundel")) |> 
   mutate(
-    login = paste0("\\@", login),
+    login = paste0("\\@", login), # Corrected escaping for backslash
     desc = ifelse(is.na(name), login, paste0(name, " (", login, ")"))
   )
 
-cat("This book was written in the open, and many people contributed via pull requests. A special thanks to all ",nrow(contributors), " of you who contributed improvements via GitHub pull requests (in alphabetical order by username): ", sep = "")
+cat("이 책은 공개적으로 작성되었으며, 많은 분들이 풀 리퀘스트(pull request)를 통해 기여해 주셨습니다. GitHub 풀 리퀘스트를 통해 개선에 기여해 주신 ",nrow(contributors), "명의 모든 분들께 특별한 감사를 전합니다(사용자명 알파벳 순): ", sep = "")
 cat(paste0(contributors$desc, collapse = ", "))
 cat(".\n")
 ```
 
-## Colophon
+## 판권
 
-An online version of this book is available at <https://r4ds.hadley.nz>.
-It will continue to evolve in between reprints of the physical book.
-The source of the book is available at <https://github.com/hadley/r4ds>.
-The book is powered by [Quarto](https://quarto.org), which makes it easy to write books that combine text and executable code.
+이 책의 온라인 버전은 <https://r4ds.hadley.nz>에서 이용할 수 있습니다.
+실물 책이 재인쇄되는 사이에도 계속 발전할 것입니다.
+책의 소스는 <https://github.com/hadley/r4ds>에서 확인할 수 있습니다.
+이 책은 텍스트와 실행 가능한 코드를 결합한 책을 쉽게 쓸 수 있게 해주는 [Quarto](https://quarto.org)로 제작되었습니다.
 
 ```{r}
 #| eval: false
@@ -330,7 +330,7 @@ pkgs <- sessioninfo::package_info(
 df <- tibble(
   package = pkgs$package,
   version = pkgs$ondiskversion,
-  source = gsub("@", "\\\\@", pkgs$source)
+  source = gsub("@", "\\\\@", pkgs$source) # Corrected escaping for backslash
 )
 knitr::kable(df, format = "markdown")
 ```

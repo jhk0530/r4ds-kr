@@ -1,39 +1,39 @@
-# Functions {#sec-functions}
+# 함수 (Functions) {#sec-functions}
 
 ```{r}
 #| echo: false
 source("_common.R")
 ```
 
-## Introduction
+## 소개
 
-One of the best ways to improve your reach as a data scientist is to write functions.
-Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting.
-Writing a function has four big advantages over using copy-and-paste:
+데이터 과학자로서 영역을 넓히는 가장 좋은 방법 중 하나는 함수를 작성하는 것입니다.
+함수를 사용하면 복사해서 붙여넣기보다 더 강력하고 일반적인 방식으로 일반적인 작업을 자동화할 수 있습니다.
+함수를 작성하는 것은 복사해서 붙여넣기보다 네 가지 큰 장점이 있습니다:
 
-1.  You can give a function an evocative name that makes your code easier to understand.
+1.  함수에 기억하기 쉬운 이름을 지정하여 코드를 더 쉽게 이해할 수 있게 할 수 있습니다.
 
-2.  As requirements change, you only need to update code in one place, instead of many.
+2.  요구 사항이 변경되면 여러 곳이 아닌 한 곳에서만 코드를 업데이트하면 됩니다.
 
-3.  You eliminate the chance of making incidental mistakes when you copy and paste (i.e. updating a variable name in one place, but not in another).
+3.  복사해서 붙여넣을 때 발생할 수 있는 우발적인 실수(예: 한 곳에서는 변수 이름을 업데이트했지만 다른 곳에서는 업데이트하지 않음)를 없앨 수 있습니다.
 
-4.  It makes it easier to reuse work from project-to-project, increasing your productivity over time.
+4.  프로젝트 간에 작업을 재사용하기가 쉬워져 시간이 지남에 따라 생산성이 향상됩니다.
 
-A good rule of thumb is to consider writing a function whenever you've copied and pasted a block of code more than twice (i.e. you now have three copies of the same code).
-In this chapter, you'll learn about three useful types of functions:
+좋은 경험 법칙은 코드 블록을 두 번 이상 복사해서 붙여넣었을 때(즉, 동일한 코드의 사본이 세 개 있을 때) 함수 작성을 고려하는 것입니다.
+이 장에서는 유용한 세 가지 유형의 함수에 대해 배웁니다:
 
--   Vector functions take one or more vectors as input and return a vector as output.
--   Data frame functions take a data frame as input and return a data frame as output.
--   Plot functions that take a data frame as input and return a plot as output.
+-   벡터 함수: 하나 이상의 벡터를 입력으로 받아 벡터를 출력으로 반환합니다.
+-   데이터 프레임 함수: 데이터 프레임을 입력으로 받아 데이터 프레임을 출력으로 반환합니다.
+-   플롯 함수: 데이터 프레임을 입력으로 받아 플롯을 출력으로 반환합니다.
 
-Each of these sections includes many examples to help you generalize the patterns that you see.
-These examples wouldn't be possible without the help of folks of twitter, and we encourage you to follow the links in the comments to see the original inspirations.
-You might also want to read the original motivating tweets for [general functions](https://twitter.com/hadleywickham/status/1571603361350164486) and [plotting functions](https://twitter.com/hadleywickham/status/1574373127349575680) to see even more functions.
+이러한 각 섹션에는 여러분이 보는 패턴을 일반화하는 데 도움이 되는 많은 예제가 포함되어 있습니다.
+이 예제들은 트위터 사용자들의 도움 없이는 불가능했을 것이며, 댓글에 있는 링크를 따라가서 원래의 영감을 확인해 보기를 권장합니다.
+또한 [일반 함수](https://twitter.com/hadleywickham/status/1571603361350164486)와 [플롯 함수](https://twitter.com/hadleywickham/status/1574373127349575680)에 대한 원래의 동기 부여 트윗을 읽어보면 더 많은 함수를 볼 수 있습니다.
 
-### Prerequisites
+### 선수 지식
 
-We'll wrap up a variety of functions from around the tidyverse.
-We'll also use nycflights13 as a source of familiar data to use our functions with.
+tidyverse의 다양한 함수들을 정리해 보겠습니다.
+또한 함수와 함께 사용할 친숙한 데이터 소스로 nycflights13을 사용할 것입니다.
 
 ```{r}
 #| message: false
@@ -41,11 +41,11 @@ library(tidyverse)
 library(nycflights13)
 ```
 
-## Vector functions
+## 벡터 함수
 
-We'll begin with vector functions: functions that take one or more vectors and return a vector result.
-For example, take a look at this code.
-What does it do?
+벡터 함수로 시작하겠습니다: 하나 이상의 벡터를 받아 벡터 결과를 반환하는 함수입니다.
+예를 들어, 이 코드를 보세요.
+무엇을 하는 코드일까요?
 
 ```{r}
 df <- tibble(
@@ -67,15 +67,15 @@ df |> mutate(
 )
 ```
 
-You might be able to puzzle out that this rescales each column to have a range from 0 to 1.
-But did you spot the mistake?
-When Hadley wrote this code he made an error when copying-and-pasting and forgot to change an `a` to a `b`.
-Preventing this type of mistake is one very good reason to learn how to write functions.
+이것이 각 열의 범위를 0에서 1로 조정한다는 것을 알아낼 수 있을 것입니다.
+하지만 실수를 발견했나요?
+Hadley가 이 코드를 작성할 때 복사해서 붙여넣는 과정에서 오류를 범했고 `a`를 `b`로 바꾸는 것을 잊었습니다.
+이런 유형의 실수를 방지하는 것이 함수 작성법을 배워야 하는 아주 좋은 이유 중 하나입니다.
 
-### Writing a function
+### 함수 작성하기
 
-To write a function you need to first analyse your repeated code to figure what parts are constant and what parts vary.
-If we take the code above and pull it outside of `mutate()`, it's a little easier to see the pattern because each repetition is now one line:
+함수를 작성하려면 먼저 반복되는 코드를 분석하여 어떤 부분이 상수이고 어떤 부분이 변하는지 파악해야 합니다.
+위의 코드를 가져와 `mutate()` 밖으로 꺼내면, 각 반복이 이제 한 줄이 되므로 패턴을 보기가 조금 더 쉽습니다:
 
 ```{r}
 #| eval: false
@@ -85,26 +85,26 @@ If we take the code above and pull it outside of `mutate()`, it's a little easie
 (d - min(d, na.rm = TRUE)) / (max(d, na.rm = TRUE) - min(d, na.rm = TRUE))  
 ```
 
-To make this a bit clearer we can replace the bit that varies with `█`:
+이것을 좀 더 명확하게 하기 위해 변하는 부분을 `█`로 바꿀 수 있습니다:
 
 ```{r}
 #| eval: false
 (█ - min(█, na.rm = TRUE)) / (max(█, na.rm = TRUE) - min(█, na.rm = TRUE))
 ```
 
-To turn this into a function you need three things:
+이것을 함수로 만들려면 세 가지가 필요합니다:
 
-1.  A **name**.
-    Here we'll use `rescale01` because this function rescales a vector to lie between 0 and 1.
+1.  **이름(name)**.
+    여기서는 이 함수가 벡터를 0과 1 사이로 재조정하므로 `rescale01`을 사용할 것입니다.
 
-2.  The **arguments**.
-    The arguments are things that vary across calls and our analysis above tells us that we have just one.
-    We'll call it `x` because this is the conventional name for a numeric vector.
+2.  **인수(arguments)**.
+    인수는 호출마다 변하는 것이며, 위의 분석에 따르면 하나만 있으면 됩니다.
+    수치형 벡터의 관례적인 이름이므로 `x`라고 부르겠습니다.
 
-3.  The **body**.
-    The body is the code that's repeated across all the calls.
+3.  **본문(body)**.
+    본문은 모든 호출에서 반복되는 코드입니다.
 
-Then you create a function by following the template:
+그런 다음 템플릿을 따라 함수를 만듭니다:
 
 ```{r}
 name <- function(arguments) {
@@ -112,7 +112,7 @@ name <- function(arguments) {
 }
 ```
 
-For this case that leads to:
+이 경우 다음과 같이 됩니다:
 
 ```{r}
 rescale01 <- function(x) {
@@ -120,14 +120,14 @@ rescale01 <- function(x) {
 }
 ```
 
-At this point you might test with a few simple inputs to make sure you've captured the logic correctly:
+이 시점에서 몇 가지 간단한 입력으로 테스트하여 로직을 올바르게 캡처했는지 확인할 수 있습니다:
 
 ```{r}
 rescale01(c(-10, 0, 10))
 rescale01(c(1, 2, 3, NA, 5))
 ```
 
-Then you can rewrite the call to `mutate()` as:
+그런 다음 `mutate()` 호출을 다음과 같이 다시 쓸 수 있습니다:
 
 ```{r}
 df |> mutate(
@@ -138,11 +138,11 @@ df |> mutate(
 )
 ```
 
-(In @sec-iteration, you'll learn how to use `across()` to reduce the duplication even further so all you need is `df |> mutate(across(a:d, rescale01))`).
+(@sec-iteration 에서는 `across()`를 사용하여 중복을 더욱 줄여 `df |> mutate(across(a:d, rescale01))`만 있으면 되도록 하는 방법을 배울 것입니다).
 
-### Improving our function
+### 함수 개선하기
 
-You might notice that the `rescale01()` function does some unnecessary work --- instead of computing `min()` twice and `max()` once we could instead compute both the minimum and maximum in one step with `range()`:
+`rescale01()` 함수가 불필요한 작업을 수행한다는 것을 알 수 있습니다. `min()`을 두 번, `max()`를 한 번 계산하는 대신 `range()`를 사용하여 한 단계로 최소값과 최대값을 모두 계산할 수 있습니다:
 
 ```{r}
 rescale01 <- function(x) {
@@ -151,14 +151,14 @@ rescale01 <- function(x) {
 }
 ```
 
-Or you might try this function on a vector that includes an infinite value:
+또는 무한대 값이 포함된 벡터에서 이 함수를 시도해 볼 수도 있습니다:
 
 ```{r}
 x <- c(1:10, Inf)
 rescale01(x)
 ```
 
-That result is not particularly useful so we could ask `range()` to ignore infinite values:
+그 결과는 그리 유용하지 않으므로 `range()`에 무한대 값을 무시하도록 요청할 수 있습니다:
 
 ```{r}
 rescale01 <- function(x) {
@@ -169,15 +169,15 @@ rescale01 <- function(x) {
 rescale01(x)
 ```
 
-These changes illustrate an important benefit of functions: because we've moved the repeated code into a function, we only need to make the change in one place.
+이러한 변경 사항은 함수의 중요한 이점을 보여줍니다: 반복되는 코드를 함수로 옮겼기 때문에 한 곳에서만 변경하면 됩니다.
 
-### Mutate functions
+### Mutate 함수
 
-Now that you've got the basic idea of functions, let's take a look at a whole bunch of examples.
-We'll start by looking at "mutate" functions, i.e. functions that work well inside of `mutate()` and `filter()` because they return an output of the same length as the input.
+이제 함수의 기본 개념을 알았으니 다양한 예제를 살펴보겠습니다.
+"mutate" 함수, 즉 입력과 길이가 같은 출력을 반환하므로 `mutate()` 및 `filter()` 내부에서 잘 작동하는 함수부터 살펴보겠습니다.
 
-Let's start with a simple variation of `rescale01()`.
-Maybe you want to compute the Z-score, rescaling a vector to have a mean of zero and a standard deviation of one:
+`rescale01()`의 간단한 변형부터 시작하겠습니다.
+벡터의 평균이 0이고 표준 편차가 1이 되도록 재조정하는 Z-점수를 계산하고 싶을 수 있습니다:
 
 ```{r}
 z_score <- function(x) {
@@ -185,8 +185,8 @@ z_score <- function(x) {
 }
 ```
 
-Or maybe you want to wrap up a straightforward `case_when()` and give it a useful name.
-For example, this `clamp()` function ensures all values of a vector lie in between a minimum or a maximum:
+또는 간단한 `case_when()`을 감싸서 유용한 이름을 지정하고 싶을 수도 있습니다.
+예를 들어, 이 `clamp()` 함수는 벡터의 모든 값이 최소값과 최대값 사이에 있도록 합니다:
 
 ```{r}
 clamp <- function(x, min, max) {
@@ -200,9 +200,9 @@ clamp <- function(x, min, max) {
 clamp(1:10, min = 3, max = 7)
 ```
 
-Of course functions don't just need to work with numeric variables.
-You might want to do some repeated string manipulation.
-Maybe you need to make the first character upper case:
+물론 함수가 수치형 변수하고만 작업해야 하는 것은 아닙니다.
+반복되는 문자열 조작을 수행하고 싶을 수도 있습니다.
+첫 글자를 대문자로 만들고 싶을 수 있습니다:
 
 ```{r}
 first_upper <- function(x) {
@@ -213,7 +213,7 @@ first_upper <- function(x) {
 first_upper("hello")
 ```
 
-Or maybe you want to strip percent signs, commas, and dollar signs from a string before converting it into a number:
+또는 문자열을 숫자로 변환하기 전에 퍼센트 기호, 쉼표, 달러 기호를 제거하고 싶을 수도 있습니다:
 
 ```{r}
 # https://twitter.com/NVlabormarket/status/1571939851922198530
@@ -231,8 +231,8 @@ clean_number("$12,300")
 clean_number("45%")
 ```
 
-Sometimes your functions will be highly specialized for one data analysis step.
-For example, if you have a bunch of variables that record missing values as 997, 998, or 999, you might want to write a function to replace them with `NA`:
+때때로 함수는 하나의 데이터 분석 단계에 매우 특화될 수 있습니다.
+예를 들어, 결측값을 997, 998, 999로 기록하는 변수가 많은 경우 이를 `NA`로 바꾸는 함수를 작성하고 싶을 수 있습니다:
 
 ```{r}
 fix_na <- function(x) {
@@ -240,13 +240,13 @@ fix_na <- function(x) {
 }
 ```
 
-We've focused on examples that take a single vector because we think they're the most common.
-But there's no reason that your function can't take multiple vector inputs.
+단일 벡터를 취하는 예제에 집중했는데, 이것이 가장 일반적이라고 생각하기 때문입니다.
+하지만 함수가 여러 벡터 입력을 받지 못할 이유는 없습니다.
 
-### Summary functions
+### 요약 함수
 
-Another important family of vector functions is summary functions, functions that return a single value for use in `summarize()`.
-Sometimes this can just be a matter of setting a default argument or two:
+벡터 함수의 또 다른 중요한 제품군은 요약 함수, 즉 `summarize()`에서 사용할 단일 값을 반환하는 함수입니다.
+때로는 기본 인수 한두 개를 설정하는 것만으로도 충분할 수 있습니다:
 
 ```{r}
 commas <- function(x) {
@@ -256,7 +256,7 @@ commas <- function(x) {
 commas(c("cat", "dog", "pigeon"))
 ```
 
-Or you might wrap up a simple computation, like for the coefficient of variation, which divides the standard deviation by the mean:
+또는 표준 편차를 평균으로 나누는 변동 계수와 같은 간단한 계산을 감쌀 수도 있습니다:
 
 ```{r}
 cv <- function(x, na.rm = FALSE) {
@@ -267,7 +267,7 @@ cv(runif(100, min = 0, max = 50))
 cv(runif(100, min = 0, max = 500))
 ```
 
-Or maybe you just want to make a common pattern easier to remember by giving it a memorable name:
+또는 기억하기 쉬운 이름을 지정하여 일반적인 패턴을 기억하기 쉽게 만들고 싶을 수도 있습니다:
 
 ```{r}
 # https://twitter.com/gbganalyst/status/1571619641390252033
@@ -276,8 +276,8 @@ n_missing <- function(x) {
 } 
 ```
 
-You can also write functions with multiple vector inputs.
-For example, maybe you want to compute the mean absolute percentage error to help you compare model predictions with actual values:
+여러 벡터 입력을 받는 함수를 작성할 수도 있습니다.
+예를 들어, 모델 예측과 실제 값을 비교하는 데 도움이 되는 평균 절대 백분율 오차(MAPE)를 계산하고 싶을 수 있습니다:
 
 ```{r}
 # https://twitter.com/neilgcurrie/status/1571607727255834625
@@ -289,20 +289,20 @@ mape <- function(actual, predicted) {
 ::: callout-note
 ## RStudio
 
-Once you start writing functions, there are two RStudio shortcuts that are super useful:
+함수 작성을 시작하면 매우 유용한 두 가지 RStudio 단축키가 있습니다:
 
--   To find the definition of a function that you've written, place the cursor on the name of the function and press `F2`.
+-   작성한 함수의 정의를 찾으려면 함수 이름에 커서를 놓고 `F2`를 누르세요.
 
--   To quickly jump to a function, press `Ctrl + .` to open the fuzzy file and function finder and type the first few letters of your function name.
-    You can also navigate to files, Quarto sections, and more, making it a very handy navigation tool.
+-   함수로 빠르게 이동하려면 `Ctrl + .`을 눌러 퍼지 파일 및 함수 찾기를 열고 함수 이름의 처음 몇 글자를 입력하세요.
+    파일, Quarto 섹션 등으로 이동할 수도 있어 매우 편리한 탐색 도구입니다.
 :::
 
-### Exercises
+### 연습문제
 
-1.  Practice turning the following code snippets into functions.
-    Think about what each function does.
-    What would you call it?
-    How many arguments does it need?
+1.  다음 코드 조각들을 함수로 바꾸는 연습을 해보세요.
+    각 함수가 무엇을 하는지 생각해 보세요.
+    이름을 무엇으로 짓겠습니까?
+    인수가 몇 개 필요합니까?
 
     ```{r}
     #| eval: false
@@ -319,18 +319,18 @@ Once you start writing functions, there are two RStudio shortcuts that are super
     round(z / sum(z, na.rm = TRUE) * 100, 1)
     ```
 
-2.  In the second variant of `rescale01()`, infinite values are left unchanged.
-    Can you rewrite `rescale01()` so that `-Inf` is mapped to 0, and `Inf` is mapped to 1?
+2.  `rescale01()`의 두 번째 변형에서는 무한대 값이 변경되지 않은 상태로 남습니다.
+    `-Inf`는 0으로, `Inf`는 1로 매핑되도록 `rescale01()`을 다시 작성할 수 있습니까?
 
-3.  Given a vector of birthdates, write a function to compute the age in years.
+3.  생년월일 벡터가 주어지면 나이(년)를 계산하는 함수를 작성하세요.
 
-4.  Write your own functions to compute the variance and skewness of a numeric vector.
-    You can look up the definitions on Wikipedia or elsewhere.
+4.  수치형 벡터의 분산과 왜도(skewness)를 계산하는 자신만의 함수를 작성하세요.
+    위키피디아 등에서 정의를 찾아볼 수 있습니다.
 
-5.  Write `both_na()`, a summary function that takes two vectors of the same length and returns the number of positions that have an `NA` in both vectors.
+5.  동일한 길이의 두 벡터를 받아 두 벡터 모두에 `NA`가 있는 위치의 수를 반환하는 요약 함수 `both_na()`를 작성하세요.
 
-6.  Read the documentation to figure out what the following functions do.
-    Why are they useful even though they are so short?
+6.  설명서를 읽고 다음 함수들이 무엇을 하는지 파악하세요.
+    매우 짧음에도 불구하고 왜 유용할까요?
 
     ```{r}
     is_directory <- function(x) {
@@ -341,21 +341,21 @@ Once you start writing functions, there are two RStudio shortcuts that are super
     }
     ```
 
-## Data frame functions
+## 데이터 프레임 함수
 
-Vector functions are useful for pulling out code that's repeated within a dplyr verb.
-But you'll often also repeat the verbs themselves, particularly within a large pipeline.
-When you notice yourself copying and pasting multiple verbs multiple times, you might think about writing a data frame function.
-Data frame functions work like dplyr verbs: they take a data frame as the first argument, some extra arguments that say what to do with it, and return a data frame or a vector.
+벡터 함수는 dplyr 동사 내에서 반복되는 코드를 추출하는 데 유용합니다.
+하지만 동사 자체를 반복하는 경우도 많으며, 특히 대규모 파이프라인 내에서 그렇습니다.
+여러 동사를 여러 번 복사해서 붙여넣고 있다는 것을 알게 되면 데이터 프레임 함수 작성을 고려해 볼 수 있습니다.
+데이터 프레임 함수는 dplyr 동사처럼 작동합니다: 데이터 프레임을 첫 번째 인수로 받고, 무엇을 할지 알려주는 추가 인수를 받고, 데이터 프레임이나 벡터를 반환합니다.
 
-To let you write a function that uses dplyr verbs, we'll first introduce you to the challenge of indirection and how you can overcome it with embracing, `{{{ }}}`.
-With this theory under your belt, we'll then show you a bunch of examples to illustrate what you might do with it.
+dplyr 동사를 사용하는 함수를 작성할 수 있도록 하기 위해 먼저 간접 참조(indirection)의 어려움과 `{{{ }}}`를 사용한 감싸기(embracing)로 이를 극복하는 방법을 소개하겠습니다.
+이 이론을 바탕으로, 무엇을 할 수 있는지 보여주는 다양한 예제를 보여드리겠습니다.
 
-### Indirection and tidy evaluation
+### 간접 참조와 Tidy Evaluation
 
-When you start writing functions that use dplyr verbs you rapidly hit the problem of indirection.
-Let's illustrate the problem with a very simple function: `grouped_mean()`.
-The goal of this function is to compute the mean of `mean_var` grouped by `group_var`:
+dplyr 동사를 사용하는 함수를 작성하기 시작하면 간접 참조 문제에 빠르게 부딪힙니다.
+아주 간단한 함수인 `grouped_mean()`으로 문제를 설명해 보겠습니다.
+이 함수의 목표는 `group_var`로 그룹화된 `mean_var`의 평균을 계산하는 것입니다:
 
 ```{r}
 grouped_mean <- function(df, group_var, mean_var) {
@@ -365,14 +365,14 @@ grouped_mean <- function(df, group_var, mean_var) {
 }
 ```
 
-If we try and use it, we get an error:
+이것을 사용하려고 하면 오류가 발생합니다:
 
 ```{r}
 #| error: true
 diamonds |> grouped_mean(cut, carat)
 ```
 
-To make the problem a bit more clear, we can use a made up data frame:
+문제를 좀 더 명확하게 하기 위해 가상의 데이터 프레임을 사용할 수 있습니다:
 
 ```{r}
 df <- tibble(
@@ -387,19 +387,19 @@ df |> grouped_mean(group, x)
 df |> grouped_mean(group, y)
 ```
 
-Regardless of how we call `grouped_mean()` it always does `df |> group_by(group_var) |> summarize(mean(mean_var))`, instead of `df |> group_by(group) |> summarize(mean(x))` or `df |> group_by(group) |> summarize(mean(y))`.
-This is a problem of indirection, and it arises because dplyr uses **tidy evaluation** to allow you to refer to the names of variables inside your data frame without any special treatment.
+`grouped_mean()`을 어떻게 호출하든 `df |> group_by(group) |> summarize(mean(x))` 또는 `df |> group_by(group) |> summarize(mean(y))` 대신 항상 `df |> group_by(group_var) |> summarize(mean(mean_var))`를 수행합니다.
+이것은 간접 참조의 문제이며, dplyr가 **tidy evaluation**을 사용하여 특별한 처리 없이 데이터 프레임 내부의 변수 이름을 참조할 수 있도록 하기 때문에 발생합니다.
 
-Tidy evaluation is great 95% of the time because it makes your data analyses very concise as you never have to say which data frame a variable comes from; it's obvious from the context.
-The downside of tidy evaluation comes when we want to wrap up repeated tidyverse code into a function.
-Here we need some way to tell `group_by()` and `summarize()` not to treat `group_var` and `mean_var` as the name of the variables, but instead look inside them for the variable we actually want to use.
+Tidy evaluation은 변수가 어느 데이터 프레임에서 왔는지 말할 필요가 없으므로 데이터 분석을 매우 간결하게 만들어 주기 때문에 95%의 경우 훌륭합니다. 문맥상 명확하기 때문입니다.
+Tidy evaluation의 단점은 반복되는 tidyverse 코드를 함수로 감싸려고 할 때 발생합니다.
+여기서는 `group_by()`와 `summarize()`에게 `group_var`와 `mean_var`를 변수 이름으로 취급하지 말고 대신 그 안을 들여다보고 우리가 실제로 사용하려는 변수를 찾도록 알려줄 방법이 필요합니다.
 
-Tidy evaluation includes a solution to this problem called **embracing** 🤗.
-Embracing a variable means to wrap it in braces so (e.g.) `var` becomes `{{{ var }}}`.
-Embracing a variable tells dplyr to use the value stored inside the argument, not the argument as the literal variable name.
-One way to remember what's happening is to think of `{{{ }}}` as looking down a tunnel --- `{{{ var }}}` will make a dplyr function look inside of `var` rather than looking for a variable called `var`.
+Tidy evaluation에는 **감싸기(embracing)** 🤗라는 이 문제에 대한 해결책이 포함되어 있습니다.
+변수를 감싼다는 것은 중괄호로 감싸서(예: `var`) `{{{ var }}}`가 되도록 하는 것을 의미합니다.
+변수를 감싸면 dplyr에게 인수를 리터럴 변수 이름이 아니라 인수 안에 저장된 값을 사용하도록 지시합니다.
+무슨 일이 일어나고 있는지 기억하는 한 가지 방법은 `{{{ }}}`를 터널을 내려다보는 것으로 생각하는 것입니다 --- `{{{ var }}}`는 dplyr 함수가 `var`라는 변수를 찾는 대신 `var`의 내부를 들여다보게 합니다.
 
-So to make `grouped_mean()` work, we need to surround `group_var` and `mean_var` with `{{{ }}}`:
+따라서 `grouped_mean()`이 작동하도록 하려면 `group_var`와 `mean_var`를 `{{{ }}}`로 감싸야 합니다:
 
 ```{r}
 grouped_mean <- function(df, group_var, mean_var) {
@@ -411,25 +411,25 @@ grouped_mean <- function(df, group_var, mean_var) {
 df |> grouped_mean(group, x)
 ```
 
-Success!
+성공입니다!
 
-### When to embrace? {#sec-embracing}
+### 언제 감싸야 할까요? {#sec-embracing}
 
-So the key challenge in writing data frame functions is figuring out which arguments need to be embraced.
-Fortunately, this is easy because you can look it up from the documentation 😄.
-There are two terms to look for in the docs which correspond to the two most common sub-types of tidy evaluation:
+따라서 데이터 프레임 함수 작성의 핵심 과제는 어떤 인수를 감싸야 하는지 파악하는 것입니다.
+다행히도 문서에서 찾아볼 수 있기 때문에 쉽습니다 😄.
+문서에서 찾아야 할 두 가지 용어가 있으며, 이는 tidy evaluation의 가장 일반적인 두 가지 하위 유형에 해당합니다:
 
--   **Data-masking**: this is used in functions like `arrange()`, `filter()`, and `summarize()` that compute with variables.
+-   **데이터 마스킹(Data-masking)**: 변수로 계산하는 `arrange()`, `filter()`, `summarize()`와 같은 함수에서 사용됩니다.
 
--   **Tidy-selection**: this is used for functions like `select()`, `relocate()`, and `rename()` that select variables.
+-   **Tidy 선택(Tidy-selection)**: 변수를 선택하는 `select()`, `relocate()`, `rename()`과 같은 함수에서 사용됩니다.
 
-Your intuition about which arguments use tidy evaluation should be good for many common functions --- just think about whether you can compute (e.g., `x + 1`) or select (e.g., `a:x`).
+어떤 인수가 tidy evaluation을 사용하는지에 대한 직관은 많은 일반적인 함수에 대해 유효할 것입니다 --- 계산할 수 있는지(예: `x + 1`) 또는 선택할 수 있는지(예: `a:x`) 생각해보세요.
 
-In the following sections, we'll explore the sorts of handy functions you might write once you understand embracing.
+다음 섹션에서는 감싸기를 이해하고 나면 작성할 수 있는 유용한 함수들을 살펴보겠습니다.
 
-### Common use cases
+### 일반적인 사용 사례
 
-If you commonly perform the same set of summaries when doing initial data exploration, you might consider wrapping them up in a helper function:
+초기 데이터 탐색을 수행할 때 동일한 요약 세트를 일반적으로 수행하는 경우 도우미 함수로 감싸는 것을 고려할 수 있습니다:
 
 ```{r}
 summary6 <- function(data, var) {
@@ -447,9 +447,9 @@ summary6 <- function(data, var) {
 diamonds |> summary6(carat)
 ```
 
-(Whenever you wrap `summarize()` in a helper, we think it's good practice to set `.groups = "drop"` to both avoid the message and leave the data in an ungrouped state.)
+(`summarize()`를 도우미로 감쌀 때마다 메시지를 피하고 데이터를 그룹화되지 않은 상태로 유지하기 위해 `.groups = "drop"`을 설정하는 것이 좋은 관행이라고 생각합니다.)
 
-The nice thing about this function is, because it wraps `summarize()`, you can use it on grouped data:
+이 함수의 좋은 점은 `summarize()`를 감싸기 때문에 그룹화된 데이터에 사용할 수 있다는 것입니다:
 
 ```{r}
 diamonds |> 
@@ -457,8 +457,8 @@ diamonds |>
   summary6(carat)
 ```
 
-Furthermore, since the arguments to summarize are data-masking, so is the `var` argument to `summary6()`.
-That means you can also summarize computed variables:
+또한 summarize에 대한 인수는 데이터 마스킹이므로 `summary6()`에 대한 `var` 인수도 마찬가지입니다.
+즉, 계산된 변수도 요약할 수 있습니다:
 
 ```{r}
 diamonds |> 
@@ -466,9 +466,9 @@ diamonds |>
   summary6(log10(carat))
 ```
 
-To summarize multiple variables, you'll need to wait until @sec-across, where you'll learn how to use `across()`.
+여러 변수를 요약하려면 @sec-across 까지 기다려야 하며, 거기서 `across()` 사용법을 배우게 될 것입니다.
 
-Another popular `summarize()` helper function is a version of `count()` that also computes proportions:
+또 다른 인기 있는 `summarize()` 도우미 함수는 비율도 계산하는 `count()`의 버전입니다:
 
 ```{r}
 # https://twitter.com/Diabb6/status/1571635146658402309
@@ -481,11 +481,11 @@ count_prop <- function(df, var, sort = FALSE) {
 diamonds |> count_prop(clarity)
 ```
 
-This function has three arguments: `df`, `var`, and `sort`, and only `var` needs to be embraced because it's passed to `count()` which uses data-masking for all variables.
-Note that we use a default value for `sort` so that if the user doesn't supply their own value it will default to `FALSE`.
+이 함수에는 `df`, `var`, `sort`의 세 가지 인수가 있으며, 모든 변수에 대해 데이터 마스킹을 사용하는 `count()`에 전달되므로 `var`만 감싸면 됩니다.
+사용자가 자신의 값을 제공하지 않으면 기본적으로 `FALSE`가 되도록 `sort`에 기본값을 사용한다는 점에 유의하세요.
 
-Or maybe you want to find the sorted unique values of a variable for a subset of the data.
-Rather than supplying a variable and a value to do the filtering, we'll allow the user to supply a condition:
+또는 데이터의 하위 집합에 대해 변수의 정렬된 고유 값을 찾고 싶을 수도 있습니다.
+필터링을 수행하기 위해 변수와 값을 제공하는 대신 사용자가 조건을 제공하도록 허용합니다:
 
 ```{r}
 unique_where <- function(df, condition, var) {
@@ -495,14 +495,14 @@ unique_where <- function(df, condition, var) {
     arrange({{ var }})
 }
 
-# Find all the destinations in December
+# 12월의 모든 목적지 찾기
 flights |> unique_where(month == 12, dest)
 ```
 
-Here we embrace `condition` because it's passed to `filter()` and `var` because it's passed to `distinct()` and `arrange()`.
+여기서는 `filter()`에 전달되기 때문에 `condition`을 감싸고, `distinct()`와 `arrange()`에 전달되기 때문에 `var`를 감쌉니다.
 
-We've made all these examples to take a data frame as the first argument, but if you're working repeatedly with the same data, it can make sense to hardcode it.
-For example, the following function always works with the flights dataset and always selects `time_hour`, `carrier`, and `flight` since they form the compound primary key that allows you to identify a row.
+이 모든 예제는 데이터 프레임을 첫 번째 인수로 받도록 만들었지만, 동일한 데이터로 반복적으로 작업하는 경우 하드코딩하는 것이 합리적일 수 있습니다.
+예를 들어, 다음 함수는 항상 flights 데이터셋과 작동하며 `time_hour`, `carrier`, `flight`가 행을 식별할 수 있는 복합 기본 키를 형성하므로 항상 이를 선택합니다.
 
 ```{r}
 subset_flights <- function(rows, cols) {
@@ -512,11 +512,11 @@ subset_flights <- function(rows, cols) {
 }
 ```
 
-### Data-masking vs. tidy-selection
+### 데이터 마스킹 대 Tidy 선택
 
-Sometimes you want to select variables inside a function that uses data-masking.
-For example, imagine you want to write a `count_missing()` that counts the number of missing observations in rows.
-You might try writing something like:
+때때로 데이터 마스킹을 사용하는 함수 내부에서 변수를 선택하고 싶을 때가 있습니다.
+예를 들어, 행에서 누락된 관측값의 수를 계산하는 `count_missing()`을 작성하고 싶다고 상상해 보세요.
+다음과 같이 작성하려고 할 수 있습니다:
 
 ```{r}
 #| error: true
@@ -533,8 +533,8 @@ flights |>
   count_missing(c(year, month, day), dep_time)
 ```
 
-This doesn't work because `group_by()` uses data-masking, not tidy-selection.
-We can work around that problem by using the handy `pick()` function, which allows you to use tidy-selection inside data-masking functions:
+`group_by()`는 tidy 선택이 아니라 데이터 마스킹을 사용하기 때문에 이것은 작동하지 않습니다.
+데이터 마스킹 함수 내부에서 tidy 선택을 사용할 수 있게 해주는 편리한 `pick()` 함수를 사용하여 이 문제를 해결할 수 있습니다:
 
 ```{r}
 count_missing <- function(df, group_vars, x_var) {
@@ -550,8 +550,8 @@ flights |>
   count_missing(c(year, month, day), dep_time)
 ```
 
-Another convenient use of `pick()` is to make a 2d table of counts.
-Here we count using all the variables in the `rows` and `columns`, then use `pivot_wider()` to rearrange the counts into a grid:
+`pick()`의 또 다른 편리한 사용법은 2차원 카운트 테이블을 만드는 것입니다.
+여기서는 `rows`와 `cols`의 모든 변수를 사용하여 카운트한 다음 `pivot_wider()`를 사용하여 카운트를 그리드로 재배열합니다:
 
 ```{r}
 # https://twitter.com/pollicipes/status/1571606508944719876
@@ -569,50 +569,50 @@ count_wide <- function(data, rows, cols) {
 diamonds |> count_wide(c(clarity, color), cut)
 ```
 
-While our examples have mostly focused on dplyr, tidy evaluation also underpins tidyr, and if you look at the `pivot_wider()` docs you can see that `names_from` uses tidy-selection.
+예제는 주로 dplyr에 집중했지만 tidy evaluation은 tidyr의 기반이기도 하며, `pivot_wider()` 문서를 보면 `names_from`이 tidy 선택을 사용한다는 것을 알 수 있습니다.
 
-### Exercises
+### 연습문제
 
-1.  Using the datasets from nycflights13, write a function that:
+1.  nycflights13의 데이터셋을 사용하여 다음을 수행하는 함수를 작성하세요:
 
-    1.  Finds all flights that were cancelled (i.e. `is.na(arr_time)`) or delayed by more than an hour.
+    1.  취소되었거나(`is.na(arr_time)`) 1시간 이상 지연된 모든 항공편을 찾습니다.
 
         ```{r}
         #| eval: false
         flights |> filter_severe()
         ```
 
-    2.  Counts the number of cancelled flights and the number of flights delayed by more than an hour.
+    2.  취소된 항공편 수와 1시간 이상 지연된 항공편 수를 계산합니다.
 
         ```{r}
         #| eval: false
         flights |> group_by(dest) |> summarize_severe()
         ```
 
-    3.  Finds all flights that were cancelled or delayed by more than a user supplied number of hours:
+    3.  취소되었거나 사용자가 제공한 시간 이상 지연된 모든 항공편을 찾습니다:
 
         ```{r}
         #| eval: false
         flights |> filter_severe(hours = 2)
         ```
 
-    4.  Summarizes the weather to compute the minimum, mean, and maximum, of a user supplied variable:
+    4.  날씨를 요약하여 사용자가 제공한 변수의 최소, 평균, 최대를 계산합니다:
 
         ```{r}
         #| eval: false
         weather |> summarize_weather(temp)
         ```
 
-    5.  Converts the user supplied variable that uses clock time (e.g., `dep_time`, `arr_time`, etc.) into a decimal time (i.e. hours + (minutes / 60)).
+    5.  시계 시간(예: `dep_time`, `arr_time` 등)을 사용하는 사용자 제공 변수를 십진수 시간(즉, 시간 + (분 / 60))으로 변환합니다.
 
         ```{r}
         #| eval: false
         flights |> standardize_time(sched_dep_time)
         ```
 
-2.  For each of the following functions list all arguments that use tidy evaluation and describe whether they use data-masking or tidy-selection: `distinct()`, `count()`, `group_by()`, `rename_with()`, `slice_min()`, `slice_sample()`.
+2.  다음 각 함수에 대해 tidy evaluation을 사용하는 모든 인수를 나열하고 데이터 마스킹을 사용하는지 tidy 선택을 사용하는지 설명하세요: `distinct()`, `count()`, `group_by()`, `rename_with()`, `slice_min()`, `slice_sample()`.
 
-3.  Generalize the following function so that you can supply any number of variables to count.
+3.  다음 함수를 일반화하여 카운트할 변수를 원하는 수만큼 제공할 수 있도록 하세요.
 
     ```{r}
     count_prop <- function(df, var, sort = FALSE) {
@@ -622,11 +622,11 @@ While our examples have mostly focused on dplyr, tidy evaluation also underpins 
     }
     ```
 
-## Plot functions
+## 플롯 함수
 
-Instead of returning a data frame, you might want to return a plot.
-Fortunately, you can use the same techniques with ggplot2, because `aes()` is a data-masking function.
-For example, imagine that you're making a lot of histograms:
+데이터 프레임을 반환하는 대신 플롯을 반환하고 싶을 수도 있습니다.
+다행히도 `aes()`가 데이터 마스킹 함수이기 때문에 ggplot2에서도 동일한 기술을 사용할 수 있습니다.
+예를 들어, 많은 히스토그램을 만들고 있다고 상상해 보세요:
 
 ```{r}
 #| fig-show: hide
@@ -639,13 +639,13 @@ diamonds |>
   geom_histogram(binwidth = 0.05)
 ```
 
-Wouldn't it be nice if you could wrap this up into a histogram function?
-This is easy as pie once you know that `aes()` is a data-masking function and you need to embrace:
+이것을 히스토그램 함수로 감쌀 수 있다면 좋지 않을까요?
+`aes()`가 데이터 마스킹 함수이고 감싸야 한다는 것을 알면 아주 쉽습니다:
 
 ```{r}
 #| fig-alt: |
-#|   A histogram of carats of diamonds, ranging from 0 to 5, showing a unimodal, 
-#|   right-skewed distribution with a peak between 0 to 1 carats.
+#|   0에서 5 사이의 다이아몬드 캐럿 히스토그램으로, 0에서 1 캐럿 사이에 
+#|   피크가 있는 단봉형의 오른쪽으로 치우쳐진 분포를 보여줍니다.
 histogram <- function(df, var, binwidth = NULL) {
   df |> 
     ggplot(aes(x = {{ var }})) + 
@@ -655,8 +655,8 @@ histogram <- function(df, var, binwidth = NULL) {
 diamonds |> histogram(carat, 0.1)
 ```
 
-Note that `histogram()` returns a ggplot2 plot, meaning you can still add on additional components if you want.
-Just remember to switch from `|>` to `+`:
+`histogram()`은 ggplot2 플롯을 반환하므로 원하는 경우 추가 구성 요소를 계속 추가할 수 있습니다.
+`|>`에서 `+`로 전환해야 한다는 점만 기억하세요:
 
 ```{r}
 #| fig.show: hide
@@ -665,16 +665,15 @@ diamonds |>
   labs(x = "Size (in carats)", y = "Number of diamonds")
 ```
 
-### More variables
+### 더 많은 변수
 
-It's straightforward to add more variables to the mix.
-For example, maybe you want an easy way to eyeball whether or not a dataset is linear by overlaying a smooth line and a straight line:
+더 많은 변수를 혼합하는 것은 간단합니다.
+예를 들어, 매끄러운 선과 직선을 겹쳐서 데이터셋이 선형인지 여부를 눈으로 확인하는 쉬운 방법을 원할 수 있습니다:
 
 ```{r}
 #| fig-alt: |
-#|   Scatterplot of height vs. mass of StarWars characters showing a positive 
-#|   relationship. A smooth curve of the relationship is plotted in red, and 
-#|   the best fit line is ploted in blue.
+#|   스타워즈 캐릭터의 키 대 질량 산점도로 양의 관계를 보여줍니다. 관계의 
+#|   매끄러운 곡선은 빨간색으로, 최적 적합선은 파란색으로 플롯됩니다.
 # https://twitter.com/tyler_js_smith/status/1574377116988104704
 linearity_check <- function(df, x, y) {
   df |>
@@ -689,12 +688,12 @@ starwars |>
   linearity_check(mass, height)
 ```
 
-Or maybe you want an alternative to colored scatterplots for very large datasets where overplotting is a problem:
+또는 오버플로팅이 문제가 되는 매우 큰 데이터셋의 경우 색상이 지정된 산점도에 대한 대안을 원할 수도 있습니다:
 
 ```{r}
 #| fig-alt: |
-#|   Hex plot of price vs. carat of diamonds showing a positive relationship. 
-#|   There are more diamonds that are less than 2 carats than more than 2 carats.
+#|   다이아몬드의 가격 대 캐럿의 육각형(Hex) 플롯으로 양의 관계를 보여줍니다. 
+#|   2캐럿 미만의 다이아몬드가 2캐럿 이상의 다이아몬드보다 더 많습니다.
 # https://twitter.com/ppaxisa/status/1574398423175921665
 hex_plot <- function(df, x, y, z, bins = 20, fun = "mean") {
   df |> 
@@ -709,17 +708,17 @@ hex_plot <- function(df, x, y, z, bins = 20, fun = "mean") {
 diamonds |> hex_plot(carat, price, depth)
 ```
 
-### Combining with other tidyverse
+### 다른 tidyverse와 결합하기
 
-Some of the most useful helpers combine a dash of data manipulation with ggplot2.
-For example, if you might want to do a vertical bar chart where you automatically sort the bars in frequency order using `fct_infreq()`.
-Since the bar chart is vertical, we also need to reverse the usual order to get the highest values at the top:
+가장 유용한 도우미 중 일부는 데이터 조작과 ggplot2를 약간 결합합니다.
+예를 들어, `fct_infreq()`를 사용하여 막대를 빈도 순서대로 자동으로 정렬하는 수직 막대 차트를 만들고 싶을 수 있습니다.
+막대 차트가 수직이므로 가장 높은 값이 맨 위에 오도록 일반적인 순서를 반전시켜야 합니다:
 
 ```{r}
 #| fig-alt: |
-#|   Bar plot of clarify of diamonds, where clarity is on the y-axis and counts 
-#|   are on the x-axis, and the bars are ordered in order of frequency: SI1, 
-#|   VS2, SI2, VS1, VVS2, VVS1, IF, I1.
+#|   다이아몬드 투명도의 막대 플롯. y축에 투명도가 있고 x축에 카운트가 
+#|   있으며 막대는 빈도 순으로 정렬됩니다: SI1, VS2, SI2, VS1, VVS2, 
+#|   VVS1, IF, I1.
 sorted_bars <- function(df, var) {
   df |> 
     mutate({{ var }} := fct_rev(fct_infreq({{ var }})))  |>
@@ -730,16 +729,16 @@ sorted_bars <- function(df, var) {
 diamonds |> sorted_bars(clarity)
 ```
 
-We have to use a new operator here, `:=` (commonly referred to as the "walrus operator"), because we are generating the variable name based on user-supplied data.
-Variable names go on the left hand side of `=`, but R's syntax doesn't allow anything to the left of `=` except for a single literal name.
-To work around this problem, we use the special operator `:=` which tidy evaluation treats in exactly the same way as `=`.
+여기서는 사용자 제공 데이터를 기반으로 변수 이름을 생성하기 때문에 `:=`(흔히 "바다코끼리 연산자"라고 함)라는 새로운 연산자를 사용해야 합니다.
+변수 이름은 `=`의 왼쪽에 오지만 R의 구문은 단일 리터럴 이름을 제외하고는 `=` 왼쪽에 어떤 것도 허용하지 않습니다.
+이 문제를 해결하기 위해 tidy evaluation이 `=`와 정확히 동일한 방식으로 취급하는 특수 연산자 `:=`를 사용합니다.
 
-Or maybe you want to make it easy to draw a bar plot just for a subset of the data:
+또는 데이터의 일부에 대해서만 막대 플롯을 쉽게 그리고 싶을 수도 있습니다:
 
 ```{r}
 #| fig-alt: |
-#|   Bar plot of clarity of diamonds. The most common is SI1, then SI2, then 
-#|   VS2, then VS1, then VVS2, then VVS1, then I1, then lastly IF.
+#|   다이아몬드 투명도의 막대 플롯. 가장 흔한 것은 SI1, 그 다음 SI2, 
+#|   VS2, VS1, VVS2, VVS1, I1, 마지막으로 IF입니다.
 conditional_bars <- function(df, condition, var) {
   df |> 
     filter({{ condition }}) |> 
@@ -750,15 +749,15 @@ conditional_bars <- function(df, condition, var) {
 diamonds |> conditional_bars(cut == "Good", clarity)
 ```
 
-You can also get creative and display data summaries in other ways.
-You can find a cool application at <https://gist.github.com/GShotwell/b19ef520b6d56f61a830fabb3454965b>; it uses the axis labels to display the highest value.
-As you learn more about ggplot2, the power of your functions will continue to increase.
+창의력을 발휘하여 다른 방식으로 데이터 요약을 표시할 수도 있습니다.
+<https://gist.github.com/GShotwell/b19ef520b6d56f61a830fabb3454965b>에서 멋진 응용 프로그램을 찾을 수 있습니다; 축 레이블을 사용하여 가장 높은 값을 표시합니다.
+ggplot2에 대해 더 많이 알게 될수록 함수의 힘은 계속 커질 것입니다.
 
-We'll finish with a more complicated case: labelling the plots you create.
+더 복잡한 경우인 생성한 플롯에 레이블을 지정하는 것으로 마무리하겠습니다.
 
-### Labeling
+### 레이블 지정
 
-Remember the histogram function we showed you earlier?
+앞서 보여드린 히스토그램 함수를 기억하시나요?
 
 ```{r}
 histogram <- function(df, var, binwidth = NULL) {
@@ -768,18 +767,18 @@ histogram <- function(df, var, binwidth = NULL) {
 }
 ```
 
-Wouldn't it be nice if we could label the output with the variable and the bin width that was used?
-To do so, we're going to have to go under the covers of tidy evaluation and use a function from the package we haven't talked about yet: rlang.
-rlang is a low-level package that's used by just about every other package in the tidyverse because it implements tidy evaluation (as well as many other useful tools).
+출력에 사용된 변수와 빈 너비로 레이블을 지정할 수 있다면 좋지 않을까요?
+그렇게 하려면 tidy evaluation의 이면으로 들어가서 아직 이야기하지 않은 패키지인 rlang의 함수를 사용해야 합니다.
+rlang은 tidy evaluation(및 기타 많은 유용한 도구)을 구현하기 때문에 tidyverse의 거의 모든 다른 패키지에서 사용되는 저수준 패키지입니다.
 
-To solve the labeling problem we can use `rlang::englue()`.
-This works similarly to `str_glue()`, so any value wrapped in `{ }` will be inserted into the string.
-But it also understands `{{{ }}}`, which automatically inserts the appropriate variable name:
+레이블 지정 문제를 해결하기 위해 `rlang::englue()`를 사용할 수 있습니다.
+이것은 `str_glue()`와 유사하게 작동하므로 `{ }`로 감싸진 모든 값은 문자열에 삽입됩니다.
+하지만 적절한 변수 이름을 자동으로 삽입하는 `{{{ }}}`도 이해합니다:
 
 ```{r}
 #| fig-alt: |
-#|   Histogram of carats of diamonds, ranging from 0 to 5. The distribution is 
-#|   unimodal and right skewed with a peak between 0 to 1 carats.
+#|   0에서 5 사이의 다이아몬드 캐럿 히스토그램. 분포는 단봉형이며 오른쪽으로 
+#|   치우쳐 있고 0에서 1 캐럿 사이에 피크가 있습니다.
 histogram <- function(df, var, binwidth) {
   label <- rlang::englue("A histogram of {{var}} with binwidth {binwidth}")
   
@@ -792,49 +791,49 @@ histogram <- function(df, var, binwidth) {
 diamonds |> histogram(carat, 0.1)
 ```
 
-You can use the same approach in any other place where you want to supply a string in a ggplot2 plot.
+ggplot2 플롯에서 문자열을 제공하려는 다른 모든 곳에서 동일한 접근 방식을 사용할 수 있습니다.
 
-### Exercises
+### 연습문제
 
-Build up a rich plotting function by incrementally implementing each of the steps below:
+아래 단계를 점진적으로 구현하여 풍부한 플롯 함수를 만드세요:
 
-1.  Draw a scatterplot given dataset and `x` and `y` variables.
+1.  데이터셋과 `x`, `y` 변수가 주어지면 산점도를 그립니다.
 
-2.  Add a line of best fit (i.e. a linear model with no standard errors).
+2.  최적 적합선(즉, 표준 오차가 없는 선형 모델)을 추가합니다.
 
-3.  Add a title.
+3.  제목을 추가합니다.
 
-## Style
+## 스타일
 
-R doesn't care what your function or arguments are called but the names make a big difference for humans.
-Ideally, the name of your function will be short, but clearly evoke what the function does.
-That's hard!
-But it's better to be clear than short, as RStudio's autocomplete makes it easy to type long names.
+R은 함수나 인수의 이름이 무엇이든 상관하지 않지만 이름은 사람에게 큰 차이를 만듭니다.
+이상적으로는 함수 이름이 짧으면서도 함수가 하는 일을 명확하게 떠올리게 해야 합니다.
+어렵습니다!
+하지만 RStudio의 자동 완성을 사용하면 긴 이름을 쉽게 입력할 수 있으므로 짧은 것보다는 명확한 것이 낫습니다.
 
-Generally, function names should be verbs, and arguments should be nouns.
-There are some exceptions: nouns are ok if the function computes a very well known noun (i.e. `mean()` is better than `compute_mean()`), or accessing some property of an object (i.e. `coef()` is better than `get_coefficients()`).
-Use your best judgement and don't be afraid to rename a function if you figure out a better name later.
+일반적으로 함수 이름은 동사여야 하고 인수는 명사여야 합니다.
+몇 가지 예외가 있습니다: 함수가 매우 잘 알려진 명사를 계산하거나(즉, `mean()`이 `compute_mean()`보다 낫습니다) 객체의 일부 속성에 액세스하는 경우(즉, `coef()`가 `get_coefficients()`보다 낫습니다) 명사가 괜찮습니다.
+최선의 판단을 사용하고 나중에 더 나은 이름을 알아내면 함수 이름을 바꾸는 것을 두려워하지 마세요.
 
 ```{r}
 #| eval: false
-# Too short
+# 너무 짧음
 f()
 
-# Not a verb, or descriptive
+# 동사가 아니거나 설명적이지 않음
 my_awesome_function()
 
-# Long, but clear
+# 길지만 명확함
 impute_missing()
 collapse_years()
 ```
 
-R also doesn't care about how you use white space in your functions but future readers will.
-Continue to follow the rules from @sec-workflow-style.
-Additionally, `function()` should always be followed by squiggly brackets (`{}`), and the contents should be indented by an additional two spaces.
-This makes it easier to see the hierarchy in your code by skimming the left-hand margin.
+R은 함수에서 공백을 사용하는 방식에 대해서도 상관하지 않지만 미래의 독자는 상관할 것입니다.
+@sec-workflow-style 의 규칙을 계속 따르세요.
+또한 `function()` 뒤에는 항상 중괄호(`{}`)가 와야 하며 내용은 두 칸 더 들여써야 합니다.
+이렇게 하면 왼쪽 여백을 훑어보면서 코드의 계층 구조를 더 쉽게 볼 수 있습니다.
 
 ```{r}
-# Missing extra two spaces
+# 추가적인 두 칸 공백 누락
 density <- function(color, facets, binwidth = 0.1) {
 diamonds |> 
   ggplot(aes(x = carat, y = after_stat(density), color = {{ color }})) +
@@ -842,7 +841,7 @@ diamonds |>
   facet_wrap(vars({{ facets }}))
 }
 
-# Pipe indented incorrectly
+# 파이프가 잘못 들여쓰기됨
 density <- function(color, facets, binwidth = 0.1) {
   diamonds |> 
   ggplot(aes(x = carat, y = after_stat(density), color = {{ color }})) +
@@ -851,12 +850,12 @@ density <- function(color, facets, binwidth = 0.1) {
 }
 ```
 
-As you can see we recommend putting extra spaces inside of `{{{ }}}`.
-This makes it very obvious that something unusual is happening.
+보시다시피 `{{{ }}}` 안에는 공백을 추가하는 것을 권장합니다.
+이렇게 하면 뭔가 특이한 일이 일어나고 있다는 것이 매우 분명해집니다.
 
-### Exercises
+### 연습문제
 
-1.  Read the source code for each of the following two functions, puzzle out what they do, and then brainstorm better names.
+1.  다음 두 함수의 소스 코드를 읽고 어떤 역할을 하는지 파악한 다음 더 나은 이름을 브레인스토밍하세요.
 
     ```{r}
     f1 <- function(string, prefix) {
@@ -868,22 +867,22 @@ This makes it very obvious that something unusual is happening.
     }
     ```
 
-2.  Take a function that you've written recently and spend 5 minutes brainstorming a better name for it and its arguments.
+2.  최근에 작성한 함수를 가져와서 5분 동안 더 나은 이름과 인수에 대해 브레인스토밍하세요.
 
-3.  Make a case for why `norm_r()`, `norm_d()` etc. would be better than `rnorm()`, `dnorm()`.
-    Make a case for the opposite.
-    How could you make the names even clearer?
+3.  `rnorm()`, `dnorm()` 등보다 `norm_r()`, `norm_d()` 등이 더 나은 이유를 설명하세요.
+    반대의 경우도 설명하세요.
+    이름을 어떻게 더 명확하게 만들 수 있습니까?
 
-## Summary
+## 요약
 
-In this chapter, you learned how to write functions for three useful scenarios: creating a vector, creating a data frame, or creating a plot.
-Along the way you saw many examples, which hopefully started to get your creative juices flowing, and gave you some ideas for where functions might help your analysis code.
+이 장에서는 벡터 생성, 데이터 프레임 생성 또는 플롯 생성이라는 세 가지 유용한 시나리오에 대한 함수를 작성하는 방법을 배웠습니다.
+그 과정에서 많은 예제를 보았는데, 이를 통해 창의력이 발휘되고 함수가 분석 코드에 도움이 될 수 있는 위치에 대한 아이디어를 얻었기를 바랍니다.
 
-We have only shown you the bare minimum to get started with functions and there's much more to learn.
-A few places to learn more are:
+우리는 함수를 시작하기 위한 최소한의 것만 보여주었으며 배워야 할 것이 훨씬 더 많습니다.
+더 배울 수 있는 몇 가지 장소는 다음과 같습니다:
 
--   To learn more about programming with tidy evaluation, see useful recipes in [programming with dplyr](https://dplyr.tidyverse.org/articles/programming.html) and [programming with tidyr](https://tidyr.tidyverse.org/articles/programming.html) and learn more about the theory in [What is data-masking and why do I need {{?](https://rlang.r-lib.org/reference/topic-data-mask.html).
--   To learn more about reducing duplication in your ggplot2 code, read the [Programming with ggplot2](https://ggplot2-book.org/programming.html){.uri} chapter of the ggplot2 book.
--   For more advice on function style, see the [tidyverse style guide](https://style.tidyverse.org/functions.html){.uri}.
+-   Tidy evaluation을 사용한 프로그래밍에 대해 자세히 알아보려면 [dplyr로 프로그래밍하기](https://dplyr.tidyverse.org/articles/programming.html) 및 [tidyr로 프로그래밍하기](https://tidyr.tidyverse.org/articles/programming.html)에서 유용한 레시피를 확인하고 [데이터 마스킹이란 무엇이며 왜 {{가 필요한가?](https://rlang.r-lib.org/reference/topic-data-mask.html)에서 이론에 대해 자세히 알아보세요.
+-   ggplot2 코드의 중복을 줄이는 방법에 대해 자세히 알아보려면 ggplot2 책의 [ggplot2로 프로그래밍하기](https://ggplot2-book.org/programming.html){.uri} 장을 읽어보세요.
+-   함수 스타일에 대한 더 많은 조언은 [tidyverse 스타일 가이드](https://style.tidyverse.org/functions.html){.uri}를 참조하세요.
 
-In the next chapter, we'll dive into iteration which gives you further tools for reducing code duplication.
+다음 장에서는 코드 중복을 줄이는 추가 도구를 제공하는 반복(iteration)에 대해 알아보겠습니다.
