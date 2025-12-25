@@ -14,16 +14,14 @@ book:
       This book was built with <a href="https://quarto.org/">Quarto</a>.
   cover-image: cover.jpg
   favicon: cover.jpg
-  site-url: https://r4ds.hadley.nz/
-  repo-url: https://github.com/hadley/r4ds/
+  site-url: https://jhk0530.github.io/r4ds-kr/
+  repo-url: https://github.com/jhk0530/r4ds-kr/
   repo-branch: main
   repo-actions: [edit, issue]
   chapters:
     - index.qmd
-
     - preface-2e.qmd
     - intro.qmd
-
     - part: whole-game.qmd
       chapters:
         - data-visualize.qmd
